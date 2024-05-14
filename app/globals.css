@@ -4,7 +4,7 @@
 
 
 .animate-slider{
-  animation: slideLoop 20s infinite linear;
+  animation: slideLoop 25s infinite linear;
 }
 .slide-image {
   flex-shrink: 0;
