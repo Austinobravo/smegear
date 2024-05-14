@@ -12,10 +12,10 @@ const images = [
 ]
 const Brands = () => {
   return (
-    <section id='brands' className='flex gap-5 h-20 overflow-hidden bg-cover' style={{backgroundImage: 'url(/logo.webp)'}}>
+    <section id='brands' className='flex bg-gray-200 gap-5 h-20 overflow-hidden bg-cover' style={{backgroundImage: 'url(/logo.webp)'}}>
         <div className='animate-slider flex space-x-4 justify-center items-center w-full'>
             {images.map((image, index) => (
-                <div key={index} className='overflow-hidden filter grayscale hover:grayscale-0'>
+                <div key={index} className='overflow-hidden'>
                     <Image src={image} width={100} height={100} alt='brands' className='w-full h-auto slide-image'/>
                 </div>
             ))}

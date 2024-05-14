@@ -8,7 +8,7 @@ const MobileNav = () => {
         <div id='logo'>
             <Image src={`https://sme-gear.s3.amazonaws.com/1-d-passportPhoto-1710430072893-logo.webp`} alt='logo' width={150} height={100}/>
         </div>
-        <div className='text-amber-500 bg-blue-700 rounded-full p-2'>
+        <div className='text-amber-500 bg-blue-700 rounded-full p-2 hover:cursor-pointer'>
             <Menu size={25}/>
         </div>
       
