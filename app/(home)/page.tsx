@@ -4,6 +4,7 @@ import Hero from './_components/Hero'
 import Brands from './_components/Brands'
 import About from './_components/About'
 import Team from './_components/Team'
+import Services from './_components/Services'
 
 const page = () => {
   return (
@@ -13,6 +14,7 @@ const page = () => {
       <Brands/>
       <About/>
       <Team/>
+      <Services/>
       
     </div>
   )
