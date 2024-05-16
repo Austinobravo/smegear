@@ -1,9 +1,12 @@
+'use client'
 import { navLinks } from '@/globals'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
 const DesktopNav = () => {
+    const [currentPath, setCurrentPath] = React.useState<string>('/')
+
   return (
     <div className='flex items-center justify-between fixed w-full md:px-12 px-6'>
         <div id='logo'>
@@ -13,7 +16,7 @@ const DesktopNav = () => {
             <ul className='flex space-x-12 text-lg'>
                 {navLinks.map((links, index) => (
                     <li key={index}>
-                        <Link href={links.path} className={`${links.path === '/' && "!text-amber-500 border-b-2 border-blue-700"} text-blue-700 font-semibold`}>
+                        <Link href={links.path} onClick={()=>setCurrentPath(links.path)} className={`${currentPath.includes(links.path) && "!text-amber-500 border-b-2 border-blue-700"} text-blue-700 font-semibold`}>
                             {links.name}
                         </Link>
                     </li>

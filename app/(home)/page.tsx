@@ -5,6 +5,7 @@ import Brands from './_components/Brands'
 import About from './_components/About'
 import Team from './_components/Team'
 import Services from './_components/Services'
+import Footer from '../../components/Footer'
 
 const page = () => {
   return (
@@ -15,6 +16,7 @@ const page = () => {
       <About/>
       <Team/>
       <Services/>
+      <Footer/>
       
     </div>
   )

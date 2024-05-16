@@ -15,8 +15,8 @@ const About = () => {
         <div className='space-y-7'>
             <h4 className='text-2xl font-bold'>We Offer the Best Services </h4>
         </div>
-        <div className='flex '>
-            <div className='font-medium basis-1/2 py-10  space-y-2'>
+        <div className='flex md:flex-nowrap flex-wrap'>
+            <div className='font-medium md:basis-1/2 py-10  space-y-2'>
                 <p className='opacity-70'>We are a team of commited professionals who take cognizance that your business requires a legal backing ranging from our legal registration process to give your business a premium online presence.</p>
                 <p className='opacity-70'>We make time worth strategy that help your business grow giving upright consultation for the longetivity of the business.</p>
                 <div>
@@ -26,7 +26,7 @@ const About = () => {
                 </Link>  
               </div>
             </div>
-            <Image src={`/smegear.jpg`} width={500} height={100} alt='logo' className='basis-1/2 object-contain hover:object-scale-down h-72 w-full '/>
+            <Image src={`/smegear.jpg`} width={500} height={100} alt='logo' className='md:basis-1/2 object-contain hover:object-scale-down h-72 w-full '/>
         </div>
         
         {/* <div className='flex md:flex-nowrap flex-wrap justify-between'>

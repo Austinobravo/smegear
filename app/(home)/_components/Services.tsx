@@ -38,7 +38,7 @@ const services = [
 
 const Services = () => {
   return (
-    <section className='bg-white md:px-12 px-6 py-10'>
+    <section id='services' className='bg-white md:px-12 px-6 py-10'>
         <div className='grid md:grid-cols-4 grid-cols-1 gap-5'>
             {services.map((service, index)=> (
                 <div key={index} className='flex space-x-4'>
