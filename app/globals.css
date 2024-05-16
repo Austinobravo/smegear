@@ -6,10 +6,10 @@
 .animate-slider{
   animation: slideLoop 25s infinite linear;
 }
-.slide-image {
+/* .slide-image {
   flex-shrink: 0;
 
-}
+} */
 
 
 @keyframes slideLoop {
