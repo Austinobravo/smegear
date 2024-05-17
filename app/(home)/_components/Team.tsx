@@ -40,7 +40,7 @@ const Team = () => {
     const [currentTeamMember, setCurrentTeamMember] = React.useState<number| null>(null)
   return (
     <div id='team' className='py-10 md:px-12 px-6' >
-            <div className='flex flex-wrap  gap-10'>
+            <div className='flex flex-wrap w-full md:justify-start justify-center gap-10'>
                 {TeamMember.map((teamMember, index) => (
                     <div key={index} className={`${isHovered && currentTeamMember === index && 'scale-105'} relative h-60`} onMouseEnter={()=>{setIsHovered(true), setCurrentTeamMember(index)}} onMouseLeave={()=>{setIsHovered(false), setCurrentTeamMember(null)}}>
                         <Image src={teamMember.image} width={200} height={100} alt={teamMember.name} className={`${isHovered && currentTeamMember === index && 'scale-105'} rounded-md object-cover h-60 w-60 object-top`} />
