@@ -1,27 +1,9 @@
-import { Book, Facebook, Handshake, Instagram, LucideFacebook, LucideInstagram, LucideTwitter, LucideYoutube, Mail, Phone, ScreenShare, Twitter, Youtube } from 'lucide-react'
+import { socialLinks } from '@/globals'
+import { Book,  Handshake,  Mail, Phone, ScreenShare } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
-const socialLinks = [
-  {
-    link: 'facebook',
-    image: <LucideFacebook/>
-  },
-  {
-    link: 'instagram',
-    image: <LucideInstagram/>
-  },
-  {
-    link: 'facebook',
-    image: <LucideTwitter/>
-  },
-  {
-    link: 'instagram',
-    image: <LucideYoutube/>
-  },
- 
-]
 const Footer = () => {
   return (
     <section className='bg-black md:px-12 px-6 py-10'>

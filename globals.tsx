@@ -1,3 +1,5 @@
+import { LucideFacebook, LucideInstagram, LucideTwitter, LucideYoutube } from "lucide-react"
+
 export const navLinks = [
     {
         name: 'Home',
@@ -16,3 +18,23 @@ export const navLinks = [
         path: '#contact'
     },
 ]
+
+export const socialLinks = [
+    {
+      link: 'facebook',
+      image: <LucideFacebook/>
+    },
+    {
+      link: 'instagram',
+      image: <LucideInstagram/>
+    },
+    {
+      link: 'facebook',
+      image: <LucideTwitter/>
+    },
+    {
+      link: 'instagram',
+      image: <LucideYoutube/>
+    },
+   
+  ]
