@@ -10,12 +10,12 @@ const Hero = () => {
             <div className='text-white flex md:!flex-none flex-col  '>
               <span className='flex text-amber-500'>
                   <Star size={12}/>
-                  <h1 className='md:text-sm text-3xl font-bold'>SmeGear Digital <span className='text-blue-700'>Agency</span></h1>
+                  <h1 className='md:text-sm text-sm font-bold'>SmeGear Digital <span className='text-blue-700'>Agency</span></h1>
               </span>
-              <h2 className='md:text-6xl md:max-w-[700px]  text-3xl'>
+              <h2 className='md:text-6xl md:max-w-[700px]  text-4xl'>
                 Your One Stop <span className='text-blue-700'>Agency</span> With Exceptional Services.
               </h2>
-              <p className='md:text-xl md:max-w-[800px]  text-lg py-7'>
+              <p className='md:text-xl md:max-w-[800px]  text-base py-7'>
                 We are a digital agency that caters for <span className='text-amber-500'>small and medium enterprises</span> ensuring an online presence for our clients.
               </p>
               <div>
