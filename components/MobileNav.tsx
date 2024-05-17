@@ -8,7 +8,6 @@ import React from 'react'
 const MobileNav = () => {
   const [isNavClicked, setIsNavClicking] = React.useState<boolean>(false)
   const [isNavScrolling, setIsNavScrolling] = React.useState<boolean>(false)
-  const [isEntering, setIsEntering] = React.useState<boolean>(false)
 
   React.useEffect(()=> {
     const handleScroll = () => {
@@ -35,6 +34,13 @@ const MobileNav = () => {
     }
   },[])
 
+  React.useEffect(() => {
+    if (isNavClicked) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }, [isNavClicked]);
   
   return (
     <>
@@ -43,7 +49,7 @@ const MobileNav = () => {
             <Image src={`https://sme-gear.s3.amazonaws.com/1-d-passportPhoto-1710430072893-logo.webp`} alt='logo' width={150} height={100}/>
         </div>
         {!isNavClicked && 
-          <div className='text-amber-500 bg-blue-700 rounded-full p-2 hover:cursor-pointer' onClick={()=> {setIsEntering(!isNavClicked),setIsNavClicking(!isNavClicked)}}>
+          <div className='text-amber-500 bg-blue-700 rounded-full p-2 hover:cursor-pointer' onClick={()=> {setIsNavClicking(!isNavClicked)}}>
               <Menu size={25}/>
           </div>
         }
@@ -51,12 +57,12 @@ const MobileNav = () => {
     </div>
     {isNavClicked && 
       <div>
-        <div className='fixed w-screen h-screen bg-black/50 top-0 left-0 z-20' onClick={()=> {setIsEntering(!isNavClicked),setIsNavClicking(!isNavClicked)}}>
+        <div className='fixed w-screen h-screen bg-black/50 top-0 left-0 z-20' onClick={()=> {setIsNavClicking(!isNavClicked)}}>
           <div className='text-amber-500 bg-blue-700 rounded-full p-2 hover:cursor-pointer w-fit ml-auto mt-14 mr-6'>
               <X size={25}/>
           </div>
         </div>
-        <div className={`bg-white w-72 z-20 h-screen fixed transition-transform duration-500 ease-in-out ${isEntering ? 'transform translate-x-0' : 'transform -translate-x-full'}`}>
+        <div className={`bg-white w-72 z-20 h-screen fixed`}>
           <div className='flex justify-center items-center'>
             <Image src={`https://sme-gear.s3.amazonaws.com/1-d-passportPhoto-1710430072893-logo.webp`} alt='logo' width={150} height={100}/>
           </div>
@@ -64,7 +70,7 @@ const MobileNav = () => {
             <ul>
               {navLinks.map((navLink, index) => (
                 <Link key={index} href={navLink.path} className=''>
-                  <li className='border-b font-bold text-sm py-2 mx-4 hover:text-blue-700 transition-all'>{navLink.name}</li>
+                  <li className='border-b font-bold text-sm py-2 mx-4 hover:text-blue-700 transition-all' onClick={()=> {setIsNavClicking(!isNavClicked)}}>{navLink.name}</li>
                 </Link>
               ))}
             </ul>
