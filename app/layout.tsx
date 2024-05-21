@@ -25,6 +25,9 @@ const satoshi = localFont({
 export const metadata: Metadata = {
   title: "SmeGear - A Digital Agency",
   description: "SmeGear - A Digital Agency",
+  other: {
+    "google-site-verification":"X0phLt90DZ0hKaDH3WyYbfbXJhuq7I3CDlR62i8RjJs"
+  }
 };
 
 export default function RootLayout({

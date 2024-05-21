@@ -25,30 +25,13 @@ const Hero = () => {
                 </Link>  
               </div>
             </div>
-            {/* <div/> */}
-            {/* <div id='video' className='basis-1/2 w-full'>
-              <video className='rounded-lg w-full' autoPlay muted loop src='https://themexriver.com/wp/gilroy-videos/hero/video-2.mp4'>
 
-              </video>
-
-            </div> */}
           </div>
             <div className='bg-white mt-16 text-red-300 p-3 animate-bounce rounded-full w-fit mx-auto '>
               <Link href={`#brands`} className='bg-white animate-pulse'>
                 <ArrowDown color='red' size={28} fontVariant={900}/>
               </Link>
             </div>
-          {/* <div className='w-20'>
-            <svg viewBox="0 0 200 200" className="text">
-              <path id="textPath" d="M 85,0 A 85,85 0 0 1 -85,0 A 85,85 0 0 1 85,0" transform="translate(100,100)" fill="none" stroke-width="0"></path>
-              <g>
-                  <text text-anchor="start">
-                  <textPath className="round-text text-uppercase" href="#textPath" startOffset="0%">scroll down-- scroll down-- scroll down--  </textPath>
-                  </text>
-              </g>
-          </svg>
-
-          </div> */}
 
       </div>
       
