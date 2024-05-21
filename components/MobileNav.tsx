@@ -44,7 +44,7 @@ const MobileNav = () => {
   
   return (
     <>
-    <div className={`flex px-6 items-center w-full justify-between fixed h-24 ${isNavScrolling && 'backdrop-blur-xl z-10'}`}>
+    <div className={`flex px-6 items-center w-full justify-between fixed h-24 ${isNavScrolling && '!backdrop-blur-xl z-10'}`}>
         <div id='logo' className='-z-20'>
             <Image src={`https://sme-gear.s3.amazonaws.com/1-d-passportPhoto-1710430072893-logo.webp`} alt='logo' width={150} height={100}/>
         </div>

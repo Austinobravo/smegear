@@ -20,7 +20,7 @@ const DesktopNav = () => {
         }
     }, [])
   return (
-    <div className={`flex items-center justify-between h-28 fixed w-full md:px-12 px-6 bg-white/0 ${isNavScrolling && 'backdrop-blur-xl z-20'}`}>
+    <div className={`flex items-center justify-between h-28 fixed w-full md:px-12 px-6 bg-white/0 ${isNavScrolling && '!backdrop-blur-xl z-20'}`}>
         <div id='logo'>
             <Image src={`https://sme-gear.s3.amazonaws.com/1-d-passportPhoto-1710430072893-logo.webp`} alt='logo' width={150} height={100}/>
         </div>
