@@ -22,3 +22,12 @@
   
 }
 
+.fade-in{
+  transition: .4s all ease-in-out;
+  transition-delay: 5s;
+  
+}
+.fade-in.left{
+  opacity: 1;
+  transform: translateX(0);
+}
