@@ -55,7 +55,7 @@ const MobileNav = () => {
         }
       
     </div>
-    <div className={`transition-all delay-200 duration-700 ease-in-out  ${isNavClicked ? 'left-0' :'translate-x-full '}`}>
+    <div className={`transition-all delay-200 border-t-2 border-amber-500 duration-700 ease-in-out  ${isNavClicked ? 'left-0' :'!-translate-x-full '}`}>
       {isNavClicked && 
         <div className={` `}>
           <div className={`fixed w-screen h-screen bg-black/50 top-0 left-0 z-20 `} onClick={()=> {setIsNavClicking(!isNavClicked)}}>
