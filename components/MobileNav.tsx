@@ -60,7 +60,7 @@ const MobileNav = () => {
         <div className={` `}>
           <div className={`fixed w-screen h-screen bg-black/50 top-0 left-0 z-20 `} onClick={()=> {setIsNavClicking(!isNavClicked)}}>
             <div className='text-amber-500 bg-blue-700 rounded-full p-2 hover:cursor-pointer w-fit ml-auto mt-14 mr-6 '>
-                <X size={25}/>
+                <X size={25} className='hover:rotate-45 transition-all delay-200 duration-500'/>
             </div>
           </div>
           <div className={`bg-white w-72 z-20 h-screen fixed `}>
