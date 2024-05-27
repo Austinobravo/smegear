@@ -7,7 +7,7 @@ import React from 'react'
 const Footer = () => {
   return (
     <section className='bg-black md:px-12 px-6 py-10'>
-        <div className=' flex md:flex-no-wrap flex-wrap text-white pb-5 gap-5'>
+        <div className=' flex md:flex-no-wrap flex-wrap text-white pb-5 gap-5 md:gap-0'>
           <div className='md:basis-1/4'>
             <Link href={`/`}>
               <Image src={`/new_logo.png`} width={200} height={100} alt='logo' className='object-cover h-20 '/>
@@ -38,7 +38,7 @@ const Footer = () => {
           </div>
           <div className='md:basis-1/2 pt-10'>
             <h3 className='text-blue-500 text-xl '>Our Offices</h3>
-            <div>
+            <div className='w-full'>
               <p className='text-sm'>Locate us on Google Maps</p>
               <div className='w-full my-5'>
               <iframe width="100%" height="200" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=%Turkei%Plaza,%Yola,%Adamawa,%Nigeria+(Voting)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>

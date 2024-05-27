@@ -17,10 +17,11 @@ const About = () => {
         </div>
         <div className='flex md:flex-nowrap flex-wrap'>
             <div className='font-medium md:basis-1/2 py-10  space-y-2'>
+                <p className='opacity-70'><b>SmeGear</b> is a Digital Agency that ranks as one of the best in consulting, marketing, software development in the state of Adamawa.</p>
                 <p className='opacity-70'>We are a team of commited professionals who take cognizance that your business requires a legal backing ranging from our legal registration process to give your business a premium online presence.</p>
                 <p className='opacity-70'>We make time worth strategy that help your business grow giving upright consultation for the longetivity of the business.</p>
                 <div>
-                <Link href={``} className='bg-amber-500 text-white  hover:scale-105 rounded-full font-bold py-3 px-5 w-fit flex items-center '>
+                <Link href={`#contact`} className='bg-amber-500 text-white  hover:scale-105 rounded-full font-bold py-3 px-5 w-fit flex items-center '>
                   Consult Now
                   <ArrowRight className='animate-pulse'/>
                 </Link>  

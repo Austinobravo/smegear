@@ -19,7 +19,7 @@ const Hero = () => {
                 We are a digital agency that caters for <span className='text-amber-500'>small and medium enterprises</span> ensuring an online presence for our clients.
               </p>
               <div>
-                <Link href={``} className='bg-blue-700  hover:scale-105 rounded-full font-bold py-3 px-5 w-fit flex items-center '>
+                <Link href={`#about`} className='bg-blue-700  hover:scale-105 rounded-full font-bold py-3 px-5 w-fit flex items-center '>
                   Explore More
                   <ArrowRight className='animate-pulse'/>
                 </Link>  
