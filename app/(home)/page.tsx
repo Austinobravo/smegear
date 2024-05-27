@@ -6,6 +6,8 @@ import About from './_components/About'
 import Team from './_components/Team'
 import Services from './_components/Services'
 import Footer from '../../components/Footer'
+import Counter from './_components/Counter'
+import Contact from './_components/Contact'
 
 const page = () => {
   return (
@@ -16,6 +18,8 @@ const page = () => {
       <About/>
       <Team/>
       <Services/>
+      <Counter/>
+      <Contact/>
       <Footer/>
       
     </div>
