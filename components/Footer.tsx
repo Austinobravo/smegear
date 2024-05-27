@@ -9,7 +9,9 @@ const Footer = () => {
     <section className='bg-black md:px-12 px-6 py-10'>
         <div className=' flex md:flex-no-wrap flex-wrap text-white pb-5'>
           <div className='md:basis-1/4'>
-            <Image src={`/new_logo.png`} width={200} height={100} alt='logo' className='object-cover h-20 '/>
+            <Link href={`/`}>
+              <Image src={`/new_logo.png`} width={200} height={100} alt='logo' className='object-cover h-20 '/>
+            </Link>
             <p className='text-sm opacity-80 pb-10'>Excellence with Speed - As our motto  stands, we strategize, execute, deliver as the motto signifies.</p>
             <div className='text-xs py-5 space-y-2'>
               <div className='flex'><Mail size={12} className='mr-2'/> <Link href='mailto:smegearhub@gmail.com'>Smegearhub@gmail.com</Link></div>

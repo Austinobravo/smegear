@@ -8,7 +8,7 @@ import React from 'react'
 const About = () => {
    
   return (
-    <section id='about' className='py-10 md:mx-12 rounded-md bg-white px-6 snap-center'>
+    <section id='about' className='py-10 md:mx-12 rounded-md bg-white px-6 '>
         <div className=''>
             <h3 className='font-mono text-blue-700'>ABOUT US</h3>
         </div>

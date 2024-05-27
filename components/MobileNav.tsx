@@ -50,7 +50,7 @@ const MobileNav = () => {
         </div>
         {!isNavClicked && 
           <div className='text-amber-500 bg-blue-700 rounded-full p-2 hover:cursor-pointer' onClick={()=> {setIsNavClicking(!isNavClicked)}}>
-              <Menu size={25}/>
+              <Menu size={25} className='hover:scale-110 transition-all duration-500'/>
           </div>
         }
       

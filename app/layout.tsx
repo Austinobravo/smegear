@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local"
 import "./globals.css";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
 const satoshi = localFont({
   src: [
     {
@@ -37,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${satoshi.className} bg-gray-200 scroll-smooth snap-y snap-mandatory`}>{children}</body>
+      <body className={`${satoshi.className} bg-gray-200 scroll-smooth snap-y snap-mandatory`}>{children}<WhatsAppIcon/></body>
     </html>
   );
 }

@@ -39,7 +39,7 @@ const Team = () => {
     const [isHovered, setIsHovered] = React.useState<boolean>(false)
     const [currentTeamMember, setCurrentTeamMember] = React.useState<number| null>(null)
   return (
-    <div id='team' className='py-10 md:px-12 px-6 snap-center' >
+    <div id='team' className='py-10 md:px-12 px-6 ' >
             <div className='flex flex-wrap w-full md:justify-start justify-center gap-10'>
                 {TeamMember.map((teamMember, index) => (
                     <div key={index} className={`${isHovered && currentTeamMember === index && 'scale-105'} relative h-60`} onMouseEnter={()=>{setIsHovered(true), setCurrentTeamMember(index)}} onMouseLeave={()=>{setIsHovered(false), setCurrentTeamMember(null)}}>
