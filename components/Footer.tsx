@@ -7,7 +7,7 @@ import React from 'react'
 const Footer = () => {
   return (
     <section className='bg-black md:px-12 px-6 py-10'>
-        <div className=' flex md:flex-no-wrap flex-wrap text-white pb-5'>
+        <div className=' flex md:flex-no-wrap flex-wrap text-white pb-5 gap-5'>
           <div className='md:basis-1/4'>
             <Link href={`/`}>
               <Image src={`/new_logo.png`} width={200} height={100} alt='logo' className='object-cover h-20 '/>
