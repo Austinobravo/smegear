@@ -26,9 +26,12 @@ const satoshi = localFont({
 export const metadata: Metadata = {
   title: "SmeGear - A Digital Agency",
   description: "SmeGear - A Digital Agency",
-  other: {
-    "google-site-verification":"X0phLt90DZ0hKaDH3WyYbfbXJhuq7I3CDlR62i8RjJs"
+  verification:{
+    google: 'X0phLt90DZ0hKaDH3WyYbfbXJhuq7I3CDlR62i8RjJs'
   }
+  // other: {
+  //   "google-site-verification":"X0phLt90DZ0hKaDH3WyYbfbXJhuq7I3CDlR62i8RjJs"
+  // }
 };
 
 export default function RootLayout({
@@ -38,7 +41,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${satoshi.className} bg-gray-200 scroll-smooth snap-y snap-mandatory`}>{children}<WhatsAppIcon/></body>
+      <body className={`${satoshi.className} bg-gray-200 scroll-smooth`}>{children}<WhatsAppIcon/></body>
     </html>
   );
 }
