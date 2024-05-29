@@ -45,9 +45,9 @@ const MobileNav = () => {
   return (
     <>
     <div className={`flex px-6 items-center w-full justify-between fixed h-24 ${isNavScrolling && '!backdrop-blur-xl z-10 bg-white/70'}`}>
-        <div id='logo' className='-z-20'>
+        <Link href={`/`} id='logo' className='-z-20'>
             <Image src={`https://sme-gear.s3.amazonaws.com/1-d-passportPhoto-1710430072893-logo.webp`} alt='logo' width={150} height={100}/>
-        </div>
+        </Link>
         {!isNavClicked && 
           <div className='text-amber-500 bg-blue-700 rounded-full p-2 hover:cursor-pointer' onClick={()=> {setIsNavClicking(!isNavClicked)}}>
               <Menu size={25} className='hover:scale-110 transition-all duration-500'/>
