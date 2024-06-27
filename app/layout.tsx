@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import localFont from "next/font/local"
 import "./globals.css";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
@@ -29,11 +30,16 @@ export const metadata: Metadata = {
   verification:{
     google: 'X0phLt90DZ0hKaDH3WyYbfbXJhuq7I3CDlR62i8RjJs'
   }
-  // other: {
-  //   "google-site-verification":"X0phLt90DZ0hKaDH3WyYbfbXJhuq7I3CDlR62i8RjJs"
-  // }
 };
+// <!-- Google tag (gtag.js) -->
+// <script async src="https://www.googletagmanager.com/gtag/js?id=G-XGG153E7VN"></script>
+// <script>
+//   window.dataLayer = window.dataLayer || [];
+//   function gtag(){dataLayer.push(arguments);}
+//   gtag('js', new Date());
 
+//   gtag('config', 'G-XGG153E7VN');
+// </script>
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -42,6 +48,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${satoshi.className} bg-gray-200 scroll-smooth`}>{children}<WhatsAppIcon/></body>
+      <GoogleAnalytics gaId="G-XGG153E7VN"/>
     </html>
   );
 }
