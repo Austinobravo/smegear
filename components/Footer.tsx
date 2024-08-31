@@ -1,3 +1,4 @@
+"use client"
 import { socialLinks } from '@/globals'
 import { Book,  Handshake,  Mail, Phone, ScreenShare } from 'lucide-react'
 import Image from 'next/image'

@@ -41,10 +41,34 @@ const MobileNav = () => {
       document.body.style.overflow = 'auto';
     }
   }, [isNavClicked]);
+
+  const handleSmoothScrolling = (event:any, path: string) => {
+    event.preventDefault()
+
+    const sectionElement = path.startsWith("#") ? path.substring(1) : null
+    const navHeight = document.getElementById("navbar")?.offsetHeight || 0
+
+    if (sectionElement){
+        const sectionId = document.getElementById(sectionElement)
+        if(sectionId){
+            const sectionPosition = sectionId?.offsetTop - navHeight
+            window.scrollTo({
+                top: sectionPosition,
+                behavior: "smooth"
+            })
+        }
+    }
+    else{
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        })
+    }
+  }
   
   return (
     <>
-    <div className={`flex px-6 items-center w-full justify-between fixed h-24 ${isNavScrolling && '!backdrop-blur-xl z-10 bg-white/70'}`}>
+    <nav id='navbar' className={`flex px-6 items-center w-full justify-between fixed h-24 ${isNavScrolling && '!backdrop-blur-xl z-10 bg-white/70'}`}>
         <Link href={`/`} id='logo' className='-z-20'>
             <Image src={`https://sme-gear.s3.amazonaws.com/1-d-passportPhoto-1710430072893-logo.webp`} alt='logo' width={150} height={100}/>
         </Link>
@@ -54,7 +78,7 @@ const MobileNav = () => {
           </div>
         }
       
-    </div>
+    </nav>
     <div className={`transition-all delay-150 border-t-2 border-amber-500 duration-700 ease-in-out  ${isNavClicked ? 'left-0' :'!-translate-x-full '}`}>
       {isNavClicked && 
         <div className={` `}>
@@ -70,7 +94,7 @@ const MobileNav = () => {
             <div>
               <ul>
                 {navLinks.map((navLink, index) => (
-                  <Link key={index} href={navLink.path} className=''>
+                  <Link key={index} href={navLink.path} onClick={(event)=>{handleSmoothScrolling(event,navLink.path)}} className=''>
                     <li className='border-b font-bold text-sm py-2 mx-4 hover:text-blue-700 transition-all' onClick={()=> {setIsNavClicking(!isNavClicked)}}>{navLink.name}</li>
                   </Link>
                 ))}
