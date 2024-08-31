@@ -4,7 +4,7 @@ import React from 'react'
 const Contact = () => {
   return (
     <div id='contact' className='flex md:px-12 px-6 flex-wrap md:flex-nowrap gap-10 py-10 bg-white'>
-        <div className='md:basis-1/2 w-full rounded-md grid grid-cols-4'>
+        <div className='md:basis-1/2 w-full '>
             <Image src={`/contact.jpg`} width={500} height={200} alt='Contact Us' className='rounded-md flex-1 w-full h-full'/>
         </div>
         <div className='md:basis-1/2 w-full'>
