@@ -1,5 +1,6 @@
 'use client'
 import { navLinks, socialLinks } from '@/globals'
+import { handleSmoothScrolling } from '@/hooks/handleScroll'
 import { Menu, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -42,33 +43,10 @@ const MobileNav = () => {
     }
   }, [isNavClicked]);
 
-  const handleSmoothScrolling = (event:any, path: string) => {
-    event.preventDefault()
-
-    const sectionElement = path.startsWith("#") ? path.substring(1) : null
-    const navHeight = document.getElementById("navbar")?.offsetHeight || 0
-
-    if (sectionElement){
-        const sectionId = document.getElementById(sectionElement)
-        if(sectionId){
-            const sectionPosition = sectionId?.offsetTop - navHeight
-            window.scrollTo({
-                top: sectionPosition,
-                behavior: "smooth"
-            })
-        }
-    }
-    else{
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        })
-    }
-  }
   
   return (
     <>
-    <nav id='navbar' className={`flex px-6 items-center w-full justify-between fixed h-24 ${isNavScrolling && '!backdrop-blur-xl z-10 bg-white/70'}`}>
+    <nav id='mobileNav' className={`flex px-6 items-center w-full justify-between fixed h-24 ${isNavScrolling && '!backdrop-blur-xl z-10 bg-white/70'}`}>
         <Link href={`/`} id='logo' className='-z-20'>
             <Image src={`https://sme-gear.s3.amazonaws.com/1-d-passportPhoto-1710430072893-logo.webp`} alt='logo' width={150} height={100}/>
         </Link>

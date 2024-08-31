@@ -1,7 +1,11 @@
-export const handleSmoothScrolling = (event:any, path: string, navHeight: number) => {
+export const handleSmoothScrolling = (event:any, path: string) => {
     event.preventDefault()
 
+    const desktopNavHeight = document.getElementById("desktopNav")?.offsetHeight || 0
+    const mobileNavHeight = document.getElementById("mobileNav")?.offsetHeight || 0
     const sectionElement = path.startsWith("#") ? path.substring(1) : null
+
+    const navHeight = desktopNavHeight + mobileNavHeight
     
     if (sectionElement){
         const sectionId = document.getElementById(sectionElement)
