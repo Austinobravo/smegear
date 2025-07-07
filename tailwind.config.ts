@@ -8,6 +8,13 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      colors: {
+        smegear: {
+          primary: "#F49F0B",   // orange
+          secondary: "#070854", // strong blue
+          accent: "#1D4ED8",    // Tailwind's default blue-700
+        },
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -17,4 +24,5 @@ const config: Config = {
   },
   plugins: [],
 };
+
 export default config;

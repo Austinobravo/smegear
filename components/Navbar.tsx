@@ -1,5 +1,5 @@
 import React from 'react'
-import DesktopNav from './DesktopNav'
+import DesktopNav from './globals/DesktopNav'
 import MobileNav from './MobileNav'
 
 const Navbar = () => {

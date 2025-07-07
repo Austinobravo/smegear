@@ -6,7 +6,7 @@ html {
   scroll-behavior: smooth;
 }
 
-.animate-slider{
+.animate-slider {
   animation: slideLoop 25s infinite linear;
 }
 /* .slide-image {
@@ -14,13 +14,30 @@ html {
 
 } */
 
-
 @keyframes slideLoop {
-  0%{
-    transform: translateX(0)
+  0% {
+    transform: translateX(0);
   }
-  100%{
+  100% {
     transform: translateX(-100%);
   }
-  
+}
+
+.link-underline {
+  @apply relative text-base font-medium text-smegear-secondary transition-colors duration-300;
+}
+
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background-color: #060855;
+  transition: width 0.3s ease;
+}
+
+.link-underline:hover::after {
+  width: 100%;
 }
