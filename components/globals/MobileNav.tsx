@@ -22,7 +22,7 @@ export default function MobileNav() {
     <div className="flex items-center justify-between w-full px-5 py-7 lg:hidden">
       {/* Logo */}
       <Link href="/" onClick={() => setOpen(false)}>
-        <Image src="/logo.png" width={140} height={140} alt="Logo" priority />
+        <Image src="/logo.webp" width={140} height={140} alt="Logo" priority />
         <span className="sr-only">Home</span>
       </Link>
 
