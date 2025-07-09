@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export default function HeroSection() {
   return (
-    <section className="relative bg-cover bg-center bg-no-repeat md:h-[120vh] flex items-center px-6 md:px-10 py-20 md:mt-28"
+    <section className="relative bg-cover bg-center bg-no-repeat md:h-[120vh] flex items-center px-6 md:px-10 py-20 "
       style={{
         backgroundImage: "url('/smilingman.webp')",
       }}
