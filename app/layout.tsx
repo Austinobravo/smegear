@@ -5,6 +5,7 @@ import "./globals.css";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
 import Navbar from "@/components/globals/Navbar";
 import Footer from "@/components/globals/Footer";
+import ScrollToTop from "@/components/globals/ScrollToTop";
 const satoshi = localFont({
   src: [
     {
@@ -54,6 +55,7 @@ export default function RootLayout({
         <Navbar/>
         {children}
         <Footer/>
+         <ScrollToTop />
         <WhatsAppIcon/></body>
       <GoogleAnalytics gaId="G-XGG153E7VN"/>
     </html>

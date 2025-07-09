@@ -11,7 +11,7 @@ import CoursesCarousel from './_components/PopularCourses2'
 
 const HomePage = () => {
   return (
-    <section className='space-y-16'>
+    <section className='space-y-10'>
       <HeroSection/>
       <CoursesCategories/>
       <PopularCourses/>

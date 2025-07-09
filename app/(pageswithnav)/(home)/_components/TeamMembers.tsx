@@ -43,7 +43,7 @@ const teamMembers = [
 
 export default function TeamCarousel() {
   return (
-    <div className="w-full px-4 py-10">
+    <div className="w-full px-4 py-10 bg-gray-300">
       <Swiper
         modules={[Autoplay]}
         spaceBetween={20}

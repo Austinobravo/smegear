@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export default function HeroSection() {
   return (
-    <section className="relative bg-cover bg-center bg-no-repeat h-[120vh] flex items-center px-6 md:px-10 py-20"
+    <section className="relative bg-cover bg-center bg-no-repeat md:h-[120vh] flex items-center px-6 md:px-10 py-20 md:mt-28"
       style={{
         backgroundImage: "url('/smilingman.webp')",
       }}
@@ -18,14 +18,18 @@ export default function HeroSection() {
       <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 items-center  max-w-7xl mx-auto w-full md:px-6">
         {/* Left - Text Content */}
         <div className="text-white">
-          <span className="inline-block bg-smegear-accent text-lg font-semibold px-5 py-3 rounded-full mb-4">
-            35% OFF
-          </span>
-          <h2 className="text-xl md:text-2xl font-semibold uppercase mb-2 tracking-wide leading-[56px]">
-            Earn 6 figure with our
-          </h2>
-          <h1 className="text-3xl md:text-5xl font-bold leading-[56px] uppercase mb-6">
-            CAC Portal Navigation <br /> Video Course
+          <div className="md:items-start flex md:flex-col items-center gap-4 md:gap-0">
+            <span className="md:inline-block bg-smegear-accent md:text-lg font-semibold md:px-5 md:py-3 rounded-full md:mb-4 py-2 px-4">
+              35% OFF
+            </span>
+            <h2 className="text-[14px] md:text-2xl font-semibold uppercase md:mb-2 tracking-wide leading-[56px]">
+              Earn 6 figure with our
+            </h2>
+          </div>
+
+          <h1 className="text-3xl md:text-5xl font-bold md:leading-[56px] leading-[40px] uppercase mb-6">
+            CAC Portal Navigation  <br /> Video
+             Course
           </h1>
           <p className="text-sm md:text-base mb-8 max-w-lg leading-relaxed text-white/90">
             Whether you're a seasoned marketer or just starting out, this course

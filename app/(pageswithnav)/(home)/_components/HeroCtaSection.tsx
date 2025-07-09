@@ -36,8 +36,8 @@ export default function HeroCTASection() {
         </p>
 
         <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-          <Button size="lg" className="text-lg px-8 py-6 font-semibold">
-            Join With Us
+          <Button size="lg" className="text-lg px-8 py-6 font-semibold bg-smegear-accent">
+            Join With Us →
           </Button>
           <Button
             size="lg"

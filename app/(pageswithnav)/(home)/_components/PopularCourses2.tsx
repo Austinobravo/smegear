@@ -144,7 +144,7 @@ const CoursesCarousel = () => {
   const nextRef = useRef(null);
 
   return (
-    <div className="bg-white py-16 px-4 md:px-12">
+    <div className="bg-[#F4F5F4] py-16 px-4 md:px-12">
       <div className="flex justify-between items-center mb-8">
         <div>
           <p className="text-sm uppercase text-blue-700 font-semibold">
@@ -185,7 +185,7 @@ const CoursesCarousel = () => {
         >
           {courses.map((course, index) => (
             <SwiperSlide key={index}>
-              <Card className="overflow-hidden shadow-lg rounded-xl transition-transform duration-300">
+              <Card className="overflow-hidden shadow-lg rounded-xl transition-transform duration-300 bg-white">
                 <Image
                   src={course.image}
                   alt={course.title}
