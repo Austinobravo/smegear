@@ -8,23 +8,23 @@ export default function HeroSection() {
   return (
     <section className="relative bg-cover bg-center bg-no-repeat h-[120vh] flex items-center px-6 md:px-10 py-20"
       style={{
-        backgroundImage: "url('/smilingman.webp')", // Replace with your image
+        backgroundImage: "url('/smilingman.webp')",
       }}
     >
       {/* Overlay */}
       <div className="absolute inset-0 bg-black opacity-60 z-0" />
 
       {/* Content */}
-      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 items-center  max-w-7xl mx-auto w-full px-6">
+      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 items-center  max-w-7xl mx-auto w-full md:px-6">
         {/* Left - Text Content */}
         <div className="text-white">
-          <span className="inline-block bg-smegear-secondary text-xs font-semibold px-4 py-2 rounded-full mb-4">
+          <span className="inline-block bg-smegear-accent text-lg font-semibold px-5 py-3 rounded-full mb-4">
             35% OFF
           </span>
-          <h2 className="text-xl md:text-2xl font-semibold uppercase mb-2 tracking-wide">
+          <h2 className="text-xl md:text-2xl font-semibold uppercase mb-2 tracking-wide leading-[56px]">
             Earn 6 figure with our
           </h2>
-          <h1 className="text-3xl md:text-5xl font-bold leading-tight uppercase mb-6">
+          <h1 className="text-3xl md:text-5xl font-bold leading-[56px] uppercase mb-6">
             CAC Portal Navigation <br /> Video Course
           </h1>
           <p className="text-sm md:text-base mb-8 max-w-lg leading-relaxed text-white/90">
@@ -34,7 +34,7 @@ export default function HeroSection() {
             achieving unparalleled success in your career.
           </p>
 
-          <Button className="bg-smegear-secondary text-white hover:bg-indigo-700 transition flex items-center gap-2 px-8 py-6 rounded-md text-sm md:text-base">
+          <Button className="bg-smegear-accent text-white hover:bg-indigo-700 transition flex items-center gap-2 px-9 py-7 rounded-md text-sm md:text-base font-semibold">
             Get Started <ArrowRight size={16} />
           </Button>
         </div>

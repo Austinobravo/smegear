@@ -141,7 +141,7 @@ const PopularCourses = () => {
           </p>
           <h2 className="text-3xl text-smegear-secondary font-bold mt-2">Our Popular Courses</h2>
         </div>
-        <Button className="px-10 py-6 bg-smegear-secondary text-white font-semibold uppercase">
+        <Button className="px-9 py-7 bg-smegear-secondary text-white font-semibold uppercase">
           <h4>
             View All Courses
           </h4>

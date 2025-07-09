@@ -49,7 +49,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${satoshi.className} bg-gray-200
+      <body className={`${satoshi.className} 
        scroll-smooth`}>
         <Navbar/>
         {children}
