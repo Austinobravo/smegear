@@ -193,7 +193,7 @@ const PopularCourses = () => {
               </div>
               <div className="flex items-center justify-between pt-4">
                 <div className="text-base font-semibold text-primary">
-                  Scaling Ideas
+                  Smegear
                 </div>
                 <div className="text-right">
                   <p className="text-lg font-bold text-primary">

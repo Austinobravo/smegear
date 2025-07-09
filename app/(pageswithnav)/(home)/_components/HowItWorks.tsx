@@ -32,7 +32,7 @@ export default function HowItWorks() {
         <span>LEARN WITH EASE</span>
       </div>
       <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12">
-        How Scaling Ideas Academy Works?
+        How Smegear Academy Works?
       </h2>
 
       <div className="flex flex-col md:flex-row justify-center gap-12 relative">

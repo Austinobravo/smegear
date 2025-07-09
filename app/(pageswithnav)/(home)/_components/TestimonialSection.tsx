@@ -19,7 +19,7 @@ const testimonials = [
     role: "Entrepreneur",
     image: "/testimonial3.webp",
     message:
-      "There’s a time in an individual’s life when certain decision causes a swift change in one’s life, I took the Scaling Ideas CAC Course and I can say; I am currently enjoying the impact of the decision. The course was explanatory enough and when the need for any clarification arises, Scaling Ideas ensures that responses are not delayed.",
+      "There’s a time in an individual’s life when certain decision causes a swift change in one’s life, I took the Smegear CAC Course and I can say; I am currently enjoying the impact of the decision. The course was explanatory enough and when the need for any clarification arises, Smegear ensures that responses are not delayed.",
   },
   {
     name: "Mrs Olufunmi",
@@ -40,7 +40,7 @@ const testimonials = [
     role: "Business Consultant",
     image: "/testimonial5.webp",
     message:
-      "As a consultant, the Scaling Ideas course helped sharpen my delivery. The support and clarity offered by the course is unmatched. Highly recommend for anyone in the business registration space.",
+      "As a consultant, the Smegear course helped sharpen my delivery. The support and clarity offered by the course is unmatched. Highly recommend for anyone in the business registration space.",
   },
   {
     name: "Sarah Ike",
