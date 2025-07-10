@@ -47,9 +47,10 @@ export default function TeamCarousel() {
       <Swiper
         modules={[Autoplay]}
         spaceBetween={20}
+        speed={2000}
         slidesPerView={4}
         loop
-        autoplay={{ delay: 3000, disableOnInteraction: false }}
+        autoplay={{ delay: 6000, disableOnInteraction: false }}
         breakpoints={{
           320: { slidesPerView: 1.2 },
           640: { slidesPerView: 2 },
@@ -72,7 +73,7 @@ export default function TeamCarousel() {
               </div>
               <CardContent className=" space-y-1">
                 <h3 className="text-2xl font-bold text-gray-900">{member.name}</h3>
-                <p className="text-md text-blue-600">{member.company}</p>
+                <p className="text-md text-smegear-accent">{member.company}</p>
               </CardContent>
             </Card>
           </SwiperSlide>

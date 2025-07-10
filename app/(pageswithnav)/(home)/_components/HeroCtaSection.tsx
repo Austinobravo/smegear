@@ -17,9 +17,9 @@ export default function HeroCTASection() {
         />
       </div>
 
-      {/* Hero content */}
+     
       <div className="relative z-10 max-w-4xl mx-auto text-center">
-        <div className="flex justify-center items-center gap-2 mb-4 text-indigo-400 font-semibold uppercase text-sm tracking-wider">
+        <div className="flex justify-center items-center gap-2 mb-4 text-smegear-accent font-semibold uppercase text-sm tracking-wider">
           <BookText className="w-5 h-5" />
           <span>Are you ready to start learning</span>
         </div>
@@ -49,7 +49,7 @@ export default function HeroCTASection() {
         </div>
       </div>
 
-      {/* Optional abstract graphics (custom) */}
+   
       <div className="absolute top-0 left-0 w-40 h-40 bg-blue-600 rounded-full blur-3xl opacity-20 z-0" />
       <div className="absolute bottom-0 right-0 w-40 h-40 bg-indigo-500 rounded-full blur-3xl opacity-20 z-0" />
     </section>

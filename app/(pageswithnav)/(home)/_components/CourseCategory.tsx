@@ -68,9 +68,10 @@ const CourseCategories = () => {
         <Swiper
           modules={[Navigation, Autoplay]}
           spaceBetween={24}
+          speed={1200}
           slidesPerView={1.2}
           loop={true}
-          autoplay={{ delay: 4000, disableOnInteraction: false }}
+          autoplay={{ delay: 5000, disableOnInteraction: false }}
           navigation={{
             nextEl: ".swiper-button-next",
             prevEl: ".swiper-button-prev",
@@ -83,7 +84,7 @@ const CourseCategories = () => {
         >
           {categories.map((category, index) => (
             <SwiperSlide key={index}>
-              <Card className="rounded-xl shadow-md hover:shadow-lg transition-all duration-300 h-full">
+              <Card className="rounded-xl shadow-md hover:shadow-lg transition-all duration-300 h-full border-2">
                 <CardContent className="p-6 text-center flex flex-col items-center gap-4">
                   {category.icon}
                   <h3 className="text-xl font-semibold">{category.title}</h3>

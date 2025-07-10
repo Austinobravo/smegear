@@ -55,7 +55,7 @@ const TestimonialsCarousel = () => {
   return (
     <div className="bg-white py-16 px-4 md:px-12">
       <div className="text-center mb-12">
-        <p className="text-sm uppercase text-blue-700 font-semibold">
+        <p className="text-sm uppercase text-smegear-accent font-semibold">
           Our Students Testimonials
         </p>
         <h2 className="text-4xl font-bold mt-2 text-gray-800">
@@ -65,13 +65,14 @@ const TestimonialsCarousel = () => {
 
       <Swiper
         slidesPerView={1.2}
+        speed={2000}
         spaceBetween={20}
         breakpoints={{
           768: { slidesPerView: 2.2 },
           1024: { slidesPerView: 3.2 },
         }}
         loop={true}
-        autoplay={{ delay: 4000, disableOnInteraction: false }}
+        autoplay={{ delay: 6000, disableOnInteraction: false }}
         modules={[Autoplay]}
       >
         {testimonials.map((testimonial, index) => (

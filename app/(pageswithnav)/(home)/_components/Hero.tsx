@@ -11,12 +11,12 @@ export default function HeroSection() {
         backgroundImage: "url('/smilingman.webp')",
       }}
     >
-      {/* Overlay */}
+      
       <div className="absolute inset-0 bg-black opacity-60 z-0" />
 
-      {/* Content */}
+   
       <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 items-center  max-w-7xl mx-auto w-full md:px-6">
-        {/* Left - Text Content */}
+     
         <div className="text-white">
           <div className="md:items-start flex md:flex-col items-center gap-4 md:gap-0">
             <span className="md:inline-block bg-smegear-accent md:text-lg font-semibold md:px-5 md:py-3 rounded-full md:mb-4 py-2 px-4">
@@ -43,11 +43,10 @@ export default function HeroSection() {
           </Button>
         </div>
 
-        {/* Right - Rounded Image */}
         <div className="hidden md:flex justify-center">
           <div className="overflow-hidden rounded-full w-[320px] h-[320px] md:w-[600px] md:h-[600px]">
             <Image
-              src="/nonsmilingman.webp" // Replace with your image
+              src="/nonsmilingman.webp" 
               alt="Thumbs Up with Money"
               width={900}
               height={900}

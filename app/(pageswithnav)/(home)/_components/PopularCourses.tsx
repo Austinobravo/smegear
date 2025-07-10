@@ -139,7 +139,7 @@ const PopularCourses = () => {
     <div className="bg-[#F4F5F4] py-16 px-4 md:px-12">
       <div className="flex justify-between items-center mb-8 ">
         <div>
-          <p className="text-sm uppercase text-blue-700 font-semibold">
+          <p className="text-sm uppercase text-smegear-accent font-semibold">
             Popular Courses
           </p>
           <h2 className="text-4xl font-bold mt-2 text-gray-800">

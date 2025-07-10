@@ -147,7 +147,7 @@ const CoursesCarousel = () => {
     <div className="bg-[#F4F5F4] py-16 px-4 md:px-12">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <p className="text-sm uppercase text-blue-700 font-semibold">
+          <p className="text-sm uppercase text-smegear-accent font-semibold">
             Popular Courses
           </p>
           <h2 className="text-4xl font-bold mt-2 text-gray-800">
@@ -160,20 +160,21 @@ const CoursesCarousel = () => {
       <div className="relative">
         <Swiper
           slidesPerView={1.2}
+           speed={2000}
           spaceBetween={20}
           breakpoints={{
             768: { slidesPerView: 2 },
             1024: { slidesPerView: 3 },
           }}
           loop={true}
-          autoplay={{ delay: 4000, disableOnInteraction: false }}
+          autoplay={{ delay: 6000, disableOnInteraction: false }}
           navigation={{
             prevEl: prevRef.current,
             nextEl: nextRef.current,
           }}
           modules={[Navigation, Autoplay]}
           onBeforeInit={(swiper) => {
-            // Assign refs to swiper navigation before initialization
+            
             if (
               swiper.params.navigation &&
               typeof swiper.params.navigation !== "boolean"
@@ -246,7 +247,7 @@ const CoursesCarousel = () => {
           ))}
         </Swiper>
 
-        {/* Navigation Arrows */}
+        
         <div
           ref={prevRef}
           className="swiper-button-prev absolute top-1/2 -left-6 z-10 bg-gray-100 hover:bg-gray-200 text-gray-700 w-10 h-10 rounded-full flex items-center justify-center shadow-md cursor-pointer"
