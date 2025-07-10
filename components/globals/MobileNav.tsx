@@ -19,7 +19,7 @@ export default function MobileNav() {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <div className="flex items-center justify-between w-full px-5 py-7 lg:hidden">
+    <div className="flex items-center justify-between w-full px-4 py-4 lg:hidden">
       {/* Logo */}
       <Link href="/" onClick={() => setOpen(false)}>
         <Image src="/logo.webp" width={140} height={140} alt="Logo" priority />
@@ -29,7 +29,7 @@ export default function MobileNav() {
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" className="p-0">
+          <Button variant="ghost" size="icon" className="p-2 bg-smegear-secondary text-white ">
             <AlignJustify className="size-7" />
             <span className="sr-only">Open menu</span>
           </Button>
@@ -37,7 +37,7 @@ export default function MobileNav() {
 
         <SheetContent
           side="right"
-          className="flex flex-col space-y-8 pt-10 w-[60%] sm:w-2/5 overflow-y-auto "
+          className="flex flex-col space-y-8 pt-10 w-[60%] sm:w-2/5 overflow-y-auto bg-white"
         >
 
           <SheetHeader>
@@ -62,7 +62,7 @@ export default function MobileNav() {
           </nav>
 
 
-          <div className="mt-auto flex flex-col gap-4 px-4">
+          {/* <div className="mt-auto flex flex-col gap-4 px-4">
             <Link href="/sign-in" onClick={() => setOpen(false)}>
               <Button variant="outline" className="w-full rounded-full !shadow-none">
                 Sign in
@@ -74,7 +74,7 @@ export default function MobileNav() {
                 Get Started
               </Button>
             </Link>
-          </div>
+          </div> */}
         </SheetContent>
       </Sheet>
     </div>

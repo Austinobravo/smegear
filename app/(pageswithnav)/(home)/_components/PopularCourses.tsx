@@ -7,7 +7,10 @@ import {
   Users,
   BarChart3,
   BadgeCheck,
-  ArrowRight
+  ArrowRight,
+  BookOpen,
+  SignalHigh,
+  Clock
 } from "lucide-react";
 import Image from "next/image";
 
@@ -23,7 +26,7 @@ const courses = [
     author: "SmeGear",
     price: "₦20,000.00",
     duration: null,
-    discount: null,
+    oldPrice: null,
   },
   {
     title: "Export Licence registration Course",
@@ -35,7 +38,7 @@ const courses = [
     level: "Intermediate",
     author: "SmeGear",
     price: "₦5,000.00",
-    discount: "₦10,000.00",
+    oldPrice: "₦10,000.00",
     duration: null,
   },
   {
@@ -48,7 +51,7 @@ const courses = [
     level: "Intermediate",
     author: "SmeGear",
     price: "₦10,000.00",
-    discount: "₦20,000.00",
+    oldPrice: "₦20,000.00",
     duration: "1h",
   },
   {
@@ -61,10 +64,10 @@ const courses = [
     level: "Intermediate",
     author: "SmeGear",
     price: "₦5,000.00",
-    discount: "₦10,000.00",
+    oldPrice: "₦10,000.00",
     duration: "1h",
   },
-   {
+  {
     title: "Company Limited by gurantee Course",
     description: "Introduction to Copyright",
     image: "/popularimg5.webp",
@@ -74,10 +77,10 @@ const courses = [
     level: "Intermediate",
     author: "SmeGear",
     price: "₦5,000.00",
-    discount: "₦10,000.00",
+    oldPrice: "₦10,000.00",
     duration: "1h",
   },
-   {
+  {
     title: "Intellectual property course bundle",
     description: "Introduction to Copyright",
     image: "/popularimg6.webp",
@@ -87,10 +90,10 @@ const courses = [
     level: "Intermediate",
     author: "SmeGear",
     price: "₦15,000.00",
-    discount: "₦30,000.00",
+    oldPrice: "₦30,000.00",
     duration: "1h",
   },
-   {
+  {
     title: "Business Name Substitution",
     description: "Introduction to Copyright",
     image: "/popularimg3.webp",
@@ -100,10 +103,10 @@ const courses = [
     level: "Intermediate",
     author: "SmeGear",
     price: "₦1,500.00",
-    discount: "",
+    oldPrice: "",
     duration: "1h",
   },
-   {
+  {
     title: "Business Commencement Date Fine",
     description: "Introduction to Copyright",
     image: "/popularimg8.webp",
@@ -113,10 +116,10 @@ const courses = [
     level: "Intermediate",
     author: "SmeGear",
     price: "₦1,500.00",
-    discount: "",
+    oldPrice: "",
     duration: "1h",
   },
-   {
+  {
     title: "How to Download Letter of Good Standing",
     description: "Introduction to Copyright",
     image: "/popularimg9.webp",
@@ -126,75 +129,82 @@ const courses = [
     level: "Intermediate",
     author: "SmeGear",
     price: "₦2,450.00",
-    discount: "",
+    oldPrice: "",
     duration: "1h",
   },
 ];
 
 const PopularCourses = () => {
   return (
-    <div className="p-6 md:p-12 bg-white">
-      <div className="mb-8 flex justify-between items-center">
+    <div className="bg-[#F4F5F4] py-16 px-4 md:px-12">
+      <div className="flex justify-between items-center mb-8 ">
         <div>
-          <p className=" text-smegear-accent text-sm text-muted-foreground uppercase font-medium">
+          <p className="text-sm uppercase text-smegear-accent font-semibold">
             Popular Courses
           </p>
-          <h2 className="text-3xl text-smegear-secondary font-bold mt-2">Our Popular Courses</h2>
+          <h2 className="text-4xl font-bold mt-2 text-gray-800">
+            Our Popular Courses
+          </h2>
         </div>
-        <Button className="px-10 py-6 bg-smegear-secondary text-white font-semibold uppercase">
-          <h4>
-            View All Courses
-          </h4>
-
-          <ArrowRight size={50} className=' ' />
-        </Button>
+        <Button className="px-9 py-7 bg-smegear-secondary text-white font-semibold uppercase">View All Courses →</Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {courses.map((course, index) => (
-          <Card key={index} className="rounded-xl overflow-hidden shadow-md">
-            {course.image && (
-              <div className="relative w-full h-64">
-                <Image
-                  src={course.image}
-                  alt={course.title}
-                  width={500}
-                  height={500}
-                  className="object-cover"
-                />
-                {course.duration && (
-                  <span className="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">
-                    <Clock3 className="inline w-3 h-3 mr-1" /> {course.duration}
-                  </span>
-                )}
+          <Card className="overflow-hidden shadow-lg rounded-xl transition-transform duration-300 bg-white">
+            <Image
+              src={course.image}
+              alt={course.title}
+              width={600}
+              height={300}
+              className="w-full h-48 object-cover"
+            />
+            <CardContent className="p-6 space-y-4">
+              <div className="flex items-center gap-1 text-yellow-500">
+                {Array(5).fill(0).map((_, i) => (
+                  <svg
+                    key={i}
+                    className="w-5 h-5 fill-yellow-500"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 .587l3.668 7.568 8.332 1.151-6.001 5.855 1.42 8.292L12 18.896l-7.419 4.557 1.42-8.292-6.001-5.855 8.332-1.151z" />
+                  </svg>
+                ))}
+                <span className="ml-2 text-sm text-gray-600">(5.00)</span>
               </div>
-            )}
-            <CardContent className="p-4 space-y-2 relative top-[30px]">
-              <div className="text-sm text-muted-foreground">★★★★★ ({course.rating.toFixed(2)})</div>
-              <h3 className="font-semibold text-lg leading-tight">
+              <h3 className="text-xl font-semibold text-gray-900">
                 {course.title}
               </h3>
-              <div className="flex gap-4 text-sm text-muted-foreground mt-2">
+              <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1">
-                  <BookText className="w-4 h-4" /> Lesson {course.lessons}
+                  <BookOpen className="w-4 h-4" /> Lesson {course.lessons}
                 </span>
                 <span className="flex items-center gap-1">
                   <Users className="w-4 h-4" /> Students {course.students}
                 </span>
                 <span className="flex items-center gap-1">
-                  <BarChart3 className="w-4 h-4" /> {course.level}
+                  <SignalHigh className="w-4 h-4" /> {course.level}
                 </span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
-                <BadgeCheck className="w-4 h-4" /> {course.author}
-              </div>
-              <div className="text-primary font-bold text-lg mt-2">
-                {course.price}{" "}
-                {course.discount && (
-                  <span className="line-through text-sm text-muted-foreground ml-1">
-                    {course.discount}
+                {course.duration && (
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" /> {course.duration}
                   </span>
                 )}
+              </div>
+              <div className="flex items-center justify-between pt-4">
+                <div className="text-base font-semibold text-primary">
+                  Smegear
+                </div>
+                <div className="text-right">
+                  <p className="text-lg font-bold text-primary">
+                    {course.price}
+                  </p>
+                  {course.oldPrice && (
+                    <p className="line-through text-sm text-gray-400">
+                      {course.oldPrice}
+                    </p>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>

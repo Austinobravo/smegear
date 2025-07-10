@@ -1,4 +1,4 @@
-// components/SmegearNavbar.tsx
+
 "use client";
 import useNavigation from '@/hooks/useNavigation'
 import Image from "next/image";
@@ -8,20 +8,20 @@ import { ShoppingCart, ArrowRight } from "lucide-react";
 export default function DesktopNav() {
     const navLinks = useNavigation()
     return (
-        <header className="w-full bg-white shadow-sm">
+        <header className="w-full bg-white shadow-sm fixed top-0 left-0 z-50 mb-24">
             <nav className="mx-auto flex max-w-7xl justify-between items-center px-6 min-h-[56px]">
-                {/* Logo */}
+
                 <Link href="/">
                     <Image
                         src="/logo.webp"
                         alt="Smegear Logo"
-                        width={120} // reduced width
-                        height={0} // reduced height
+                        width={120}
+                        height={0}
                         priority
                     />
                 </Link>
 
-                {/* Navigation Links */}
+
                 <ul className="hidden gap-6 lg:flex items-center">
                     {navLinks.map((item) => (
                         <li key={item.href}>
@@ -34,27 +34,15 @@ export default function DesktopNav() {
                         </li>
                     ))}
 
-                    {/* Cart icon */}
-                    {/* <li className="relative">
-                        <Link
-                            href="/cart"
-                            className="flex h-8 w-8 items-center justify-center rounded-full bg-smegear-secondary text-white"
-                        >
-                            <ShoppingCart size={18} />
-                        </Link>
-                        <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
-                            0
-                        </span>
-                    </li> */}
 
-                    {/* Contact Us button */}
+
                     <li>
                         <Link
                             href="/contact"
                             className="flex font-medium items-center gap-2 rounded-lg bg-smegear-secondary px-6 py-4 text-white transition hover:opacity-90 text-[15px] uppercase"
                         >
                             Contact&nbsp;Us
-                            <ArrowRight size={20} className=' font-semibold'/>
+                            <ArrowRight size={20} className=' font-semibold' />
                         </Link>
                     </li>
                 </ul>
