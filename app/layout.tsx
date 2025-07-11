@@ -3,8 +3,6 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import localFont from "next/font/local"
 import "./globals.css";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
-import Navbar from "@/components/globals/Navbar";
-import Footer from "@/components/globals/Footer";
 import ScrollToTop from "@/components/globals/ScrollToTop";
 const satoshi = localFont({
   src: [
@@ -52,12 +50,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${satoshi.className} 
        scroll-smooth`}>
-        <Navbar/>
         <div className="md:pt-[72px] pb-[72px]">
 
         {children}
         </div>
-        <Footer/>
          <ScrollToTop />
         <WhatsAppIcon/></body>
       <GoogleAnalytics gaId="G-XGG153E7VN"/>
