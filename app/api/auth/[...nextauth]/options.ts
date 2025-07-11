@@ -3,16 +3,17 @@ import  CredentialsProvider  from "next-auth/providers/credentials";
 
 import prisma from '@/prisma/prisma'
 import { comparePassword } from "@/lib/utils";
+import { emojiRegex } from "@/lib/formSchema";
 
 export const options:NextAuthOptions = {
     providers: [
         CredentialsProvider({
             name: 'Credentials',
             credentials: {
-                username: {
-                    label: 'username',
-                    placeholder: 'Your username',
-                    type: 'username'
+                email: {
+                    label: 'email',
+                    placeholder: 'Your email',
+                    type: 'email'
                 },
                 password: {
                     label: 'password',
@@ -21,25 +22,27 @@ export const options:NextAuthOptions = {
                 },
             },
             async authorize(credentials){
-                if (!credentials?.username || !credentials.password) throw new Error('Invalid credentials')
+                if (!credentials?.email || !credentials.password) throw new Error('Invalid credentials')
 
-                if(credentials.username.trim().length <= 1 || credentials.password.trim().length <= 1) throw new Error('Invalid credentials')
+                if(credentials.email.trim().length <= 1 || credentials.password.trim().length <= 1) throw new Error('Invalid credentials')
 
-                if (credentials.username.match(/\p{Emoji}/gu) || credentials.password.match(/\p{Emoji}/gu)) throw new Error('Invalid credentials')
+                if (credentials.email.match(emojiRegex) || credentials.password.match(emojiRegex)) {
+                throw new Error("Invalid emoji credentials");
+                }
 
                 const user = await prisma.user.findUnique({
                     where:{
-                        username: credentials.username.trim(), 
+                        email: credentials.email.trim(), 
                     },
                     
                 })
 
                 if (!user) throw new Error("Invalid user credentials")
 
-                const isCorrectPassword = await comparePassword(credentials.password, user.password.trim())
+                const isCorrectPassword = await comparePassword(credentials.password, user.passwordHash.trim())
                 if(!isCorrectPassword) throw new Error("Invalid credentials")
 
-                const { password, ...UserWithoutPassword } = user 
+                const { passwordHash, ...UserWithoutPassword } = user 
                 return UserWithoutPassword
             }
         })
@@ -61,7 +64,7 @@ export const options:NextAuthOptions = {
                 user: {
                     ...session.user,
                     id: token.id as string,
-                    username: token.username as string,
+                    email: token.email as string,
                     
                 }
             }
@@ -71,7 +74,7 @@ export const options:NextAuthOptions = {
                 return {
                     ...token,
                     id: user.id,
-                    username: (user as any).username,
+                    email: (user as any).email,
                 }
             }
             return token
