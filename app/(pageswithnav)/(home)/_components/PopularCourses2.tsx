@@ -145,17 +145,18 @@ const CoursesCarousel = () => {
 
   return (
     <div className="bg-[#F4F5F4] py-16 px-4 md:px-12">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <p className="text-sm uppercase text-smegear-accent font-semibold">
-            Popular Courses
-          </p>
-          <h2 className="text-4xl font-bold mt-2 text-gray-800">
-            Our Popular Courses
-          </h2>
-        </div>
-        <Button className="px-9 py-7 bg-smegear-secondary text-white font-semibold uppercase">View All Courses →</Button>
-      </div>
+   <div className="flex md:justify-between flex-col items-center mb-8 md:flex-row">
+           <div className="text-center md:text-left mb-4 md:mb-0">
+             <p className="text-sm uppercase text-smegear-accent font-semibold">
+               Popular Courses
+             </p>
+             <h2 className="md:text-4xl text-2xl font-bold mt-2 text-gray-800">
+               Our Popular Courses
+             </h2>
+           </div>
+           <Button className="px-9  py-7 bg-smegear-secondary text-white font-semibold uppercase">View All Courses →</Button>
+         </div>
+   
 
       <div className="relative">
         <Swiper

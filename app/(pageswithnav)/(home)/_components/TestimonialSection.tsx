@@ -58,7 +58,7 @@ const TestimonialsCarousel = () => {
         <p className="text-sm uppercase text-smegear-accent font-semibold">
           Our Students Testimonials
         </p>
-        <h2 className="text-4xl font-bold mt-2 text-gray-800">
+        <h2 className="md:text-4xl text-2xl  font-bold mt-2 text-gray-800">
           Hear From Our Students
         </h2>
       </div>
