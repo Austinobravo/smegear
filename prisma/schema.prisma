@@ -23,6 +23,8 @@ model User {
   phone          String?
   verificationLink  String?
   role           Role        @default(STUDENT)
+  isEmailVerified  Boolean?         @default(false)
+  emailVerified    DateTime?
   enrolledCourses Enrollment[]
   coursesCreated Course[]    @relation("InstructorCourses")
   reviews        Review[]

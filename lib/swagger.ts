@@ -9,11 +9,11 @@ const options: swaggerJSDoc.Options = {
     },
     servers: [
       {
-        url: "https://https://smegear.vercel.app/api", 
+        url: "https://smegear.vercel.app", 
         description: "Production server",
       },
       {
-        url: "http://localhost:3000/api",
+        url: "http://localhost:3000",
         description: "Local dev server",
       },
     ],
