@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import prisma from "@/prisma/prisma";
-// import rateLimit from "@/lib/rate-limit";
-import { BASE_URL } from "@/lib/globals";
-
 
 /**
  * @swagger
