@@ -36,7 +36,7 @@ import prisma from "@/prisma/prisma";
 export const GET = async (req: Request) => {
   const { searchParams } = new URL(req.url);
   const token = searchParams.get("token");
-  
+
   if (!token) return NextResponse.json({ message: "Invalid token" }, { status: 400 });
 
   try {
@@ -61,7 +61,7 @@ export const GET = async (req: Request) => {
 
     return NextResponse.json({message: `Verified successfully`}, {status: 200});
   } catch (err) {
-    console.log("err", err)
+    console.log("error in verify email endpoint", err)
     return NextResponse.json({ error: "Token expired or invalid" }, { status: 400 });
   }
 };
