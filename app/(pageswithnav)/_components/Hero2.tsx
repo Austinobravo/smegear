@@ -16,7 +16,7 @@ const PageHeader = ({ title, breadcrumb, backgroundImage }:Props) => {
     >
       <div className="absolute inset-0 bg-black bg-opacity-65"></div>
       <div className="relative z-10 max-w-6xl mx-auto">
-        <h1 className="md:text-[48px] font-bold mb-4 text-4xl">{title}</h1>
+        <h1 className="md:text-[48px] font-bold mb-4 text-3xl">{title}</h1>
         <p className="text-lg flex items-center space-x-2 justify-center">
           {breadcrumb.map((item: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined, index: number) => (
             <span key={index}>

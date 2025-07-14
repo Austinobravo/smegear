@@ -23,17 +23,20 @@ export async function sendEmail({
   const html = await compileTemplate(template, data);
 
   const transporter = nodemailer.createTransport({
-    host: 'techproinnovationsltd.com',
-    port: 465, // Use 587 if SSL is not enabled
-    secure: true, // true for port 465, false for port 587
-    auth: {
-      user: 'hr@techproinnovationsltd.com',
-      pass: process.env.EMAIL_PASSWORD, // Set this in your .env
-    },
-  });
+  host: 'mail.smegear.agency',
+  port: 587,
+  secure: false, 
+  auth: {
+    user: 'noreply@smegear.agency',
+    pass: process.env.EMAIL_PASSWORD,
+  },
+  tls: {
+    rejectUnauthorized: false, 
+  },
+});
 
   const mailOptions = {
-    from: '"Talent Pro Africa" <hr@techproinnovationsltd.com>',
+    from: '"SmeGear" <noreply@smegear.agency>',
     to,
     subject,
     html,
@@ -41,4 +44,5 @@ export async function sendEmail({
 
   const info = await transporter.sendMail(mailOptions);
   console.log('✅ Email sent!', info.messageId);
+  console.log('✅ Email sent info!', info);
 }

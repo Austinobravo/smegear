@@ -4,6 +4,7 @@ import localFont from "next/font/local"
 import "./globals.css";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
 import ScrollToTop from "@/components/globals/ScrollToTop";
+import Navbar from "@/components/Navbar";
 const satoshi = localFont({
   src: [
     {
@@ -50,7 +51,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${satoshi.className} 
        scroll-smooth`}>
-        <div className="md:pt-[72px] pb-[72px]">
+        <div className="md:pt-[72px] pb-[70px]">
 
         {children}
         </div>

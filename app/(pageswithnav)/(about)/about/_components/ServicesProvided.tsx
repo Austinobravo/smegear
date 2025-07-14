@@ -27,7 +27,7 @@ const courses = [
 export default function CoursesSection() {
   return (
     <section className=" px-4 lg:px-10 text-center mb-20">
-      <p className="text-smegear-secondary text-[16px] font-medium uppercase tracking-wide flex justify-center items-center gap-2">
+      <p className="text-smegear-secondary text-[18px] font-medium uppercase tracking-wide flex justify-center items-center gap-2">
         <BookText size={20} />
         What We Do
       </p>

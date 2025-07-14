@@ -7,6 +7,16 @@ const options: swaggerJSDoc.Options = {
       title: "SmeGear Backend Endpoints",
       version: "1.0.0",
     },
+    servers: [
+      {
+        url: "https://https://smegear.vercel.app/api", 
+        description: "Production server",
+      },
+      {
+        url: "http://localhost:3000/api",
+        description: "Local dev server",
+      },
+    ],
   },
   apis: ["./app/api/**/*.ts"], 
 };

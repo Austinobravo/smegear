@@ -1,3 +1,15 @@
+import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken"
+
+export const comparePassword = async (currentPassword: string, hashPassword: string) => {
+    const isPasswordCorrect = bcrypt.compareSync(currentPassword, hashPassword)
+    return isPasswordCorrect
+}
+
+export const createVerificationToken = (email: string) => {
+    const secret = process.env.JWT_SECRET!
+    return jwt.sign({ email }, secret, { expiresIn: "1h" })
+  }
 export const validateForEmptySpaces = (value: string) => {
     return value.trim().length >= 1
 }
@@ -7,6 +19,8 @@ export const formatDate = (date: number | string) => {
     const options:Intl.DateTimeFormatOptions = {weekday:"long",day: "2-digit", month: "short", year: "numeric"}
     return new Date(date).toLocaleDateString(language, options )
 }
+
+
 
 export function getGreeting(): string {
   const hour = new Date().getHours();
@@ -62,10 +76,10 @@ export const getShareableLink = (data:any, socialType: string) => {
     }
 }
 
-export const DEV_BASE_URL =
+export const BASE_URL =
   process.env.NODE_ENV === "development"
     ? "http://localhost:3000"
-    : process.env.DEV_API_URL;
+    : process.env.API_URL;
 
     
-export const BASE_URL = process.env.NEXT_PUBLIC_API_URL
+// export const BASE_URL = process.env.NEXT_PUBLIC_API_URL

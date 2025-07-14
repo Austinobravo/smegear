@@ -4,13 +4,7 @@ import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-// User creation schema
-const CreateUserSchema = z.object({
-  email: z.string().email(),
-  name: z.string().optional(),
-  password: z.string().min(6),
-  role: z.enum(["STUDENT", "INSTRUCTOR", "ADMIN"]).optional(),
-});
+
 
 // User update schema
 const UpdateUserSchema = z.object({
@@ -25,6 +19,8 @@ const UpdateUserSchema = z.object({
  * /api/users:
  *   get:
  *     summary: Get all users
+ *     tags:
+ *       - Users
  *     responses:
  *       200:
  *         description: List of users
@@ -44,106 +40,15 @@ export async function GET() {
   return NextResponse.json(users);
 }
 
-/**
- * @swagger
- * /api/users:
- *   post:
- *     summary: Create a new user
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *               name:
- *                 type: string
- *               password:
- *                 type: string
- *               role:
- *                 type: string
- *                 enum: [STUDENT, INSTRUCTOR, ADMIN]
- *     responses:
- *       201:
- *         description: User created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: string
- *                 email:
- *                   type: string
- *                 name:
- *                   type: string
- *                 role:
- *                   type: string
- *       400:
- *         description: Invalid request
- */
-export async function POST(req: Request) {
-    
-  try {
-     const body = await req.json();
-    const parsed = CreateUserSchema.safeParse(body);
 
-    if (!parsed.success) {
-      return NextResponse.json({ message: "Invalid data", errors: parsed.error.flatten() }, { status: 400 });
-    }
-
-    const { email, name, password, role } = parsed.data;
-
-    if (!email || !password) {
-      return NextResponse.json({ message: "Email and password are required." }, { status: 400 });
-    }
-
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (existingUser) {
-      return NextResponse.json({ message: "User already exists." }, { status: 400 });
-    }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create user
-    const user = await prisma.user.create({
-      data: {
-        email,
-        name,
-        passwordHash: hashedPassword,
-        role: role || "STUDENT",
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-      },
-    });
-
-    return NextResponse.json(user, { status: 201 });
-  } catch (error) {
-    console.error("Error creating user:", error);
-    return NextResponse.json({ message: "Something went wrong." }, { status: 500 });
-  }
-}
 
 /**
  * @swagger
  * /api/users:
  *   patch:
  *     summary: Update a user
+ *     tags:
+ *       - Users
  *     requestBody:
  *       required: true
  *       content:
@@ -190,7 +95,8 @@ export async function PATCH(req: Request) {
       select: {
         id: true,
         email: true,
-        name: true,
+        firstName: true,
+        lastName: true,
         role: true,
       },
     });
@@ -207,6 +113,8 @@ export async function PATCH(req: Request) {
  * /api/users:
  *   delete:
  *     summary: Delete a user
+ *     tags:
+ *       - Users
  *     requestBody:
  *       required: true
  *       content:

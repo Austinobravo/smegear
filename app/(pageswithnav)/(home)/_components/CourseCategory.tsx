@@ -17,39 +17,9 @@ import {
   Pencil,
   ArrowRight,
 } from "lucide-react";
+import Link from "next/link";
+import { categories } from "@/data";
 
-const categories = [
-  {
-    title: "Company Registration",
-    description: "Comprehensive Courses",
-    icon: <Landmark className="w-8 h-8 text-blue-600" />,
-  },
-  {
-    title: "NGO Brand Registration",
-    description: "Comprehensive Courses",
-    icon: <BookOpen className="w-8 h-8 text-blue-600" />,
-  },
-  {
-    title: "NGO Post Incorporation",
-    description: "Comprehensive Courses",
-    icon: <Pencil className="w-8 h-8 text-blue-600" />,
-  },
-  {
-    title: "All Our Cac Courses",
-    description: "Comprehensive Courses",
-    icon: <Pencil className="w-8 h-8 text-blue-600" />,
-  },
-  {
-    title: "Business Registration",
-    description: "Comprehensive Courses",
-    icon: <Pencil className="w-8 h-8 text-blue-600" />,
-  },
-  {
-    title: "Business Name",
-    description: "Comprehensive Courses",
-    icon: <Landmark className="w-8 h-8 text-blue-600" />,
-  },
-];
 
 const CourseCategories = () => {
   return (
@@ -61,7 +31,7 @@ const CourseCategories = () => {
             Courses Categories
           </p>
         </div>
-        <h2 className="text-4xl font-bold mt-2">Explore Top Categories</h2>
+        <h2 className="lg:text-4xl text-2xl font-bold mt-2">Explore Top Categories</h2>
       </div>
 
       <div className="relative">
@@ -86,21 +56,24 @@ const CourseCategories = () => {
             <SwiperSlide key={index}>
               <Card className="rounded-xl shadow-md hover:shadow-lg transition-all duration-300 h-full border-2">
                 <CardContent className="p-6 text-center flex flex-col items-center gap-4">
-                  {category.icon}
+                  {/* {category.icon} */}
                   <h3 className="text-xl font-semibold">{category.title}</h3>
                   <p className="text-[16px] text-smegear-accent">
                     {category.description}
                   </p>
-                  <Button className="mt-4 bg-smegear-secondary text-white text-[14px] leading-[14px] uppercase" variant="default">
-                    Learn More
-                    <ArrowRight size={20} className="ml-2" />
-                  </Button>
+
+                  <Link href={`/courses/${category.id}`}>
+                    <Button className="mt-4 bg-smegear-secondary text-white text-[14px] leading-[14px] uppercase" variant="default">
+                      Learn More
+                      <ArrowRight size={20} className="ml-2" />
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             </SwiperSlide>
           ))}
 
-        
+
         </Swiper>
       </div>
 
