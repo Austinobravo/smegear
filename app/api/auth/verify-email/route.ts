@@ -36,10 +36,7 @@ import prisma from "@/prisma/prisma";
 export const GET = async (req: Request) => {
   const { searchParams } = new URL(req.url);
   const token = searchParams.get("token");
-
-  // Rate limit by IP or token
-//   await rateLimit(req);
-
+  
   if (!token) return NextResponse.json({ message: "Invalid token" }, { status: 400 });
 
   try {
