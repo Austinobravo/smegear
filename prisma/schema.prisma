@@ -41,6 +41,7 @@ model Course {
   imageUrl    String?
   price       Float       @default(0)
   published   Boolean     @default(false)
+  slug        String      @default("default")
   instructor  User        @relation("InstructorCourses", fields: [instructorId], references: [id])
   instructorId String
   modules     Module[]

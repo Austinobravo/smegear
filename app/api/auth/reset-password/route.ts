@@ -23,17 +23,13 @@ const ResetForgotPasswordSchema = z.object({
  *     summary: Check token validity
  *     tags:
  *       - Auth
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: string
- *             required:
- *               - token
- *             properties:
- *               token:
- *                 type: string
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Token for password reset
  *     responses:
  *       200
  */

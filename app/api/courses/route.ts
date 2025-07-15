@@ -15,6 +15,10 @@ import { z } from "zod";
  *         description: List of courses
  */
 export async function GET() {
+    // const user = await getCurrentUser()
+    // if(!user){
+    //   return NextResponse.json({ message: "Unauthorized"}, { status: 403 });
+    // }
   try {
     const courses = await prisma.course.findMany({
       include: {
@@ -67,7 +71,7 @@ export async function GET() {
 export async function POST(req: Request) {
     const user = await getCurrentUser()
     if(!user){
-      return NextResponse.json({ message: "UNauthorized"}, { status: 403 });
+      return NextResponse.json({ message: "Unauthorized"}, { status: 403 });
     }
   try {
     const body = await req.json();
@@ -76,7 +80,7 @@ export async function POST(req: Request) {
     if (!parsed.success) {
       return NextResponse.json({ message: "Invalid data", errors: parsed.error.flatten() }, { status: 400 });
     }
-    
+
 
     const course = await prisma.course.create({
       data: parsed.data,
@@ -121,9 +125,9 @@ export async function POST(req: Request) {
  *         description: Course updated successfully
  */
 export async function PATCH(req: Request) {
-     const user = await getCurrentUser()
+    const user = await getCurrentUser()
     if(!user){
-      return NextResponse.json({ message: "UNauthorized"}, { status: 403 });
+      return NextResponse.json({ message: "Unauthorized"}, { status: 403 });
     }
   try {
     const body = await req.json();
@@ -177,7 +181,7 @@ export async function PATCH(req: Request) {
 export async function DELETE(req: Request) {
      const user = await getCurrentUser()
     if(!user){
-      return NextResponse.json({ message: "UNauthorized"}, { status: 403 });
+      return NextResponse.json({ message: "Unauthorized"}, { status: 403 });
     }
   try {
     const body = await req.json();

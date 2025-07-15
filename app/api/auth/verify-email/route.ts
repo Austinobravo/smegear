@@ -9,17 +9,13 @@ import prisma from "@/prisma/prisma";
  *     summary: Email verification
  *     tags:
  *       - Auth
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - token
- *             properties:
- *               token:
- *                 type: string
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Token for verification
  *     responses:
  *       200:
  *         description: Verified successfully
