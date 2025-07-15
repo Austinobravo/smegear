@@ -1,4 +1,5 @@
 import { getCurrentUser } from "@/lib/getServerSession";
+import { createNewSlug } from "@/lib/globals";
 import prisma from "@/prisma/prisma";
 import { CourseCreateSchema, CourseUpdateSchema } from "@/schemas/backendFormSchema";
 import { NextResponse } from "next/server";
@@ -81,9 +82,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Invalid data", errors: parsed.error.flatten() }, { status: 400 });
     }
 
+    const slug = await createNewSlug(parsed.data.title)
+
 
     const course = await prisma.course.create({
-      data: parsed.data,
+      data: {slug: slug, ...parsed.data},
     });
 
     return NextResponse.json(course, { status: 201 });
