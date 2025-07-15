@@ -26,7 +26,10 @@ import prisma from "@/prisma/prisma";
  *         content:
  *           application/json:
  *             schema:
- *               type: string
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  *             items:
  *                 type: string
  *       400:
