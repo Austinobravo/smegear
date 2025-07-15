@@ -97,7 +97,7 @@ export default function ContactForm() {
 
             <Button
               type="submit"
-              className="bg-black text-white px-8 py-6 text-base font-semibold hover:bg-gray-900"
+              className="bg-smegear-secondary text-white px-8 py-6 text-base font-semibold hover:bg-smegear-accent"
             >
               Send Us A Message
             </Button>

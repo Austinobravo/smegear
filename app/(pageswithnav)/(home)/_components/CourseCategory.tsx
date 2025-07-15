@@ -23,7 +23,7 @@ import { categories } from "@/data";
 
 const CourseCategories = () => {
   return (
-    <div className="p-6 md:p-12 bg-white">
+    <div className="p-6 md:p-12 bg-[#FEFFFE]">
       <div className="mb-8 text-center flex flex-col items-center">
         <div className="flex items-center gap-2 justify-center">
           <BookOpen className="w-7 h-5 text-smegear-secondary" />

@@ -53,7 +53,7 @@ const testimonials = [
 
 const TestimonialsCarousel = () => {
   return (
-    <div className="bg-white py-16 px-4 md:px-12">
+    <div className="bg-[#FEFFFE] py-16 px-4 md:px-12">
       <div className="text-center mb-12">
         <p className="text-sm uppercase text-smegear-accent font-semibold">
           Our Students Testimonials

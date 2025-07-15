@@ -177,11 +177,9 @@ export default function RegistrationForm() {
 
 
           <div className="col-span-1 md:col-span-2">
-            <Button
-              type="submit"
-              className="bg-blue-700 text-white font-bold px-8 py-4 uppercase"
-            >
-              Register
+            <Button className="px-10 py-6 bg-smegear-secondary text-white font-semibold uppercase flex items-center gap-2 justify-center">
+              <h4>Register</h4>
+
             </Button>
           </div>
         </form>

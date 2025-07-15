@@ -9,28 +9,7 @@ import Image from "next/image";
 import { categories } from "@/data";
 import { ca } from "zod/v4/locales";
 
-// const course = {
-//   title: "Business Name Registration",
-//   instructor: "Scaling Ideas",
-//   price: "₦5000",
-//   image: "/popularimg1.webp",
-//   lessons: 4,
-//   students: 32,
-//   updatedAt: "July 28, 2024",
-//   rating: 5,
-//   description:
-//     "This course is designed to help you grasp the fundamental requirements and guidance for registering a business with the Corporate Affairs Commission (CAC). Learn how to do a name search, use the CAC portal, and ensure proper registration procedures.",
-//   info: [
-//     "Step-by-step guide",
-//     "Thorough name search",
-//     "Navigate CAC portal",
-//     "Avoid registration errors",
-//     "Access to mentorship",
-//     "Access to daily marketing content",
-//     "Accredited Agent Portal",
-//     "Community of CAC agents",
-//   ],
-// };
+
 interface PageProps {
   params: { coursedetails: string };
 }

@@ -51,7 +51,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${satoshi.className} 
-       scroll-smooth`}>
+       scroll-smooth `}>
         <Navbar/>
         <div className="md:pt-[72px] pb-[70px]">
 

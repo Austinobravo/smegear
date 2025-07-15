@@ -1,5 +1,5 @@
 import { Landmark, BookOpen, Pencil } from "lucide-react";
- export const categories = [
+export const categories = [
   {
     id: 1,
     title: "Company Registration",
@@ -7,14 +7,16 @@ import { Landmark, BookOpen, Pencil } from "lucide-react";
     icon: Landmark,
     students: 32,
     lessons: 4,
+    instructor: "SmeGear",
     image: "/businesses/companyregistrationcourse.webp",
-    instructor: "Scaling Ideas",
+
     price: "₦5000",
     rating: 5,
     Views: "4375",
     UpdatedAt: "July 28, 2024",
     Category: "Business",
-    overView: "This course is designed to help you grasp the fundamental requirements and guidance for registering a business with the Corporate Affairs Commission (CAC). Learn how to do a name search, use the CAC portal, and ensure proper registration procedures.",
+    overView:
+      "This course is designed to help you grasp the fundamental requirements and guidance for registering a business with the Corporate Affairs Commission (CAC). Learn how to do a name search, use the CAC portal, and ensure proper registration procedures.",
     info: [
       "Step-by-step guide",
       "Thorough name search",
@@ -33,14 +35,16 @@ import { Landmark, BookOpen, Pencil } from "lucide-react";
     icon: BookOpen,
     students: 32,
     lessons: 4,
+    instructor: "SmeGear",
     image: "/businesses/ngoregistration.webp",
-    instructor: "Scaling Ideas",
+
     price: "₦5000",
     rating: 5,
     Views: "4375",
     UpdatedAt: "July 28, 2024",
     Category: "Business",
-    overView: "This course is designed to help you grasp the fundamental requirements and guidance for registering a business with the Corporate Affairs Commission (CAC). Learn how to do a name search, use the CAC portal, and ensure proper registration procedures.",
+    overView:
+      "This course is designed to help you grasp the fundamental requirements and guidance for registering a business with the Corporate Affairs Commission (CAC). Learn how to do a name search, use the CAC portal, and ensure proper registration procedures.",
     info: [
       "Step-by-step guide",
       "Thorough name search",
@@ -59,14 +63,16 @@ import { Landmark, BookOpen, Pencil } from "lucide-react";
     icon: Pencil,
     students: 32,
     lessons: 4,
+    instructor: "SmeGear",
     image: "/businesses/ngopostincorporationmcourse.webp",
-    instructor: "Scaling Ideas",
+
     price: "₦5000",
     rating: 5,
     Views: "4375",
     UpdatedAt: "July 28, 2024",
     Category: "Business",
-    overView: "This course is designed to help you grasp the fundamental requirements and guidance for registering a business with the Corporate Affairs Commission (CAC). Learn how to do a name search, use the CAC portal, and ensure proper registration procedures.",
+    overView:
+      "This course is designed to help you grasp the fundamental requirements and guidance for registering a business with the Corporate Affairs Commission (CAC). Learn how to do a name search, use the CAC portal, and ensure proper registration procedures.",
     info: [
       "Step-by-step guide",
       "Thorough name search",
@@ -85,14 +91,16 @@ import { Landmark, BookOpen, Pencil } from "lucide-react";
     icon: Pencil,
     students: 32,
     lessons: 4,
+    instructor: "SmeGear",
     image: "/businesses/groupofcompanies.webp",
-    instructor: "Scaling Ideas",
+
     price: "₦5000",
     rating: 5,
     Views: "4375",
     UpdatedAt: "July 28, 2024",
     Category: "Business",
-    overView: "This course is designed to help you grasp the fundamental requirements and guidance for registering a business with the Corporate Affairs Commission (CAC). Learn how to do a name search, use the CAC portal, and ensure proper registration procedures.",
+    overView:
+      "This course is designed to help you grasp the fundamental requirements and guidance for registering a business with the Corporate Affairs Commission (CAC). Learn how to do a name search, use the CAC portal, and ensure proper registration procedures.",
     info: [
       "Step-by-step guide",
       "Thorough name search",
@@ -111,14 +119,16 @@ import { Landmark, BookOpen, Pencil } from "lucide-react";
     icon: Pencil,
     students: 32,
     lessons: 4,
+    instructor: "SmeGear",
     image: "/businesses/businesscommencement.webp",
-    instructor: "Scaling Ideas",
+
     price: "₦5000",
     rating: 5,
     Views: "4375",
     UpdatedAt: "July 28, 2024",
     Category: "Business",
-    overView: "This course is designed to help you grasp the fundamental requirements and guidance for registering a business with the Corporate Affairs Commission (CAC). Learn how to do a name search, use the CAC portal, and ensure proper registration procedures.",
+    overView:
+      "This course is designed to help you grasp the fundamental requirements and guidance for registering a business with the Corporate Affairs Commission (CAC). Learn how to do a name search, use the CAC portal, and ensure proper registration procedures.",
     info: [
       "Step-by-step guide",
       "Thorough name search",
@@ -137,14 +147,15 @@ import { Landmark, BookOpen, Pencil } from "lucide-react";
     icon: Landmark,
     students: 32,
     lessons: 4,
+    instructor: "SmeGear",
     image: "/businesses/businessnameregistrationcourse.webp",
-    instructor: "Scaling Ideas",
     price: "₦5000",
     rating: 5,
     Views: "4375",
     UpdatedAt: "July 28, 2024",
     Category: "Business",
-    overView: "This course is designed to help you grasp the fundamental requirements and guidance for registering a business with the Corporate Affairs Commission (CAC). Learn how to do a name search, use the CAC portal, and ensure proper registration procedures.",
+    overView:
+      "This course is designed to help you grasp the fundamental requirements and guidance for registering a business with the Corporate Affairs Commission (CAC). Learn how to do a name search, use the CAC portal, and ensure proper registration procedures.",
     info: [
       "Step-by-step guide",
       "Thorough name search",

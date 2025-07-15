@@ -32,7 +32,7 @@ const stats = [
 
 const CommunityEngagement = () => {
   return (
-    <div className="bg-white py-10 px-4 md:px-12">
+    <div className="bg-[#FEFFFE] py-10 px-4 md:px-12">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
         {benefits.map((item, i) => (
           <Card

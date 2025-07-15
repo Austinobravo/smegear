@@ -26,7 +26,7 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section className="py-16 px-6 text-center">
+    <section className="py-16 px-6 text-center bg-[#FEFFFE]">
       <div className="text-smegear-accent font-semibold text-sm tracking-wide flex justify-center items-center gap-2 mb-2">
         <GraduationCap className="w-5 h-5" />
         <span>LEARN WITH EASE</span>

@@ -8,7 +8,7 @@ import { ShoppingCart, ArrowRight } from "lucide-react";
 export default function DesktopNav() {
     const navLinks = useNavigation()
     return (
-        <header className="w-full bg-white shadow-sm fixed top-0 left-0 z-50 mb-24">
+        <header className="w-full bg-[#FEFFFE] shadow-sm fixed top-0 left-0 z-50 mb-24">
             <nav className="mx-auto flex max-w-7xl justify-between items-center px-6 min-h-[56px]">
 
                 <Link href="/">

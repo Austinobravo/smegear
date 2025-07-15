@@ -46,7 +46,7 @@ export default function LoginForm() {
 
   return (
     <div className="flex items-center justify-center min-h-[50vh] px-4 bg-white">
-      <Card className="w-full max-w-md shadow-lg border-2">
+      <Card className="w-full max-w-md border-none ">
         <CardContent className="py-10 space-y-10">
           <h2 className="text-xl font-semibold">Hi, Welcome back!</h2>
 
@@ -130,7 +130,7 @@ export default function LoginForm() {
               
               <p className="text-center text-sm text-gray-600">
                 Don’t have an account?{" "}
-                <Link href="/register" className="font-semibold text-smegear-accent hover:underline">
+                <Link href={"/register"} className="font-semibold text-smegear-accent hover:underline">
                   REGISTER NOW
                 </Link>
               </p>

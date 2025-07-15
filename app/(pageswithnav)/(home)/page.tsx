@@ -8,10 +8,11 @@ import HowItWorks from './_components/HowItWorks'
 import HeroCTASection from './_components/HeroCtaSection'
 import TestimonialsCarousel from './_components/TestimonialSection'
 import CoursesCarousel from './_components/PopularCourses2'
+import LatestNewsHeader from './_components/LatestNewsHeader'
 
 const HomePage = () => {
   return (
-    <section className='space-y-5'>
+    <section className=''>
       <HeroSection />
       <CoursesCategories />
       <PopularCourses />
@@ -21,6 +22,7 @@ const HomePage = () => {
       <HeroCTASection />
       <TestimonialsCarousel />
       <CoursesCarousel />
+      <LatestNewsHeader/>
     </section>
   )
 }
