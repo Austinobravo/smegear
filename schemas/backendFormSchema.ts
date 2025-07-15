@@ -17,3 +17,4 @@ export const CourseUpdateSchema = z.object({
   price: z.coerce.number().min(0, "Price must be >= 0").optional(),
   published: z.boolean().optional(),
 });
+
