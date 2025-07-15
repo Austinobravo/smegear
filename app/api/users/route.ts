@@ -18,16 +18,16 @@ const UpdateUserSchema = z.object({
  * @swagger
  * /api/users:
  *   get:
- *     summary: Get all users
+ *     summary: My profile
  *     tags:
  *       - Users
  *     responses:
  *       200:
- *         description: List of users
+ *         description: My profile
  *         content:
  *           application/json:
  *             schema:
- *               type: array
+ *               type: object
  *               items:
  *                 type: object
  */
@@ -36,8 +36,8 @@ export async function GET() {
   if(!user){
     return NextResponse.json({message: "Unauthorized"}, {status: 401})
   }
-  const users = await prisma.user.findMany();
-  return NextResponse.json(users);
+  const foundUser = await prisma.user.findUnique({where:{id:user.id}, omit:{passwordHash:true}});
+  return NextResponse.json(foundUser);
 }
 
 
