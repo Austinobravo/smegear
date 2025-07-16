@@ -3,8 +3,7 @@ import { validateForEmptySpaces } from "./globals";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const AcceptedFileTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'application/pdf'];
-const emojiRegex = /(\p{Emoji_Presentation}|\p{Extended_Pictographic})/gu
-
+export const emojiRegex = /(\p{Emoji_Presentation}|\p{Extended_Pictographic})/gu
 
 export const WaitlistFormSchema = z.object({
     name: z.string().min(1, {message: "This field is mandatory"}).refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(/(\p{Emoji_Presentation}|\p{Extended_Pictographic})/gu), {message: "No emoji's alllowed."}),

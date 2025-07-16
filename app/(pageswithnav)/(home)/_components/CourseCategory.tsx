@@ -78,10 +78,12 @@ const CourseCategories = () => {
       </div>
 
       <div className="text-center mt-10 flex justify-center w-full">
+        <Link href="/courses">
         <Button className="px-10 py-6 bg-smegear-secondary text-white font-semibold uppercase flex items-center gap-2 justify-center">
           <h4>View All Category</h4>
           <ArrowRight size={20} />
         </Button>
+        </Link>
       </div>
     </div>
   );

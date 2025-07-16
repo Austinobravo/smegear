@@ -10,16 +10,16 @@ import {
 
 const benefits = [
   {
-    icon: <UserPlus className="w-14 h-14 text-primary" />, title: "Become a Co-owner"
+    icon: <UserPlus className="w-14 h-14 text-primary text-white" />, title: "Become a Co-owner"
   },
   {
-    icon: <Wallet className="w-14 h-14 text-primary" />, title: "Become an Affiliate"
+    icon: <Wallet className="w-14 h-14 text-primary text-white" />, title: "Become an Affiliate"
   },
   {
-    icon: <Megaphone className="w-14 h-14 text-primary" />, title: "Access Free Marketing Content"
+    icon: <Megaphone className="w-14 h-14 text-primary text-white" />, title: "Access Free Marketing Content"
   },
   {
-    icon: <CreditCard className="w-14 h-14 text-primary" />, title: "Access to Agent Portal"
+    icon: <CreditCard className="w-14 h-14 text-primary text-white" />, title: "Access to Agent Portal"
   },
 ];
 

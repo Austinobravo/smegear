@@ -15,7 +15,7 @@ interface PageProps {
 }
 
 export default function ProductDetailPage({ params }: PageProps) {
-  const categoryId = parseInt(params.popularcoursesdetails);
+  const categoryId = Number(params.popularcoursesdetails);
   const category = courses.find((cat) => cat.id === categoryId);
 
   if (!category) return notFound();

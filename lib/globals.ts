@@ -1,3 +1,18 @@
+import prisma from "@/prisma/prisma"
+import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken"
+import slug from "slug"
+
+
+export const comparePassword = async (currentPassword: string, hashPassword: string) => {
+    const isPasswordCorrect = bcrypt.compareSync(currentPassword, hashPassword)
+    return isPasswordCorrect
+}
+
+export const createVerificationToken = (email: string) => {
+    const secret = process.env.JWT_SECRET!
+    return jwt.sign({ email }, secret, { expiresIn: "1h" })
+  }
 export const validateForEmptySpaces = (value: string) => {
     return value.trim().length >= 1
 }
@@ -8,43 +23,44 @@ export const formatDate = (date: number | string) => {
     return new Date(date).toLocaleDateString(language, options )
 }
 
-export function getGreeting(): string {
-  const hour = new Date().getHours();
+export const createNewSlug = async (title: string) => {
+    const baseSlug = slug(title);
+    let sluggedTitle = baseSlug;
 
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
+    const existingCourseSlugs = await prisma.course.findMany({
+        where:{
+            slug:{
+                startsWith: baseSlug
+            }
+        },
+        select: {
+            slug: true
+        }
+    })
+
+    if (existingCourseSlugs.length === 0) {
+        // If no conflicts, return the base slug
+        return sluggedTitle;
+    }
+
+    if(existingCourseSlugs.length > 0){
+        const verifySuffix = existingCourseSlugs.map(({slug}) => {
+            const match = slug.match(new RegExp(`^${baseSlug}-(\\d+)$`));
+
+            return match ? parseInt(match[1], 10) : null
+        }).filter((value):value is number => value !== null)
+
+        if(verifySuffix.length > 0){
+            const maxSuffix = Math.max(...verifySuffix)
+            sluggedTitle = `${baseSlug}-${maxSuffix + 1}`
+        }else{
+            sluggedTitle = `${baseSlug}-1`
+        }
+
+    }
+    
+    return sluggedTitle
 }
-
-export const locations = [
-    "Remote",
-    "Hybrid",
-    "On Site",
-    "other"
-]
-
-export const level_of_work = [
-    "Entry level/graduate",
-    "Junior level (1 -2 years)",
-    "Mid level (3 -4 years)",
-    "Senior level (5 - 8 years)",
-    "Expert and leadership (9+ years)",
-    "other"
-
-]
-
-export const type_of_role = [
-    "Software Engineering",
-    "Data",
-    "Product",
-    "Design",
-    "Operations and Strategy",
-    "Sales and Account Management",
-    "Marketing",
-    "People, Hr, Recruitment",
-    "Finance, Legal and Compliance",
-    "other"
-]
 
 export const getShareableLink = (data:any, socialType: string) => {
     switch (socialType) {
@@ -62,10 +78,10 @@ export const getShareableLink = (data:any, socialType: string) => {
     }
 }
 
-export const DEV_BASE_URL =
+export const BASE_URL =
   process.env.NODE_ENV === "development"
     ? "http://localhost:3000"
-    : process.env.DEV_API_URL;
+    : process.env.API_URL;
 
     
-export const BASE_URL = process.env.NEXT_PUBLIC_API_URL
+// export const BASE_URL = process.env.NEXT_PUBLIC_API_URL

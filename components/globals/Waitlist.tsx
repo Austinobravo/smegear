@@ -3,7 +3,7 @@ import Image from 'next/image'
 import React from 'react'
 import { ChevronRight } from "lucide-react"
 import Link from 'next/link'
-import WaitlistForm from '@/app/(pageswithnav)/(home)/_components/WaitlistForm'
+// import WaitlistForm from '@/app/(pageswithnav)/(home)/_components/WaitlistForm'
 
 const Waitlist = () => {
   return (
@@ -86,7 +86,7 @@ const Waitlist = () => {
 
       
     </section>
-    <WaitlistForm />
+    {/* <WaitlistForm /> */}
     
     </div>
   )

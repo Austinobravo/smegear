@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String      @id @default(uuid())
+  email          String      @unique
+  firstName      String
+  lastName      String
+  passwordHash   String
+  phone          String?
+  verificationLink  String?
+  role           Role        @default(STUDENT)
+  isEmailVerified  Boolean?         @default(false)
+  emailVerified    DateTime?
+  enrolledCourses Enrollment[]
+  coursesCreated Course[]    @relation("InstructorCourses")
+  reviews        Review[]
+  progress       Progress[]
+
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model Course {
+  id          String      @id @default(uuid())
+  title       String
+  description String
+  imageUrl    String?
+  price       Float       @default(0)
+  published   Boolean     @default(false)
+  slug        String      @default("default")
+  instructor  User        @relation("InstructorCourses", fields: [instructorId], references: [id])
+  instructorId String
+  modules     Module[]
+  enrollments Enrollment[]
+  reviews     Review[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Module {
+  id        String   @id @default(uuid())
+  title     String
+  course    Course   @relation(fields: [courseId], references: [id])
+  courseId  String
+  lessons   Lesson[]
+  order     Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Lesson {
+  id        String   @id @default(uuid())
+  title     String
+  content   String   @db.Text
+  videoUrl  String?
+  module    Module   @relation(fields: [moduleId], references: [id])
+  moduleId  String
+  order     Int
+  progress  Progress[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Enrollment {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  course    Course   @relation(fields: [courseId], references: [id])
+  courseId  String
+  enrolledAt DateTime @default(now())
+}
+
+model Progress {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id])
+  lessonId  String
+  completed Boolean  @default(false)
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  course    Course   @relation(fields: [courseId], references: [id])
+  courseId  String
+  rating    Int
+  comment   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  STUDENT
+  INSTRUCTOR
+  ADMIN
+}

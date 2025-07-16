@@ -11,11 +11,11 @@ import { ca } from "zod/v4/locales";
 
 
 interface PageProps {
-  params: { coursedetails: string };
+  coursedetails: string | PromiseLike<string>;
 }
 
-export default  function ProductDetailPage({ params }: PageProps) {
-  const categoryId = parseInt(params.coursedetails);
+export default async function ProductDetailPage({ params }: {params: PageProps}) {
+  const categoryId = parseInt(await params.coursedetails);
   const category = categories.find((cat) => cat.id === categoryId);
 
   if (!category) return notFound();

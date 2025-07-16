@@ -38,14 +38,16 @@ const CoursesCarousel = () => {
             Our Popular Courses
           </h2>
         </div>
-        <Button className="px-9  py-7 bg-smegear-secondary text-white font-semibold uppercase">View All Courses →</Button>
+        <Link href="/courses">
+          <Button className="px-9  py-7 bg-smegear-secondary text-white font-semibold uppercase">View All Courses →</Button>
+        </Link>
       </div>
 
 
       <div className="relative">
         <Swiper
           slidesPerView={1.2}
-          speed={2000}
+          speed={500}
           spaceBetween={20}
           breakpoints={{
             768: { slidesPerView: 2 },

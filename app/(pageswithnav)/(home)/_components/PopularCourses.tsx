@@ -153,7 +153,9 @@ const PopularCourses = () => {
             Our Popular Courses
           </h2>
         </div>
+        <Link href="/courses">
         <Button className="px-9  py-7 bg-smegear-secondary text-white font-semibold uppercase">View All Courses →</Button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

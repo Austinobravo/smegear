@@ -1,21 +1,30 @@
-// lib/getProfile.ts
-import axios from "axios";
-import { cookies } from "next/headers";
-// import { BASE_URL } from "./globals";
+import { getToken } from "next-auth/jwt";
+import { getServerSession } from "next-auth";
+import { options } from "@/app/api/auth/[...nextauth]/options";
+import { NextRequest } from "next/server";
+import { User } from "./generated/prisma";
 
-export async function getProfile() {
-  try{
-    const token = (await cookies()).get("token")?.value;
-  
-    if (!token) return null;
-    const res = await axios(`${process.env.NEXT_PUBLIC_API_URL}/api/profile`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return res.data as UserDataType
 
-  }catch(error){
-    console.error("Error in server user", error)
-    return null
+export const getCurrentUser = async (req?: NextRequest): Promise<User | null> => {
+  try {
+    // 1 Try getServerSession first
+    const session = await getServerSession(options);
+    if (session?.user?.id) {
+      return session.user as User;
+    }
 
+    // 2 Fallback: try getToken (e.g., from Authorization header)
+    if (req) {
+      const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+      if (token && token.id) {
+        return token as User;
+      }
+    }
+
+    // Not authenticated
+    return null;
+  } catch (error) {
+    console.error("Error in getCurrentUser:", error);
+    return null;
   }
-}
+};
