@@ -32,7 +32,7 @@ import { getCurrentUser } from "@/lib/getServerSession";
  *         description: Progress started
  */
 export async function POST(req: Request) {
-    const user = await getCurrentUser()
+  const user = await getCurrentUser()
     if(!user){
         return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
@@ -45,25 +45,34 @@ export async function POST(req: Request) {
 
   const {  lessonId, completed } = validated.data;
 
-  const progress = await prisma.progress.upsert({
-    where: {
-      userId_lessonId: {
-        userId,
-        lessonId,
-      },
-    },
-    update: {
-      completed,
-      completedAt: completed ? new Date() : null,
-    },
-    create: {
-      userId,
-      lessonId,
-      completed: completed || false,
-    },
-  });
+  try{
 
-  return NextResponse.json({ data: progress }, { status: 201 });
+    const progress = await prisma.progress.upsert({
+        where: {
+          userId_lessonId: {
+            userId,
+            lessonId,
+          },
+        },
+        update: {
+          completed,
+          completedAt: completed ? new Date() : null,
+        },
+        create: {
+          userId,
+          lessonId,
+          completed: completed || false,
+        },
+      });
+    
+      return NextResponse.json(progress, { status: 201 });
+   }catch (error: any) {
+    if (error.code === 'P2025') {
+        return NextResponse.json({ message: "Progress not created" }, { status: 404 });
+    }
+    return NextResponse.json({ message: "Server Error", error }, { status: 500 });
+    }
+
 }
 
 /**
@@ -73,11 +82,6 @@ export async function POST(req: Request) {
  *     summary: Get progress for a specific user and lesson
  *     tags: [Progress]
  *     parameters:
- *       - in: query
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
  *       - in: query
  *         name: lessonId
  *         required: true
@@ -93,23 +97,29 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
   const { searchParams } = new URL(req.url);
-  const userId = searchParams.get("userId");
+  const userId = user.id
   const lessonId = searchParams.get("lessonId");
 
-  if (!userId || !lessonId) {
-    return NextResponse.json({ error: "userId and lessonId are required" }, { status: 400 });
+  if (!lessonId) {
+    return NextResponse.json({ error: "lessonId are required" }, { status: 400 });
   }
 
-  const progress = await prisma.progress.findUnique({
-    where: {
-      userId_lessonId: {
-        userId,
-        lessonId,
-      },
-    },
-  });
+  try{
+      const progress = await prisma.progress.findUnique({
+        where: {
+          userId_lessonId: {
+            userId,
+            lessonId,
+          },
+        },
+      });
+    
+      return NextResponse.json(progress);
 
-  return NextResponse.json({ data: progress });
+   }catch (error: any) {
+    console.log("Error in get progress", error)
+        return NextResponse.json({ message: "Server Error", error }, { status: 500 });
+      }
 }
 
 
@@ -152,15 +162,24 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: validated.error.flatten() }, { status: 400 });
   }
 
-  const updated = await prisma.progress.update({
-    where: { id },
-    data: {
-      completed: validated.data.completed,
-      completedAt: validated.data.completed ? new Date() : null,
-    },
-  });
+  try{
 
-  return NextResponse.json({ data: updated });
+      const updated = await prisma.progress.update({
+        where: { id },
+        data: {
+          completed: validated.data.completed,
+          completedAt: validated.data.completed ? new Date() : null,
+        },
+      });
+    
+      return NextResponse.json(updated);
+   }catch (error: any) {
+    if (error.code === 'P2025') {
+        return NextResponse.json({ message: "Progress not found" }, { status: 404 });
+    }
+    return NextResponse.json({ message: "Server Error", error }, { status: 500 });
+    }
+
 }
 
 /**
