@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/prisma/prisma";
-import { LessonPatchSchema, LessonSchema } from "@/schemas/backendFormSchema";
+import { LessonUpdateSchema, LessonSchema } from "@/schemas/backendFormSchema";
 import { getCurrentUser } from "@/lib/getServerSession";
 
 /**
@@ -190,7 +190,7 @@ export async function PATCH(req: Request,) {
   try {
     const body = await req.json();
     const { id } = body
-    const parsed = LessonPatchSchema.safeParse(body);
+    const parsed = LessonUpdateSchema.safeParse(body);
 
     if (!parsed.success) {
       return NextResponse.json({ errors: parsed.error.flatten() }, { status: 400 });

@@ -25,6 +25,12 @@ export const ModuleCreateSchema = z.object({
   courseId: z.string().min(1, "Course ID is required").refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
   order: z.number().min(1, "Order must be >= 1"),
 });
+export const ModuleUpdateSchema = z.object({
+  id: z.string(),
+  title: z.string().optional(),
+  courseId: z.string().optional(),
+  order: z.number().min(1, "Order must be >= 1"),
+});
 
 export const LessonSchema = z.object({
   title: z.string().min(1, "Title is required").refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
@@ -34,7 +40,7 @@ export const LessonSchema = z.object({
   order: z.number().int().min(0),
 });
 
-export const LessonPatchSchema = z.object({
+export const LessonUpdateSchema = z.object({
   title: z.string().optional(),
   content: z.string().optional(),
   videoUrl: z.string().url().optional(),

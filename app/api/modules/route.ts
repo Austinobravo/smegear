@@ -1,6 +1,6 @@
 import { getCurrentUser } from "@/lib/getServerSession";
 import prisma from "@/prisma/prisma";
-import { ModuleCreateSchema } from "@/schemas/backendFormSchema";
+import { ModuleCreateSchema, ModuleUpdateSchema } from "@/schemas/backendFormSchema";
 import { NextResponse } from "next/server";
 
 /**
@@ -153,5 +153,65 @@ export async function DELETE(req: Request) {
   } catch (error) {
     console.error("Error deleting module:", error);
         return NextResponse.json({ message: "Server Error", error: error }, { status: 500 });
+  }
+}
+
+
+/**
+ * @swagger
+ * /api/modules:
+ *   patch:
+ *     summary: Update a module
+ *     tags: [Modules]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *             properties:
+ *               title:
+ *                 type: string
+ *               courseId:
+ *                 type: string
+ *               order:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Module updated successfully
+ */
+export async function PATCH(req: Request) {
+    const user = await getCurrentUser()
+    if(!user){
+      return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
+    }
+  try {
+    const body = await req.json();
+    const parsed = ModuleUpdateSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return NextResponse.json({ message: "Invalid data", errors: parsed.error.flatten() }, { status: 400 });
+    }
+
+    const { id, ...updateData } = parsed.data;
+
+    const existingModule = await prisma.module.findUnique({where:{id}})
+
+    if (!existingModule) {
+      return NextResponse.json({ message: "Module does not exist." }, { status: 404 });
+    }
+
+    const updatedModule = await prisma.module.update({
+      where: { id },
+      data: updateData,
+    });
+
+    return NextResponse.json(updatedModule);
+  } catch (error) {
+    console.error("Error updating module:", error);
+        return NextResponse.json({ message: "Server Error", error: error }, { status: 500 });
+
   }
 }
