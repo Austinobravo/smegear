@@ -94,7 +94,7 @@ export async function GET(req: NextRequest) {
   }
 
   try{
-      const progress = await prisma.progress.findUnique({
+      const progress = await prisma.progress.findFirst({
         where: {
             userId,
             lessonId
