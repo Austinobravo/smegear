@@ -31,7 +31,7 @@ export async function GET(_: NextRequest) {
         orderBy: { updatedAt: "desc" },
       });
     
-      return NextResponse.json({ data: progress });
+      return NextResponse.json(progress);
     
   } catch (error) {
       console.error("Error fetching user progress:", error);

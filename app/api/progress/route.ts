@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/prisma";
-import z from "zod";
 import { ProgressSchema, ProgressUpdateSchema } from "@/schemas/backendFormSchema";
 import { getCurrentUser } from "@/lib/getServerSession";
 
@@ -49,10 +48,8 @@ export async function POST(req: Request) {
 
     const progress = await prisma.progress.upsert({
         where: {
-          userId_lessonId: {
             userId,
             lessonId,
-          },
         },
         update: {
           completed,
@@ -107,10 +104,8 @@ export async function GET(req: NextRequest) {
   try{
       const progress = await prisma.progress.findUnique({
         where: {
-          userId_lessonId: {
             userId,
-            lessonId,
-          },
+            lessonId
         },
       });
     
@@ -208,6 +203,7 @@ export async function DELETE(req: Request) {
           where: { id},
         });
 
+        return  NextResponse.json(null, { status: 204 });
     }catch (error: any) {
         if (error.code === 'P2025') {
           return NextResponse.json({ message: "Progress not found" }, { status: 404 });
@@ -215,5 +211,4 @@ export async function DELETE(req: Request) {
         return NextResponse.json({ message: "Server Error", error }, { status: 500 });
       }
 
-  return new NextResponse(null, { status: 204 });
 }
