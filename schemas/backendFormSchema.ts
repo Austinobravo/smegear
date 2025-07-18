@@ -56,3 +56,15 @@ export const ProgressUpdateSchema = z.object({
   id: z.string(),
   completed: z.boolean(),
 });
+
+export const ReviewSchema = z.object({
+  courseId: z.string().uuid().min(1, "Course Id is required").refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
+  rating: z.number().min(1).max(5),
+  comment: z.string().optional(),
+});
+
+export const ReviewUpdateSchema = z.object({
+  id: z.string(),
+  rating: z.number().min(1).max(5).optional(),
+  comment: z.string().optional(),
+});
