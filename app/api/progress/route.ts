@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     if(!user){
         return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
-    const userId = user.id
+    const userId = user?.id
   const body = await req.json();
   const validated = ProgressSchema.safeParse(body);
   if (!validated.success) {
@@ -86,7 +86,7 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
   const { searchParams } = new URL(req.url);
-  const userId = user.id
+  const userId = user?.id
   const lessonId = searchParams.get("lessonId");
 
   if (!lessonId) {

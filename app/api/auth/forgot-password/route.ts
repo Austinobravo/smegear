@@ -56,7 +56,7 @@ export async function POST(req: Request) {
 
   await prisma.user.update({
       where:{
-        id: user.id
+        id: user?.id
       },
       data:{
         verificationLink: RESET_LINK

@@ -17,7 +17,7 @@ import { getCurrentUser } from "@/lib/getServerSession";
  */
 export async function GET(_: NextRequest) {
   const user = await getCurrentUser()
-  const userId = user.id
+  const userId = user?.id
   try{
       const progress = await prisma.progress.findMany({
         where: { userId},

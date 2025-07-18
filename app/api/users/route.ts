@@ -36,7 +36,7 @@ export async function GET() {
   if(!user){
     return NextResponse.json({message: "Unauthorized"}, {status: 401})
   }
-  const foundUser = await prisma.user.findUnique({where:{id:user.id}, omit:{passwordHash:true}});
+  const foundUser = await prisma.user.findUnique({where:{id:user?.id}, omit:{passwordHash:true}});
   return NextResponse.json(foundUser);
 }
 

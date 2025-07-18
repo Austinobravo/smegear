@@ -84,7 +84,7 @@ export async function POST(req: Request) {
 
 
     const course = await prisma.course.create({
-      data: {slug: slug, instructorId: user.id, ...parsed.data},
+      data: {slug: slug, instructorId: user?.id, ...parsed.data},
     });
 
     return NextResponse.json(course, { status: 201 });

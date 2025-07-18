@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
     }
 
     const review = await prisma.review.create({
-      data: {userId:user.id, ...validated.data},
+      data: {userId:user?.id, ...validated.data},
     });
 
     return NextResponse.json(review, { status: 201 });

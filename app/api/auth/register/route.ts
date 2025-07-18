@@ -112,7 +112,7 @@ export async function POST(req: Request) {
 
 
     await prisma.user.update({
-      where: { id: user.id },
+      where: { id: user?.id },
       data: { verificationLink: VERIFICATION_LINK }
     });
 

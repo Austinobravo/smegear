@@ -73,7 +73,7 @@ export const options:NextAuthOptions = {
             if(user){
                 return {
                     ...token,
-                    id: user.id,
+                    id: user?.id,
                     email: (user as any).email,
                 }
             }
