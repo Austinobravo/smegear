@@ -58,8 +58,6 @@ export async function GET() {
  *             required:
  *               - id
  *             properties:
- *               id:
- *                 type: string
  *               name:
  *                 type: string
  *               password:
@@ -72,6 +70,10 @@ export async function GET() {
  *         description: User updated successfully
  */
 export async function PATCH(req: Request) {
+    const user = await getCurrentUser()
+    if(!user){
+        return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
+    }
   try {
     const body = await req.json();
     const parsed = UpdateUserSchema.safeParse(body);

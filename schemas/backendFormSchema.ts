@@ -46,3 +46,13 @@ export const LessonUpdateSchema = z.object({
   videoUrl: z.string().url().optional(),
   order: z.number().int().min(0).optional(),
 });
+
+export const ProgressSchema = z.object({
+  lessonId: z.string().min(1, "Lesson Id is required").refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
+  completed: z.boolean().optional(),
+});
+
+export const ProgressUpdateSchema = z.object({
+  id: z.string(),
+  completed: z.boolean(),
+});

@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
  * @swagger
  * /api/modules:
  *   get:
- *     summary: Get all modules
+ *     summary: Get all modules in a course
  *     tags: [Modules]
  *     parameters:
  *       - in: query
