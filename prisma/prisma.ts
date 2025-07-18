@@ -1,4 +1,4 @@
-import { PrismaClient } from "@/lib/generated/prisma";
+import { PrismaClient } from "@prisma/client";
 
 if (!process.env.PRISMA_DISABLE_PREPARED_STATEMENTS) {
   process.env.PRISMA_DISABLE_PREPARED_STATEMENTS = 'true';
