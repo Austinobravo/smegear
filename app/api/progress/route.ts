@@ -46,16 +46,8 @@ export async function POST(req: Request) {
 
   try{
 
-    const progress = await prisma.progress.upsert({
-        where: {
-            userId,
-            lessonId,
-        },
-        update: {
-          completed,
-          completedAt: completed ? new Date() : null,
-        },
-        create: {
+    const progress = await prisma.progress.create({
+        data: {
           userId,
           lessonId,
           completed: completed || false,
