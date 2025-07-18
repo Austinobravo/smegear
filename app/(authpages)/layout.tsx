@@ -15,8 +15,7 @@ const PagesWithNavLayout = ({ children }: Props) => {
 
           {children}
         </div>
-        <ScrollToTop />
-        <WhatsAppIcon />
+        
         <Footer/>
         </body>
 

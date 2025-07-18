@@ -1,11 +1,29 @@
 import { Landmark, BookOpen, Pencil } from "lucide-react";
+
 const generateRandomDate = () => {
   const start = new Date(2022, 0, 1);
   const end = new Date(2025, 6, 1);
   return new Date(
     start.getTime() + Math.random() * (end.getTime() - start.getTime())
-  );
+  )
+    .toISOString()
+    .split("T")[0];
 };
+
+const generateRandomProgress = () => Math.floor(Math.random() * 101);
+const generateRandomChapters = () => Math.floor(Math.random() * 18) + 3;
+
+const determineCategory = (title: string) => {
+  const lower = title.toLowerCase();
+  if (lower.includes("ngo")) return "NGO";
+  if (lower.includes("company")) return "Company";
+  if (lower.includes("license") || lower.includes("licence")) return "License";
+  if (lower.includes("copyright")) return "Copyright";
+  if (lower.includes("business")) return "Business";
+  if (lower.includes("course")) return "Course";
+  return "General";
+};
+
 const courses = [
   {
     id: 1,
@@ -558,6 +576,9 @@ const courses = [
 ].map((course) => ({
   ...course,
   date: generateRandomDate(),
+  progress: generateRandomProgress(),
+  chapters: generateRandomChapters(),
+  Category: determineCategory(course.title),
 }));
 
 export default courses;

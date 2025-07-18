@@ -26,9 +26,9 @@ export default function FilterCoursesPage() {
   const sortedCourses = useMemo(() => {
     let sorted = [...courses];
     if (sort === "Release Date (newest first)") {
-      sorted.sort((a, b) => b.date.getTime() - a.date.getTime());
+      sorted.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     } else if (sort === "Release Date (oldest first)") {
-      sorted.sort((a, b) => a.date.getTime() - b.date.getTime());
+      sorted.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     } else if (sort === "Course Title (a-z)") {
       sorted.sort((a, b) => a.title.localeCompare(b.title));
     } else if (sort === "Course Title (z-a)") {
@@ -54,9 +54,9 @@ export default function FilterCoursesPage() {
   return (
     <div className="space-y-10 px-4 sm:px-6 lg:px-8 mb-10">
       <div className="flex flex-col sm:flex-row justify-between  items-center bg-gray-300 py-6 px-8 rounded-lg gap-4">
-        <p className="text-xl font-semibold text-gray-900 ">
+        <div className="text-xl font-semibold text-gray-900 ">
           <h4 className="font-bold text-2xl">{courses.length} <span className="text-gray-600 text-lg">courses</span></h4>
-        </p>
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger className="border flex items-center gap-2 rounded px-6 py-4  bg-white text-[16px] ">
             <span>{sort}</span>

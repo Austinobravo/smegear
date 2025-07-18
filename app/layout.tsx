@@ -52,7 +52,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${satoshi.className} 
        scroll-smooth`}>
-         <Toaster
+        <Toaster
           richColors
           toastOptions={{
             classNames: {
@@ -67,8 +67,10 @@ export default function RootLayout({
 
 
         {children}
-
+        <ScrollToTop />
+        <WhatsAppIcon />
       </body>
+
       <GoogleAnalytics gaId="G-XGG153E7VN" />
     </html>
   );

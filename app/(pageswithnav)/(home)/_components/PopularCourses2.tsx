@@ -74,7 +74,7 @@ const CoursesCarousel = () => {
           {displayedCourses.map((course, index) => (
             <SwiperSlide key={index}>
               <Link href={`/courses/popularcourses/${course.id}`} className="no-underline">
-                <Card className="overflow-hidden shadow-lg rounded-xl transition-transform duration-300 bg-white">
+                <Card className="overflow-hidden shadow-lg rounded-xl transition-transform duration-300 bg-white py-0">
                   <Image
                     src={course.image}
                     alt={course.title}
@@ -123,7 +123,7 @@ const CoursesCarousel = () => {
                           {course.price}
                         </p>
                         {course.oldPrice && (
-                          <p className="line-through text-sm text-gray-400">
+                          <p className="line-through  text-lg  text-gray-400 ">
                             {course.oldPrice}
                           </p>
                         )}
