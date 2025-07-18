@@ -33,6 +33,6 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
     return NextResponse.json(course);
   } catch (error) {
     console.error("Error fetching course:", error);
-    return NextResponse.json({ message: "Failed to fetch course" }, { status: 500 });
+        return NextResponse.json({ message: "Server Error", error: error }, { status: 500 });
   }
 }

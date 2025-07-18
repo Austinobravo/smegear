@@ -8,7 +8,7 @@ export const CourseCreateSchema = z.object({
   imageUrl: z.string().url("Invalid URL").optional(),
   price: z.coerce.number().min(0, "Price must be >= 0"),
   published: z.boolean().optional(),
-  instructorId: z.string().min(1, "Instructor ID is required").refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
+  // instructorId: z.string().min(1, "Instructor ID is required").refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
 });
 
 export const CourseUpdateSchema = z.object({
@@ -24,4 +24,19 @@ export const ModuleCreateSchema = z.object({
   title: z.string().min(1, "Title is required").refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
   courseId: z.string().min(1, "Course ID is required").refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
   order: z.number().min(1, "Order must be >= 1"),
+});
+
+export const LessonSchema = z.object({
+  title: z.string().min(1, "Title is required").refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
+  content: z.string().min(1, "Content is required").refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
+  videoUrl: z.string().url().optional(),
+  moduleId: z.string().min(1, "Module Id is required").refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
+  order: z.number().int().min(0),
+});
+
+export const LessonPatchSchema = z.object({
+  title: z.string().optional(),
+  content: z.string().optional(),
+  videoUrl: z.string().url().optional(),
+  order: z.number().int().min(0).optional(),
 });

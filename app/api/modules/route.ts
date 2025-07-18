@@ -14,20 +14,24 @@ import { NextResponse } from "next/server";
  *         name: courseId
  *         schema:
  *           type: string
- *         required: false
+ *         required: true
  *         description: Filter modules by course ID
  *     responses:
  *       200:
  *         description: List of modules
  */
 export async function GET(req: Request) {
-     const user = await getCurrentUser()
+    const user = await getCurrentUser()
     if(!user){
-        return NextResponse.json({ message: "Unauthorized"}, { status: 403 });
+        return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
   try {
     const { searchParams } = new URL(req.url);
     const courseId = searchParams.get("courseId");
+
+    if(!courseId){
+      return NextResponse.json({message: "Please add a courseId in the params"}, {status: 403})
+    }
 
     const modules = await prisma.module.findMany({
       where: courseId ? { courseId } : undefined,
@@ -42,7 +46,7 @@ export async function GET(req: Request) {
     return NextResponse.json(modules);
   } catch (error) {
     console.error("Error fetching modules:", error);
-    return NextResponse.json({ message: "Failed to fetch modules" }, { status: 500 });
+        return NextResponse.json({ message: "Server Error", error: error }, { status: 500 });
   }
 }
 
@@ -76,7 +80,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
     const user = await getCurrentUser()
     if(!user){
-        return NextResponse.json({ message: "Unauthorized"}, { status: 403 });
+        return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
   try {
     const body = await req.json();
@@ -93,7 +97,7 @@ export async function POST(req: Request) {
     return NextResponse.json(module, { status: 201 });
   } catch (error) {
     console.error("Error creating module:", error);
-    return NextResponse.json({ message: "Failed to create module" }, { status: 500 });
+        return NextResponse.json({ message: "Server Error", error: error }, { status: 500 });
   }
 }
 
@@ -123,7 +127,7 @@ export async function POST(req: Request) {
 export async function DELETE(req: Request) {
       const user = await getCurrentUser()
     if(!user){
-        return NextResponse.json({ message: "Unauthorized"}, { status: 403 });
+        return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
   try {
     const body = await req.json();
@@ -148,6 +152,6 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ message: "Module deleted successfully." });
   } catch (error) {
     console.error("Error deleting module:", error);
-    return NextResponse.json({ message: "Failed to delete module" }, { status: 500 });
+        return NextResponse.json({ message: "Server Error", error: error }, { status: 500 });
   }
 }

@@ -38,6 +38,6 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     return NextResponse.json(module);
   } catch (error) {
     console.error("Error fetching module:", error);
-    return NextResponse.json({ message: "Failed to fetch module" }, { status: 500 });
+        return NextResponse.json({ message: "Server Error", error: error }, { status: 500 });
   }
 }
