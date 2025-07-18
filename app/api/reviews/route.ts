@@ -21,7 +21,6 @@ import { getCurrentUser } from "@/lib/getServerSession";
  *               type: array
  *               items:
  *                 type: object
- *                 $ref: '#/components/schemas/Review'
  */
 export async function GET() {
     const user = await getCurrentUser()
