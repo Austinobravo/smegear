@@ -1,8 +1,11 @@
 import React from 'react'
+import StudentSettingsPage from './_components/studentsettingspage'
 
 const SettingPage = () => {
   return (
-    <div>SettingPage</div>
+    <section>
+      <StudentSettingsPage/>
+    </section>
   )
 }
 
