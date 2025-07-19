@@ -1,48 +1,45 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
+'use client'
+import React from 'react'
 import { Button } from "@/components/ui/button";
 import {
-  Clock3,
-  BookText,
-  Users,
-  BarChart3,
-  BadgeCheck,
-  ArrowRight,
+
   BookOpen,
+  Users,
   SignalHigh,
-  Clock,
-
+  Search,
+  X
 } from "lucide-react";
-import Image from "next/image";
-import courses from "@/Data/popularcourseslist"
-import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Book, CheckCircle, Clock } from 'lucide-react'
+import Image from 'next/image'
+import { cn } from '@/lib/utils'
+import courses from '@/Data/popularcourseslist'
+import Link from 'next/link';
 
-
-// ...existing code...
-const PopularCourses = () => {
-  // Only display the first 6 courses
+const RecommendedCourses = () => {
   const displayedCourses = courses.slice(0, 6);
-
   return (
-    <div className="bg-[#F4F5F4] py-16 px-4 md:px-12">
-      <div className="flex md:justify-between flex-col items-center mb-8 md:flex-row">
-        <div className="text-center md:text-left mb-4 md:mb-0">
-          <p className="text-sm uppercase text-smegear-accent font-semibold">
-            Popular Courses
-          </p>
-          <h2 className="md:text-4xl text-2xl font-bold mt-2 text-gray-800">
-            Our Popular Courses
-          </h2>
-        </div>
-        <Link href="/courses">
-        <Button className="px-9  py-7 bg-smegear-secondary text-white font-semibold uppercase">View All Courses →</Button>
-        </Link>
-      </div>
+    <section className='space-y-6 p-4'>
+      <h2 className="md:text-2xl text-2xl font-bold  text-gray-800">
+        Recommended Courses
+      </h2>
 
+      {/* Courses Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {displayedCourses.map((course, index) => (
-          <Link href={`/courses/popularcourses/${course.id}`} className="no-underline">
-            <Card className="overflow-hidden shadow-lg rounded-xl transition-transform duration-300 bg-white py-0  hover:scale-[1.02] hover:shadow-xl cursor-pointer" key={index}>
+          <Link
+            href={`/student/search/${course.id}`}
+            className="no-underline"
+            key={index}
+          >
+            <Card className="overflow-hidden shadow-lg rounded-xl transition-transform duration-300 bg-white hover:scale-[1.02] hover:shadow-xl pb-4 pt-0">
               <Image
                 src={course.image}
                 alt={course.title}
@@ -50,7 +47,7 @@ const PopularCourses = () => {
                 height={300}
                 className="w-full h-48 object-cover"
               />
-              <CardContent className="p-6 space-y-4">
+              <CardContent className="px-6 space-y-4">
                 <div className="flex items-center gap-1 text-yellow-500">
                   {Array(5).fill(0).map((_, i) => (
                     <svg
@@ -91,7 +88,7 @@ const PopularCourses = () => {
                       {course.price}
                     </p>
                     {course.oldPrice && (
-                      <p className="line-through text-lg  text-gray-400">
+                      <p className="line-through text-sm text-gray-400">
                         {course.oldPrice}
                       </p>
                     )}
@@ -102,8 +99,8 @@ const PopularCourses = () => {
           </Link>
         ))}
       </div>
-    </div>
-  );
-};
+    </section>
+  )
+}
 
-export default PopularCourses;
+export default RecommendedCourses

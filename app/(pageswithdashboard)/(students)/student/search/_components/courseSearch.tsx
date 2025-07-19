@@ -29,8 +29,8 @@ const filteredCourses = courses.filter(course =>
 
 
   return (
-    <div className="bg-[#F4F5F4] py-10 px-4 md:px-12 space-y-8">
-      <h2 className="md:text-3xl text-2xl font-bold  text-gray-800">
+    <div className=" p-4 space-y-8">
+      <h2 className="text-2xl   text-gray-800 font-bold  ">
             Search Courses
           </h2>
 
