@@ -37,13 +37,13 @@ const CommunityEngagement = () => {
         {benefits.map((item, i) => (
           <Card
             key={i}
-            className="border-2 border-smegear-primary bg-[#f9f9ff] py-6 px-2 text-center rounded-xl "
+            className="border-2 border-smegear-primary bg-[#f9f9ff] py-6  text-center rounded-xl "
           >
             <CardContent className="flex flex-col items-center gap-2">
              <div className="bg-smegear-secondary p-2 rounded-full flex justify-center items-center text-smegear-primary">
               {item.icon}
               </div> 
-              <p className="text-[16.5px] font-semibold text-smegear-secondary text-center">
+              <p className="text-[17px] font-semibold text-smegear-secondary text-center">
                 {item.title}
               </p>
             </CardContent>

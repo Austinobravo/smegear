@@ -1,5 +1,5 @@
 "use client";
-import { Star } from "lucide-react";
+import { BookText, Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -55,10 +55,11 @@ const TestimonialsCarousel = () => {
   return (
     <div className="bg-[#FEFFFE] py-16 px-4 md:px-12">
       <div className="text-center mb-12">
-        <p className="text-sm uppercase text-smegear-accent font-semibold">
+        <p className="text-[16px] uppercase text-smegear-accent font-semibold flex gap-1 justify-center items-center">
+           <BookText size={18} />
           Our Students Testimonials
         </p>
-        <h2 className="md:text-4xl text-2xl  font-bold mt-2 text-gray-800">
+        <h2 className="md:text-4xl text-3xl  font-bold mt-2 text-gray-800">
           Hear From Our Students
         </h2>
       </div>

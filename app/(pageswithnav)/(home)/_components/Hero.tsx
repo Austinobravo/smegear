@@ -16,7 +16,7 @@ import LoginForm from "./LoginForm";
 
 export default function HeroSection() {
   return (
-    <section className="relative bg-cover bg-center bg-no-repeat md:h-[138vh] flex items-center px-6 md:px-10 md:py-24 py-10"
+    <section className="relative bg-cover bg-center bg-no-repeat md:h-[138vh] flex items-center px-6 md:px-10 md:py-24 py-5"
       style={{
         backgroundImage: "url('/smilingman.webp')",
       }}
@@ -32,12 +32,12 @@ export default function HeroSection() {
             <span className="md:inline-block bg-smegear-accent md:text-lg font-semibold md:px-5 md:py-3 rounded-full md:mb-4 py-2 px-4">
               35% OFF
             </span>
-            <h2 className="text-[14px] md:text-2xl font-semibold uppercase md:mb-2 tracking-wide leading-[56px]">
+            <h2 className="text-[17px] md:text-2xl font-bold uppercase md:mb-2 tracking-wide leading-[56px]">
               Earn 6 figure with our
             </h2>
           </div>
 
-          <h1 className="text-3xl md:text-5xl font-bold md:leading-[56px] leading-[40px] uppercase mb-6">
+          <h1 className="text-[34px] md:text-5xl font-bold md:leading-[56px] leading-[46px] uppercase my-5">
             CAC Portal Navigation  <br /> Video
             Course
           </h1>
