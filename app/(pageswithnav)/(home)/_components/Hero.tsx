@@ -28,11 +28,11 @@ export default function HeroSection() {
       <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 items-center  max-w-7xl mx-auto w-full md:px-6 py-24 gap-4">
 
         <div className="text-white">
-          <div className="md:items-start flex md:flex-col items-center gap-4 md:gap-0">
-            <span className="md:inline-block bg-smegear-accent md:text-lg font-semibold md:px-5 md:py-3 rounded-full md:mb-4 py-2 px-4">
+          <div className=" flex  items-center gap-4 ">
+            <span className="md:inline-block bg-smegear-accent md:text-lg font-semibold md:px-5 md:py-3 rounded-full  py-2 px-4">
               35% OFF
             </span>
-            <h2 className="text-[16px] md:text-2xl font-bold uppercase md:mb-2 tracking-wide leading-[56px]">
+            <h2 className="text-[16px] md:text-xl font-bold uppercase md:mb-2 tracking-wide leading-[56px]">
               Earn 6 figure with our
             </h2>
           </div>
