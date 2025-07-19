@@ -27,11 +27,11 @@ const PopularCourses = () => {
     <div className="bg-[#F4F5F4] py-16 px-4 md:px-12">
       <div className="flex md:justify-between flex-col items-center mb-8 md:flex-row">
         <div className="text-center md:text-left mb-4 md:mb-0">
-          <p className="text-[16px] uppercase text-smegear-secondary font-semibold flex justify-center gap-1 items-center">
+          <p className="text-[16px] uppercase text-smegear-accent font-semibold flex justify-center gap-1 items-center md:justify-start ">
             <BookText size={18} />
             Popular Courses
           </p>
-          <h2 className="md:text-4xl text-3xl font-bold mt-2 text-gray-800">
+          <h2 className="md:text-4xl text-3xl font-bold mt-2 text-smegear-secondary">
             Our Popular Courses
           </h2>
         </div>
