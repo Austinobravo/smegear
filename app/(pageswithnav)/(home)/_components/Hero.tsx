@@ -37,7 +37,7 @@ export default function HeroSection() {
             </h2>
           </div>
 
-          <h1 className="text-[30px] md:text-5xl font-bold md:leading-[56px] leading-[46px] uppercase my-5">
+          <h1 className="text-[32px] md:text-5xl font-bold md:leading-[56px] leading-[46px] uppercase my-5">
             CAC Portal Navigation   Video
             Course
           </h1>
