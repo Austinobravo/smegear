@@ -7,55 +7,65 @@ import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+
 import { toast } from 'sonner';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+import { formatPrice } from '@/lib/format';
 
 
 
-// interface TitleFormProps{
-//   initialData:{
-//     title:string;
-//   };
-//   courseId:string;
+// interface DescriptionProps{
+//   initialData:Course
+//    courseId:string;
+//   
+//   
 // }
 
 
-const TitleForm = () => {
+const PriceForm = () => {
   const [isEditing, setIsEditing] = useState(false)
+  const [pricing,setPricing]=useState(false)
+
+
   const toggleEdit = () => setIsEditing((current) => !current)
   const formSchema = z.object({
-    title: z.string().min(1, {
-      message: "Title is required",
+    price: z.number().min(1, {
+      message: "Price is required",
     }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: ""
+      price: 0.00
     },
   })
   const { isSubmitting, isValid } = form.formState
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values)
-    toast.success("Title Saved")
+    toast.success("Price Saved")
 
   }
   return (
     <div className='mt-6 border bg-slate-100 rounded-md p-4'><div className='font-medium flex items-center justify-between'>
-      Course title
+      Course price
       <Button onClick={toggleEdit} variant="ghost">
         {isEditing && (<>Cancel</>)}{!isEditing && (<><Pencil className='h-4 w-4 mr-2' />
-          Edit title
+          Edit Price
         </>)}</Button>
     </div>
-      {!isEditing && (<p className='text-sm mt-2'>Initial Title</p>)}
+      {!isEditing && (<p className={cn("text-sm mt-2",!pricing&& "text-slate-500 italic")}>{pricing?formatPrice(0.00):"No price"}</p>)}
       {isEditing && (<Form {...form}><form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 mt-4'>
-        <FormField control={form.control} name="title" render={({ field }) => {
+        <FormField control={form.control} name="price" render={({ field }) => {
           return (<FormItem>
             <FormControl>
-              <Input disabled={isSubmitting} placeholder="Edit Title" {...field} className='bg-white' />
+              <Input type='number'
+                step='0.01'
+                disabled={isSubmitting} placeholder="Set a price for your course " {...field}
+                className='bg-white' />
             </FormControl>
             <FormMessage />
           </FormItem>)
@@ -64,9 +74,9 @@ const TitleForm = () => {
         <Button disabled={!isValid || isSubmitting} type='submit'>
           Save
         </Button>
-        </form></Form>)}
+      </form></Form>)}
     </div>
   )
 }
 
-export default TitleForm
+export default PriceForm
