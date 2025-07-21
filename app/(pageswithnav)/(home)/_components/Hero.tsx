@@ -16,7 +16,7 @@ import LoginForm from "./LoginForm";
 
 export default function HeroSection() {
   return (
-    <section className="relative bg-cover bg-center bg-no-repeat md:h-[138vh] flex items-center px-6 md:px-10 md:py-24 py-5"
+    <section className="relative bg-cover bg-center bg-no-repeat md:h-[130vh] flex items-center px-6 md:px-10 md:py-24 py-5"
       style={{
         backgroundImage: "url('/smilingman.webp')",
       }}
