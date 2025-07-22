@@ -45,7 +45,7 @@ export default function Footer() {
     },
   ];
   return (
-    <footer className="bg-smegear-secondary text-white pt-10 pb-6 px-4">
+    <footer className="bg-smegear-secondary text-white pt-10  px-4">
       {/* Top contact info */}
       <div className="max-w-7xl mx-4 md:mx-auto flex flex-col md:items-center md:justify-center">
         <div className="w-full grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 border-b border-white/10 pb-6 mb-6 items-start">
@@ -117,7 +117,7 @@ export default function Footer() {
               </li>)
 
             )}
-          
+
           </ul>
         </div>
 

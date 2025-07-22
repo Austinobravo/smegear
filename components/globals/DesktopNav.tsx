@@ -8,15 +8,15 @@ import { ShoppingCart, ArrowRight } from "lucide-react";
 export default function DesktopNav() {
     const navLinks = useNavigation()
     return (
-        <header className="w-full bg-[#FEFFFE] shadow-sm fixed top-0 left-0 z-50 mb-24">
+        <header className="w-full bg-[#FEFFFE]  fixed top-0 left-0 z-50 mb-24 py-5 shadow-lg">
             <nav className="mx-auto flex max-w-7xl justify-between items-center px-6 min-h-[56px]">
 
                 <Link href="/">
                     <Image
-                        src="/logo.webp"
+                        src="/editedlogo.png"
                         alt="Smegear Logo"
-                        width={120}
-                        height={0}
+                        width={150}
+                        height={150}
                         priority
                     />
                 </Link>

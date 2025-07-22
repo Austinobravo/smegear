@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import localFont from "next/font/local"
 import "./globals.css";
-import WhatsAppIcon from "@/components/WhatsAppIcon";
+import WhatsAppIcon from "@/components/globals/WhatsAppIcon";
 import ScrollToTop from "@/components/globals/ScrollToTop";
-import Navbar from "@/components/Navbar";
+import { Toaster } from "@/components/ui/sonner"
+// import Navbar from "@/components/Navbar";
 const satoshi = localFont({
   src: [
     {
@@ -29,7 +30,7 @@ const satoshi = localFont({
 export const metadata: Metadata = {
   title: "SmeGear - A Digital Agency",
   description: "SmeGear - A Digital Agency",
-  verification:{
+  verification: {
     google: 'X0phLt90DZ0hKaDH3WyYbfbXJhuq7I3CDlR62i8RjJs'
   }
 };
@@ -51,13 +52,24 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${satoshi.className} 
        scroll-smooth`}>
-        <div className="md:pt-[72px] pb-[70px]">
+         <Toaster
+          richColors
+          toastOptions={{
+            classNames: {
+              success: 'bg-green-50 text-green-800 border border-green-300',
+              error: 'bg-red-50 text-red-800 border border-red-300',
+              info: 'bg-blue-50 text-blue-800 border border-blue-300',
+              warning: 'bg-yellow-50 text-yellow-800 border border-yellow-300',
+              default: 'bg-gray-50 text-gray-800 border border-gray-300',
+            },
+          }}
+        />
+
 
         {children}
-        </div>
-         <ScrollToTop />
-        <WhatsAppIcon/></body>
-      <GoogleAnalytics gaId="G-XGG153E7VN"/>
+
+      </body>
+      <GoogleAnalytics gaId="G-XGG153E7VN" />
     </html>
   );
 }
