@@ -6,6 +6,8 @@ import WhatsAppIcon from "@/components/globals/WhatsAppIcon";
 import ScrollToTop from "@/components/globals/ScrollToTop";
 import { Toaster } from "@/components/ui/sonner"
 // import Navbar from "@/components/Navbar";
+import { Jost } from 'next/font/google';
+
 const satoshi = localFont({
   src: [
     {
@@ -23,9 +25,17 @@ const satoshi = localFont({
     {
       path: './fonts/Satoshi-Medium.otf'
     },
+    
 
-  ]
+  ],
+   variable: "--font-satoshi", 
+    display: "swap",
 })
+
+const jost = Jost({
+  subsets: ['latin'],
+  variable: '--font-jost',
+});
 
 export const metadata: Metadata = {
   title: "SmeGear - A Digital Agency",
@@ -49,7 +59,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" >
       <body className={`${satoshi.className} 
        scroll-smooth`}>
         <Toaster

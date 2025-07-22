@@ -575,9 +575,13 @@ const courses = [
   },
 ].map((course) => ({
   ...course,
-  date: generateRandomDate(),
-  progress: generateRandomProgress(),
-  chapters: generateRandomChapters(),
+  // date: generateRandomDate(),
+  // progress: generateRandomProgress(),
+  // chapters: generateRandomChapters(),
+  date: new Date().toISOString()
+    .split("T")[0],
+  progress: 20,
+  chapters: 12,
   Category: determineCategory(course.title),
 }));
 

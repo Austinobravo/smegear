@@ -3,6 +3,7 @@
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle
@@ -65,6 +66,7 @@ export default function CourseCards() {
 
             <CardContent className="space-y-1 pt-4 px-4">
               <CardTitle className="text-xl font-semibold">{course.title}</CardTitle>
+              <CardDescription className="text-muted-foreground text-sm">{course.Category}</CardDescription>
               <p className="text-muted-foreground text-sm">{course.Category}</p>
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <Book size={14} />

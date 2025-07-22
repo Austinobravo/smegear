@@ -7,8 +7,7 @@ import React from 'react'
 
 const PagesWithNavLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html lang="en">
-      <body className={`
+      <main className={`
           scroll-smooth`}>
         <Navbar />
         <div className="md:pt-[72px] pb-[50px]">
@@ -17,9 +16,7 @@ const PagesWithNavLayout = ({ children }: { children: React.ReactNode }) => {
         </div>
        
         <Footer/>
-        </body>
-
-    </html>
+        </main>
   )
 }
 

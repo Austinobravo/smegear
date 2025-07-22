@@ -4,10 +4,6 @@ import jwt from "jsonwebtoken"
 import slug from "slug"
 
 
-export const comparePassword = async (currentPassword: string, hashPassword: string) => {
-    const isPasswordCorrect = bcrypt.compareSync(currentPassword, hashPassword)
-    return isPasswordCorrect
-}
 
 export const createVerificationToken = (email: string) => {
     const secret = process.env.JWT_SECRET!

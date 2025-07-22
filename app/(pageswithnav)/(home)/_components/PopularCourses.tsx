@@ -42,7 +42,7 @@ const PopularCourses = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {displayedCourses.map((course, index) => (
-          <Link href={`/courses/popularcourses/${course.id}`} className="no-underline">
+          <Link key={`course-${index}`} href={`/courses/popularcourses/${course.id}`} className="no-underline">
             <Card className="overflow-hidden shadow-lg rounded-xl transition-transform duration-300 bg-white py-0  hover:scale-[1.02] hover:shadow-xl cursor-pointer" key={index}>
               <Image
                 src={course.image}
