@@ -1,9 +1,17 @@
 "use client";
 
-
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { notFound } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+import LoginForm from "@/app/(pageswithnav)/(home)/_components/LoginForm";
+
 import {
 
   BookOpen,
@@ -24,14 +32,8 @@ import {
   ArrowRight,
 } from "lucide-react";
 import Image from "next/image";
-import { categories } from "@/data";
+import courses from "@/Data/popularcourseslist"
 import { ca } from "zod/v4/locales";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs'
 import {
   Dialog,
   DialogContent,
@@ -41,15 +43,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
-import LoginForm from "@/app/(pageswithnav)/(home)/_components/LoginForm";
 
-
+interface PageProps {
+  params: { browsecoursesdetails: string };
+}
 const curriculum = [
   {
     id: 'item-1',
@@ -120,15 +117,9 @@ export const overviewContent = [
     content: "Copyright registration course",
   },
 ];
-
-
-interface PageProps {
-  coursedetails: string | PromiseLike<string>;
-}
-
-export default async function ProductDetailPage({ params }: { params: PageProps }) {
-  const categoryId = parseInt(await params.coursedetails);
-  const category = categories.find((cat) => cat.id === categoryId);
+export default function ProductDetailPage({ params }: PageProps) {
+  const categoryId = Number(params.browsecoursesdetails);
+  const category = courses.find((cat) => cat.id === categoryId);
 
   if (!category) return notFound();
   return (

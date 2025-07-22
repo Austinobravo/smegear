@@ -6,7 +6,7 @@ import Link from 'next/link'
 const SignIn = () => {
   const background = "/hero2.webp"
   return (
-    <section className='space-y-10 '>
+    <section className='space-y-5 mb-5'>
       <PageHeader title="DASHBOARD"
         breadcrumb={['Home', 'Dashboard']}
         backgroundImage={background} />

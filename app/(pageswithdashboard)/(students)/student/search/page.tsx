@@ -1,8 +1,11 @@
 import React from 'react'
+import CourseCards from './_components/courseSearch'
 
 const SearchPage = () => {
   return (
-    <div>SearchPage</div>
+    <section>
+      <CourseCards />
+    </section>
   )
 }
 

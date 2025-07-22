@@ -6,15 +6,15 @@ import { FileText } from "lucide-react"
 export default function LatestNewsHeader() {
   return (
     <section className="w-full py-40 px-4 md:px-28 bg-[#FEFFFE]">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:justify-between justify-center md:items-center gap-6">
         
         <div>
-          <div className="flex items-center gap-2 text-smegear-accent text-sm md:text-base font-medium uppercase">
+          <div className="flex items-center gap-2 text-smegear-accent text-[16px] md:text-lg font-medium uppercase justify-center md:justify-start">
             <FileText size={20} />
             <span>Our News & Blogs</span>
           </div>
           
-          <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mt-2">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 text-center">
             Latest News & Blogs
           </h2>
         </div>

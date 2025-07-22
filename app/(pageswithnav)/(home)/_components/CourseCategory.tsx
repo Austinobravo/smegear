@@ -16,6 +16,7 @@ import {
   Landmark,
   Pencil,
   ArrowRight,
+  BookText,
 } from "lucide-react";
 import Link from "next/link";
 import { categories } from "@/data";
@@ -26,19 +27,19 @@ const CourseCategories = () => {
     <div className="p-6 md:p-12 bg-[#FEFFFE]">
       <div className="mb-8 text-center flex flex-col items-center">
         <div className="flex items-center gap-2 justify-center">
-          <BookOpen className="w-7 h-5 text-smegear-secondary" />
-          <p className="text-[16px] leading-[26px] text-smegear-secondary uppercase font-medium">
+          <BookText className="text-smegear-accent" size={18} />
+          <p className="text-[16px] leading-[26px] text-smegear-accent uppercase font-semibold">
             Courses Categories
           </p>
         </div>
-        <h2 className="lg:text-4xl text-2xl font-bold mt-2">Explore Top Categories</h2>
+        <h2 className="lg:text-4xl text-3xl font-bold mt-2 text-smegear-secondary">Explore Top Categories</h2>
       </div>
 
       <div className="relative">
         <Swiper
           modules={[Navigation, Autoplay]}
           spaceBetween={24}
-          speed={1200}
+          speed={300}
           slidesPerView={1.2}
           loop={true}
           autoplay={{ delay: 5000, disableOnInteraction: false }}
@@ -63,7 +64,7 @@ const CourseCategories = () => {
                   </p>
 
                   <Link href={`/courses/${category.id}`}>
-                    <Button className="mt-4 bg-smegear-secondary text-white text-[14px] leading-[14px] uppercase" variant="default">
+                    <Button className="mt-4 bg-smegear-secondary text-white text-[14px] leading-[14px] uppercase " variant="default">
                       Learn More
                       <ArrowRight size={20} className="ml-2" />
                     </Button>

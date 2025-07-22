@@ -16,7 +16,8 @@ import {
   SignalHigh,
   Clock,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  BookText
 } from "lucide-react";
 
 
@@ -31,10 +32,11 @@ const CoursesCarousel = () => {
     <div className="bg-[#F4F5F4] py-16 px-4 md:px-12">
       <div className="flex md:justify-between flex-col items-center mb-8 md:flex-row">
         <div className="text-center md:text-left mb-4 md:mb-0">
-          <p className="text-sm uppercase text-smegear-accent font-semibold">
+          <p className="text-[16px] uppercase text-smegear-accent font-semibold flex md:justify-start justify-center gap-1 items-center">
+            <BookText size={18} />
             Popular Courses
           </p>
-          <h2 className="md:text-4xl text-2xl font-bold mt-2 text-gray-800">
+          <h2 className="md:text-4xl text-3xl font-bold mt-2 text-smegear-secondary">
             Our Popular Courses
           </h2>
         </div>
@@ -74,7 +76,7 @@ const CoursesCarousel = () => {
           {displayedCourses.map((course, index) => (
             <SwiperSlide key={index}>
               <Link href={`/courses/popularcourses/${course.id}`} className="no-underline">
-                <Card className="overflow-hidden shadow-lg rounded-xl transition-transform duration-300 bg-white">
+                <Card className="overflow-hidden shadow-lg rounded-xl transition-transform duration-300 bg-white py-0">
                   <Image
                     src={course.image}
                     alt={course.title}
@@ -123,7 +125,7 @@ const CoursesCarousel = () => {
                           {course.price}
                         </p>
                         {course.oldPrice && (
-                          <p className="line-through text-sm text-gray-400">
+                          <p className="line-through  text-lg  text-gray-400 ">
                             {course.oldPrice}
                           </p>
                         )}

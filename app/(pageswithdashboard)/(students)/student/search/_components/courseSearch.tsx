@@ -1,49 +1,48 @@
-import React from "react";
+"use client";
+import React, { useState, useEffect, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useSearchParams } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import {
-  Clock3,
-  BookText,
-  Users,
-  BarChart3,
-  BadgeCheck,
-  ArrowRight,
-  BookOpen,
-  SignalHigh,
   Clock,
-
+  BookOpen,
+  Users,
+  SignalHigh,
+  Search,
+  X
 } from "lucide-react";
 import Image from "next/image";
-import courses from "@/Data/popularcourseslist"
+import courses from "@/Data/popularcourseslist";
 import Link from "next/link";
+import { Input } from "@/components/ui/input";
 
-
-// ...existing code...
 const PopularCourses = () => {
-  // Only display the first 6 courses
-  const displayedCourses = courses.slice(0, 6);
+ const searchParams = useSearchParams();
+const query = searchParams.get("q")?.toLowerCase() || "";
+
+const filteredCourses = courses.filter(course =>
+  course.title.toLowerCase().includes(query)
+);
+ 
+
+
 
   return (
-    <div className="bg-[#F4F5F4] py-16 px-4 md:px-12">
-      <div className="flex md:justify-between flex-col items-center mb-8 md:flex-row">
-        <div className="text-center md:text-left mb-4 md:mb-0">
-          <p className="text-[16px] uppercase text-smegear-accent font-semibold flex justify-center gap-1 items-center md:justify-start ">
-            <BookText size={18} />
-            Popular Courses
-          </p>
-          <h2 className="md:text-4xl text-3xl font-bold mt-2 text-smegear-secondary">
-            Our Popular Courses
+    <div className=" p-4 space-y-8">
+      <h2 className="text-2xl   text-gray-800 font-bold  ">
+            Search Courses
           </h2>
-        </div>
-        <Link href="/courses">
-        <Button className="px-9  py-7 bg-smegear-secondary text-white font-semibold uppercase">View All Courses →</Button>
-        </Link>
-      </div>
 
+      {/* Courses Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {displayedCourses.map((course, index) => (
-          <Link href={`/courses/popularcourses/${course.id}`} className="no-underline">
-            <Card className="overflow-hidden shadow-lg rounded-xl transition-transform duration-300 bg-white py-0  hover:scale-[1.02] hover:shadow-xl cursor-pointer" key={index}>
+        {filteredCourses.map((course, index) => (
+          <Link
+            href={`/student/search/${course.id}`}
+            className="no-underline"
+            key={index}
+          >
+            <Card className="overflow-hidden shadow-lg rounded-xl transition-transform duration-300 bg-white hover:scale-[1.02] hover:shadow-xl pb-4 pt-0">
               <Image
                 src={course.image}
                 alt={course.title}
@@ -51,7 +50,7 @@ const PopularCourses = () => {
                 height={300}
                 className="w-full h-48 object-cover"
               />
-              <CardContent className="p-6 space-y-4">
+              <CardContent className="px-6 space-y-4">
                 <div className="flex items-center gap-1 text-yellow-500">
                   {Array(5).fill(0).map((_, i) => (
                     <svg
@@ -92,7 +91,7 @@ const PopularCourses = () => {
                       {course.price}
                     </p>
                     {course.oldPrice && (
-                      <p className="line-through text-lg  text-gray-400">
+                      <p className="line-through text-sm text-gray-400">
                         {course.oldPrice}
                       </p>
                     )}
@@ -103,6 +102,15 @@ const PopularCourses = () => {
           </Link>
         ))}
       </div>
+
+      {/* View All Courses Button */}
+      {/* <div className="flex justify-center">
+        <Link href="/courses">
+          <Button className="px-9 py-7 bg-smegear-secondary text-white font-semibold uppercase hover:bg-smegear-accent">
+            View All Courses →
+          </Button>
+        </Link>
+      </div> */}
     </div>
   );
 };

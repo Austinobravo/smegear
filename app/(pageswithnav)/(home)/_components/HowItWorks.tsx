@@ -56,8 +56,8 @@ export default function HowItWorks() {
 
 
             <div className="mt-6">
-              <h3 className="text-lg md:text-xl font-bold text-gray-900">{step.title}</h3>
-              <p className="text-gray-600 text-base leading-relaxed mt-2">
+              <h3 className="text-xl md:text-xl font-bold text-gray-900">{step.title}</h3>
+              <p className="text-gray-600 text-lg leading-relaxed mt-2">
                 {step.desc}
               </p>
             </div>
