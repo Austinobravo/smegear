@@ -25,7 +25,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Enter a valid email address" }),
+  email: z.string().min(1, { message: "This field is required" }),
   password: z.string().min(4, { message: "Password is required" }),
   remember: z.boolean().optional(),
 })
@@ -173,7 +173,7 @@ export default function LoginForm() {
               
               <Button
                 type="submit"
-                className="w-full bg-smegear-secondary hover:bg-smegear-accent text-white font-semibold py-6"
+                className="w-full bg-smegear-secondary disabled:cursor-not-allowed hover:bg-smegear-accent text-white font-semibold py-6"
                 disabled={isSubmitting}
               >
                 {isSubmitting ?

@@ -10,6 +10,7 @@ import z from "zod";
 const CreateUserSchema = z.object({
     firstName: z.string().min(1, {message: "This field is mandatory"}).refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
     lastName: z.string().min(1, {message: "This field is mandatory"}).refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
+    username: z.string().min(1, {message: "This field is mandatory"}).refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
     email: z.string().email({message: "Invalid email"}).min(1, {message: "This field is mandatory"}).refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
     confirmPassword: z.string().min(1, {message: "This field is mandatory"}).refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
     password: z.string().min(1, {message: "This field is mandatory"}).refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
@@ -34,6 +35,7 @@ const CreateUserSchema = z.object({
  *             required:
  *               - email
  *               - password
+ *               - username
  *             properties:
  *               email:
  *                 type: string
@@ -41,6 +43,8 @@ const CreateUserSchema = z.object({
  *               firstName:
  *                 type: string
  *               lastName:
+ *                 type: string
+ *               username:
  *                 type: string
  *               password:
  *                 type: string
@@ -75,12 +79,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Invalid data", errors: parsed.error.flatten() }, { status: 400 });
     }
 
-    const { email, firstName, lastName, password, role } = parsed.data;
+    const { email, firstName, lastName, password, role, username } = parsed.data;
 
 
     // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
+    const existingUser = await prisma.user.findFirst({
+      where:{
+          OR: [
+          {
+              email: email
+          },
+          {
+              username: email
+          }
+          ]
+      },
     });
 
     if (existingUser) {
@@ -96,6 +109,7 @@ export async function POST(req: Request) {
         email,
         firstName,
         lastName,
+        username,
         passwordHash: hashedPassword,
         role: role || "STUDENT",
       },
