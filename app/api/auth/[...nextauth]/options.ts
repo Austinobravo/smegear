@@ -27,7 +27,7 @@ export const options:NextAuthOptions = {
                 if(credentials.email.trim().length <= 1 || credentials.password.trim().length <= 1) throw new Error('Invalid credentials')
 
                 if (credentials.email.match(emojiRegex) || credentials.password.match(emojiRegex)) {
-                throw new Error("Invalid emoji credentials");
+                throw new Error("Invalid credentials");
                 }
 
                 const user = await prisma.user.findUnique({
@@ -37,7 +37,7 @@ export const options:NextAuthOptions = {
                     
                 })
 
-                if (!user) throw new Error("Invalid user credentials")
+                if (!user) throw new Error("Invalid credentials")
 
                 const isCorrectPassword = await comparePassword(credentials.password, user.passwordHash.trim())
                 if(!isCorrectPassword) throw new Error("Invalid credentials")

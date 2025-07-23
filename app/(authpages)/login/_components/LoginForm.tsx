@@ -1,6 +1,6 @@
 'use client'
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -20,6 +20,9 @@ import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Link from "next/link"
+import { signIn, useSession } from 'next-auth/react'
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Enter a valid email address" }),
@@ -31,6 +34,9 @@ type FormSchema = z.infer<typeof formSchema>
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const STORAGE_KEY = "rememberedUser";
+  const router = useRouter()
+
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,10 +46,55 @@ export default function LoginForm() {
     },
   })
 
-  function onSubmit(values: FormSchema) {
+  async function onSubmit(values: FormSchema) {
     console.log(values)
+     try{
+      const data = await signIn("credentials", 
+        {
+          username: values.email.trim(),
+          password: values.password.trim(),
+          redirect: false
+        }
+      )
+
+      if (data?.error) return  toast.error("Error", {
+        description: data.error,
+    })
+
+    if(data?.url){
+        toast.success("Success", {
+          description: "Login successful.",
+      })
+
+      if (values.remember) {
+        localStorage.setItem(STORAGE_KEY, values.email.trim());
+      } else {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+
+      return router.push("/dashboard")
+
+    } 
+
+
+
+    }catch(error: any){
+      toast.error("Error", {
+        description: error,
+    })
+
+    }
   }
 
+  const isSubmitting = form.formState.isSubmitting
+
+    React.useEffect(() => {
+    const savedEmail = localStorage.getItem(STORAGE_KEY)
+    if(savedEmail){
+      form.setValue("email", savedEmail)
+      form.setValue("remember", true)
+    }
+  }, [])
   return (
     <div className="flex items-center justify-center min-h-[50vh] px-4 bg-white">
       <Card className="w-full max-w-md shadow-lg border-2">
@@ -123,8 +174,13 @@ export default function LoginForm() {
               <Button
                 type="submit"
                 className="w-full bg-smegear-secondary hover:bg-smegear-accent text-white font-semibold py-6"
+                disabled={isSubmitting}
               >
-                SIGN IN
+                {isSubmitting ?
+                <div className="loader"></div>
+                :
+                <span>SIGN IN</span>
+                }
               </Button>
 
               
