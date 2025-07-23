@@ -8,6 +8,7 @@ import ImageForm from './_components/image-form'
 import CategoryForm from './_components/category-form'
 import PriceForm from './_components/price-form'
 import AttachmentForm from './_components/attachment-form'
+import ChaptersForm from './_components/chapters-form'
 const AdminCoursesPage = () => {
 
   // Map categories to match the expected shape for CategoryForm
@@ -20,7 +21,7 @@ const AdminCoursesPage = () => {
             Course setup
           </h1>
           <span>
-            Complete all fields (1/5)
+            Complete all fields (1/6)
           </span>
         </div>
       </div>
@@ -55,9 +56,10 @@ const AdminCoursesPage = () => {
                 Course chapters
               </h2>
             </div>
-            <div>
-              TODO:Chapters
-            </div>
+            <ChaptersForm
+
+
+            />
           </div>
           <div>
             <div className='flex items-center gap-x-2'>
