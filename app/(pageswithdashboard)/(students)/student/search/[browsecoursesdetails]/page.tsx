@@ -1,5 +1,3 @@
-"use client";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { notFound } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -106,7 +104,7 @@ const instructorInfo = {
   ],
 };
 
-export const overviewContent = [
+const overviewContent = [
   {
     heading: "About The Course",
     content:

@@ -1,6 +1,3 @@
-"use client";
-
-
 import { notFound } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -109,7 +106,7 @@ const instructorInfo = {
   ],
 };
 
-export const overviewContent = [
+const overviewContent = [
   {
     heading: "About The Course",
     content:
