@@ -47,6 +47,7 @@ export function getApiDocs() {
         description: "Local dev server",
       },
       ]
+    
     },
   });
 }
