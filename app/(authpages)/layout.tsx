@@ -7,8 +7,7 @@ import React, { PropsWithChildren } from 'react'
 type Props = PropsWithChildren<{}>
 const PagesWithNavLayout = ({ children }: Props) => {
   return (
-    <html lang="en">
-      <body className={`
+      <main className={`
           scroll-smooth`}>
         <Navbar />
         <div className="md:pt-[72px] ">
@@ -17,9 +16,7 @@ const PagesWithNavLayout = ({ children }: Props) => {
         </div>
         
         <Footer/>
-        </body>
-
-    </html>
+        </main>
   )
 }
 
