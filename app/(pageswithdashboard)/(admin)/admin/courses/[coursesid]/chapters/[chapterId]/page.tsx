@@ -8,6 +8,7 @@ import ChapterAccessForm from './_components/chapter-access-form';
 import Items from '@/Data/items';
 import ChapterVideoForm from './_components/chapter-video-form';
 import Banner from '@/components/banner';
+import ChapterActions from './_components/chapter-actions';
 interface PageProps {
   params: { chapterId: string };
 }
@@ -55,7 +56,7 @@ const ChapterId = ({ params }: PageProps) => {
               </div>
               <ChapterActions disabled={!isComplete}
                 chaptersId={chaptersId}
-                isPublished={category?.isPublished}
+                checkPublished={category?.isPublished || false}
               />
 
             </div>
