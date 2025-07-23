@@ -40,11 +40,11 @@ export const createNewSlug = async (title: string) => {
     }
 
     if(existingCourseSlugs.length > 0){
-        const verifySuffix = existingCourseSlugs.map(({slug}) => {
+        const verifySuffix = existingCourseSlugs.map(({slug}:{slug:string}) => {
             const match = slug.match(new RegExp(`^${baseSlug}-(\\d+)$`));
 
             return match ? parseInt(match[1], 10) : null
-        }).filter((value):value is number => value !== null)
+        }).filter((value:any):value is number => value !== null)
 
         if(verifySuffix.length > 0){
             const maxSuffix = Math.max(...verifySuffix)

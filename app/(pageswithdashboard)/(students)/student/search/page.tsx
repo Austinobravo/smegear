@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import CourseCards from './_components/courseSearch'
 
 const SearchPage = () => {
   return (
-    <section>
-      <CourseCards />
-    </section>
+     <Suspense fallback={<div className='text-center'>loading...</div>}>
+        <CourseCards />
+    </Suspense>
   )
 }
 

@@ -4,7 +4,6 @@ import { options } from "@/app/api/auth/[...nextauth]/options";
 import { NextRequest } from "next/server";
 import { User } from "./generated/prisma";
 
-
 export const getCurrentUser = async (req?: NextRequest): Promise<User | null> => {
   try {
     // 1 Try getServerSession first

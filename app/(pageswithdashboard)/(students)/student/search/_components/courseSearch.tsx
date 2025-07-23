@@ -22,7 +22,7 @@ const PopularCourses = () => {
 const query = searchParams.get("q")?.toLowerCase() || "";
 
 const filteredCourses = courses.filter(course =>
-  course.title.toLowerCase().includes(query)
+  course.title.toLowerCase().includes(query.toLocaleLowerCase())
 );
  
 

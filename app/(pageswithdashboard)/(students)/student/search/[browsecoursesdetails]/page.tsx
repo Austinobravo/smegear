@@ -1,5 +1,3 @@
-"use client";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { notFound } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -45,7 +43,7 @@ import {
 
 
 interface PageProps {
-  params: { browsecoursesdetails: string };
+  params: Promise<{ browsecoursesdetails: string }>;
 }
 const curriculum = [
   {
@@ -106,7 +104,7 @@ const instructorInfo = {
   ],
 };
 
-export const overviewContent = [
+const overviewContent = [
   {
     heading: "About The Course",
     content:
@@ -117,8 +115,8 @@ export const overviewContent = [
     content: "Copyright registration course",
   },
 ];
-export default function ProductDetailPage({ params }: PageProps) {
-  const categoryId = Number(params.browsecoursesdetails);
+export default async function ProductDetailPage({ params }: PageProps) {
+  const categoryId = Number((await params).browsecoursesdetails);
   const category = courses.find((cat) => cat.id === categoryId);
 
   if (!category) return notFound();

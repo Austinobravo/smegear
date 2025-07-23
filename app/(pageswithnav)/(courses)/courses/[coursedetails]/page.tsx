@@ -1,6 +1,3 @@
-"use client";
-
-
 import { notFound } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -109,7 +106,7 @@ const instructorInfo = {
   ],
 };
 
-export const overviewContent = [
+const overviewContent = [
   {
     heading: "About The Course",
     content:
@@ -122,12 +119,13 @@ export const overviewContent = [
 ];
 
 
-interface PageProps {
-  coursedetails: string | PromiseLike<string>;
+interface Props {
+  // coursedetails: string | PromiseLike<string>;
+   params: Promise<{ coursedetails: string }>;
 }
 
-export default async function ProductDetailPage({ params }: { params: PageProps }) {
-  const categoryId = parseInt(await params.coursedetails);
+export default async function ProductDetailPage({ params }: Props) {
+  const categoryId = parseInt((await params).coursedetails);
   const category = categories.find((cat) => cat.id === categoryId);
 
   if (!category) return notFound();
