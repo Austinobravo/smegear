@@ -3,7 +3,7 @@
 import ConfirmModal from '@/components/modals/confirm-modals';
 import { Button } from '@/components/ui/button';
 import { Trash } from 'lucide-react';
-import React from 'react'
+import React, { useState } from 'react'
 
 
 interface ChapterActionsProps {
@@ -13,6 +13,8 @@ interface ChapterActionsProps {
 }
 
 const ChapterActions = ({ disabled, chaptersId, checkPublished }: ChapterActionsProps) => {
+
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <div className='flex items-center gap-x-2'>
       <Button onClick={() => { }}

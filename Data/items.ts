@@ -3,6 +3,7 @@ type ChapterItem = {
   name: string;
   isPublished: boolean;
   free: boolean;
+  price?: number; 
 };
 
 
@@ -11,25 +12,29 @@ type ChapterItem = {
     id: 1,
     name: "Intro",
     isPublished: false,
-    free: false
+    free: false,
+    price:20000
   },
   {
     id: 2,
     name: "ChapterOne",
     isPublished: true,
-    free: true
+    free: true,
+     price:35000
   },
   {
     id: 3,
     name: "ChapterTwo",
     isPublished: false,
-    free: false
+    free: false,
+     price:50000
   },
   {
     id: 4,
     name: "Outro",
     isPublished: true,
-    free: true
+    free: true,
+      price:15000
   },
 ];
 

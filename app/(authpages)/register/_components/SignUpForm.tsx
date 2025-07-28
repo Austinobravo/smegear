@@ -15,12 +15,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { register } from "module";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z
   .object({
     firstName: z.string().min(1, "First name is required"),
     lastName: z.string().min(1, "Last name is required"),
-    username: z.string().min(1, "User name is required"),
+
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string().min(6, "Please confirm your password"),
@@ -31,6 +35,7 @@ const formSchema = z
   });
 
 export default function RegistrationForm() {
+  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const form = useForm({
@@ -38,15 +43,57 @@ export default function RegistrationForm() {
     defaultValues: {
       firstName: "",
       lastName: "",
-      username: "",
+
       email: "",
       password: "",
       confirmPassword: "",
     },
   });
+  const isSubmitting = form.formState.isSubmitting
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const payload = {
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      password: values.password,
+      confirmPassword: values.confirmPassword
+    }
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, payload)
+      if (response.status === 200) {
+        console.log(response.data)
+        toast.success("Registration successful", {
+          description: response.data.message,
+        });
+        router.push("/student")
+      }
+      form.reset()
+    } catch (error: any) {
+      // Safely extract error message
+      let errorMessage = "Something went wrong. Please try again.";
 
-  function onSubmit(values: any) {
-    console.log("Form Data:", values);
+      // Handle Axios-like or structured error objects
+      if (error?.response?.data) {
+        const rawMessage = error.response.data.error || error.response.data.message;
+
+        errorMessage =
+          typeof rawMessage === "string"
+            ? rawMessage
+            : JSON.stringify(rawMessage);
+      }
+
+      // Handle NextAuth or general thrown Errors
+      else if (typeof error === "string") {
+        errorMessage = error;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+
+      // Show toast
+      toast.error("Error", {
+        description: errorMessage,
+      });
+    }
   }
 
   return (
@@ -88,22 +135,7 @@ export default function RegistrationForm() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="User Name"
-                    className="h-14 text-lg border-2"
-                  />
-                </FormControl>
-                <FormMessage className="text-red-500 text-sm" />
-              </FormItem>
-            )}
-          />
+
           <FormField
             control={form.control}
             name="email"

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import localFont from "next/font/local"
+
 import "./globals.css";
 import WhatsAppIcon from "@/components/globals/WhatsAppIcon";
 import ScrollToTop from "@/components/globals/ScrollToTop";
@@ -8,29 +8,40 @@ import { Toaster } from "@/components/ui/sonner"
 // import Navbar from "@/components/Navbar";
 import { Jost } from 'next/font/google';
 
+import localFont from 'next/font/local';
+
 const satoshi = localFont({
   src: [
     {
-      path: './fonts/Satoshi-Regular.otf'
+      path: './fonts/Satoshi-Light.otf',
+      weight: '300',
+      style: 'normal',
     },
     {
-      path: './fonts/Satoshi-Bold.otf'
+      path: './fonts/Satoshi-Regular.otf',
+      weight: '400',
+      style: 'normal',
     },
     {
-      path: './fonts/Satoshi-Light.otf'
+      path: './fonts/Satoshi-Medium.otf',
+      weight: '500',
+      style: 'normal',
     },
     {
-      path: './fonts/Satoshi-Black.otf'
+      path: './fonts/Satoshi-Bold.otf',
+      weight: '700',
+      style: 'normal',
     },
     {
-      path: './fonts/Satoshi-Medium.otf'
+      path: './fonts/Satoshi-Black.otf',
+      weight: '900',
+      style: 'normal',
     },
-    
-
   ],
-   variable: "--font-satoshi", 
-    display: "swap",
-})
+  variable: '--font-satoshi',
+  display: 'swap',
+});
+
 
 const jost = Jost({
   subsets: ['latin'],
@@ -60,8 +71,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" >
-      <body className={`${satoshi.className} 
-       scroll-smooth`}>
+      <body className={`${satoshi.variable} font-satoshi scroll-smooth`}>
+
         <Toaster
           richColors
           toastOptions={{

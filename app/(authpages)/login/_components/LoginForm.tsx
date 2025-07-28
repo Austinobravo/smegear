@@ -48,8 +48,8 @@ export default function LoginForm() {
 
   async function onSubmit(values: FormSchema) {
     console.log(values)
-     try{
-      const data = await signIn("credentials", 
+    try {
+      const data = await signIn("credentials",
         {
           username: values.email.trim(),
           password: values.password.trim(),
@@ -57,40 +57,61 @@ export default function LoginForm() {
         }
       )
 
-      if (data?.error) return  toast.error("Error", {
+      if (data?.error) return toast.error("Error", {
         description: data.error,
-    })
-
-    if(data?.url){
-        toast.success("Success", {
-          description: "Login successful.",
       })
 
-      if (values.remember) {
-        localStorage.setItem(STORAGE_KEY, values.email.trim());
-      } else {
-        localStorage.removeItem(STORAGE_KEY);
+      if (data?.url) {
+        toast.success("Success", {
+          description: "Login successful.",
+        })
+
+        if (values.remember) {
+          localStorage.setItem(STORAGE_KEY, values.email.trim());
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+        }
+
+        return router.push("/dashboard")
+
       }
 
-      return router.push("/dashboard")
-
-    } 
 
 
+    } catch (error: any) {
+  // Safely extract error message
+  let errorMessage = "Something went wrong. Please try again.";
 
-    }catch(error: any){
-      toast.error("Error", {
-        description: error,
-    })
+  // Handle Axios-like or structured error objects
+  if (error?.response?.data) {
+    const rawMessage = error.response.data.error || error.response.data.message;
 
-    }
+    errorMessage =
+      typeof rawMessage === "string"
+        ? rawMessage
+        : JSON.stringify(rawMessage);
+  }
+
+  // Handle NextAuth or general thrown Errors
+  else if (typeof error === "string") {
+    errorMessage = error;
+  } else if (error?.message) {
+    errorMessage = error.message;
+  }
+
+  // Show toast
+  toast.error("Error", {
+    description: errorMessage,
+  });
+}
+
   }
 
   const isSubmitting = form.formState.isSubmitting
 
-    React.useEffect(() => {
+  React.useEffect(() => {
     const savedEmail = localStorage.getItem(STORAGE_KEY)
-    if(savedEmail){
+    if (savedEmail) {
       form.setValue("email", savedEmail)
       form.setValue("remember", true)
     }
@@ -103,7 +124,7 @@ export default function LoginForm() {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-              
+
               <FormField
                 control={form.control}
                 name="email"
@@ -117,7 +138,7 @@ export default function LoginForm() {
                 )}
               />
 
-             
+
               <FormField
                 control={form.control}
                 name="password"
@@ -133,7 +154,7 @@ export default function LoginForm() {
                         />
                       </FormControl>
 
-                     
+
                       <div
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
                         onClick={() => setShowPassword(prev => !prev)}
@@ -147,7 +168,7 @@ export default function LoginForm() {
               />
 
 
-              
+
               <div className="flex items-center justify-between text-sm">
                 <FormField
                   control={form.control}
@@ -165,25 +186,25 @@ export default function LoginForm() {
                     </FormItem>
                   )}
                 />
-                <Link href="#" className="text-xs font-semibold text-smegear-accent hover:underline">
+                <Link href="/forget-password" className="text-xs font-semibold text-smegear-accent hover:underline">
                   FORGOT PASSWORD?
                 </Link>
               </div>
 
-              
+
               <Button
                 type="submit"
                 className="w-full bg-smegear-secondary hover:bg-smegear-accent text-white font-semibold py-6"
                 disabled={isSubmitting}
               >
                 {isSubmitting ?
-                <div className="loader"></div>
-                :
-                <span>SIGN IN</span>
+                  <div className="loader"></div>
+                  :
+                  <span>SIGN IN</span>
                 }
               </Button>
 
-              
+
               <p className="text-center text-sm text-gray-600">
                 Don’t have an account?{" "}
                 <Link href="/register" className="font-semibold text-smegear-accent hover:underline">

@@ -45,7 +45,7 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-[50vh] px-4 bg-white">
+    <div className="flex items-center justify-center min-h-[50vh] bg-white">
       <Card className="w-full max-w-md border-none ">
         <CardContent className="py-10 space-y-10">
           <h2 className="text-xl font-semibold">Hi, Welcome back!</h2>

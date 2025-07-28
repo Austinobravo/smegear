@@ -1,9 +1,8 @@
 import { PrismaClient } from "@/lib/generated/prisma";
 
 if (!process.env.PRISMA_DISABLE_PREPARED_STATEMENTS) {
-  process.env.PRISMA_DISABLE_PREPARED_STATEMENTS = 'true';
+  process.env.PRISMA_DISABLE_PREPARED_STATEMENTS = "true";
 }
-
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
