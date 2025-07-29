@@ -24,6 +24,7 @@ const VerifyEmailPage = () => {
         router.push("/login");
       } catch (error) {
         toast.error("Verification failed. Token may have expired");
+        router.push("/resend-verification");
 
       } finally {
         setLoading(false)
@@ -38,7 +39,7 @@ const VerifyEmailPage = () => {
           <Loader2 className='animate-spin' />
           <p>Verifying email...</p>
         </div>
-      ) : (<p className='text-center'>Verification complete.</p>)}
+      ) : null}
 
     </div>
   )

@@ -66,9 +66,12 @@ export default function ResendVerificationPage() {
             )}
           />
 
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Sending..." : "Send Verification Email"}
-          </Button>
+          <div className="w-1/2 mx-auto">
+            <Button type="submit" className="w-full bg-smegear-secondary hover:bg-smegear-accent" disabled={loading}>
+              {loading ? "Sending..." : "Send Verification Email"}
+            </Button>
+          </div>
+
         </form>
       </Form>
     </div>
