@@ -14,7 +14,7 @@ const CreateUserSchema = z.object({
     email: z.string().email({message: "Invalid email"}).min(1, {message: "This field is mandatory"}).refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
     confirmPassword: z.string().min(1, {message: "This field is mandatory"}).refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
     password: z.string().min(1, {message: "This field is mandatory"}).refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
-   role: z.enum(["STUDENT", "INSTRUCTOR", "ADMIN"]).optional(),
+   role: z.enum(["STUDENT", "INSTRUCTOR", "ADMIN"]).optional().default("STUDENT"),
   }).refine((data) => data.confirmPassword === data.password, {message: "Password don't match", path: ['confirmPassword']})
 
 
