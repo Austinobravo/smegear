@@ -79,31 +79,31 @@ export default function LoginForm() {
 
 
     } catch (error: any) {
-  // Safely extract error message
-  let errorMessage = "Something went wrong. Please try again.";
+      // Safely extract error message
+      let errorMessage = "Something went wrong. Please try again.";
 
-  // Handle Axios-like or structured error objects
-  if (error?.response?.data) {
-    const rawMessage = error.response.data.error || error.response.data.message;
+      // Handle Axios-like or structured error objects
+      if (error?.response?.data) {
+        const rawMessage = error.response.data.error || error.response.data.message;
 
-    errorMessage =
-      typeof rawMessage === "string"
-        ? rawMessage
-        : JSON.stringify(rawMessage);
-  }
+        errorMessage =
+          typeof rawMessage === "string"
+            ? rawMessage
+            : JSON.stringify(rawMessage);
+      }
 
-  // Handle NextAuth or general thrown Errors
-  else if (typeof error === "string") {
-    errorMessage = error;
-  } else if (error?.message) {
-    errorMessage = error.message;
-  }
+      // Handle NextAuth or general thrown Errors
+      else if (typeof error === "string") {
+        errorMessage = error;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
 
-  // Show toast
-  toast.error("Error", {
-    description: errorMessage,
-  });
-}
+      // Show toast
+      toast.error("Error", {
+        description: errorMessage,
+      });
+    }
 
   }
 
