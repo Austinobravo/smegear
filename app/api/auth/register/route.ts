@@ -52,7 +52,7 @@ const CreateUserSchema = z.object({
  *                 type: string
  *     responses:
  *       201:
- *         description: User created successfully, PLease verify your email.
+ *         description: User created successfully, Please verify your email.
  *         content:
  *           application/json:
  *             schema:
@@ -79,9 +79,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Invalid data", errors: parsed.error.flatten() }, { status: 400 });
     }
 
-    const { email, firstName, lastName, password, role, username } = parsed.data;
+    const { firstName, lastName, password, role, username } = parsed.data;
 
-
+    const email = parsed.data.email.toLowerCase()
     // Check if user already exists
     const existingUser = await prisma.user.findFirst({
       where:{
@@ -90,7 +90,7 @@ export async function POST(req: Request) {
               email: email
           },
           {
-              username: email
+              username: username
           }
           ]
       },
