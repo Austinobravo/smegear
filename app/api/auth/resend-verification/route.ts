@@ -25,7 +25,7 @@ import { BASE_URL, createVerificationToken } from "@/lib/globals"
  *                 type: string
  *                 format: email
  *     responses:
- *       201:
+ *       200:
  *         description: Verification email sent.
  *       400:
  *         description: Invalid request
