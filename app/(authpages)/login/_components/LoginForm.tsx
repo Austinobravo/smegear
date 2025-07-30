@@ -51,7 +51,7 @@ export default function LoginForm() {
      try{
       const data = await signIn("credentials", 
         {
-          username: values.email.trim(),
+          email: values.email.trim(),
           password: values.password.trim(),
           redirect: false
         }
