@@ -1,8 +1,7 @@
-
-import { NextResponse } from "next/server"
-import prisma from "@/prisma/prisma"
-import { sendEmail } from "@/emails/mailer" 
-import { BASE_URL, createVerificationToken } from "@/lib/globals"
+import { NextResponse } from "next/server";
+import prisma from "@/prisma/prisma";
+import { sendEmail } from "@/emails/mailer";
+import { BASE_URL, createVerificationToken } from "@/lib/globals";
 
 /**
  * @swagger
@@ -35,42 +34,50 @@ import { BASE_URL, createVerificationToken } from "@/lib/globals"
  *                   type: string
  */
 export async function POST(req: Request) {
-  let { email } = await req.json()
-  email = email.toLowerCase()
+  let { email } = await req.json();
+  email = email.toLowerCase();
 
-//   await rateLimit(req);
+  //   await rateLimit(req);
 
   if (!email) {
-    return NextResponse.json({ message: "Email is required" }, { status: 400 })
+    return NextResponse.json({ message: "Email is required" }, { status: 400 });
   }
 
-  const user = await prisma.user.findUnique({ where: { email, isEmailVerified: true } })
+  const user = await prisma.user.findUnique({
+    where: { email, isEmailVerified: true },
+  });
 
   if (!user) {
-    return NextResponse.json({ message: "If this email exists, a reset link has been sent" }, { status: 200 })
+    return NextResponse.json(
+      { message: "If this email exists, a reset link has been sent" },
+      { status: 200 }
+    );
   }
 
-
-  const token = createVerificationToken(user.email)
+  const token = createVerificationToken(user.email);
   const RESET_LINK = `${BASE_URL}/reset-password?token=${token}`;
 
   await prisma.user.update({
-      where:{
-        id: user?.id
-      },
-      data:{
-        verificationLink: RESET_LINK
-      }
-    })
+    where: {
+      id: user?.id,
+    },
+    data: {
+      verificationLink: RESET_LINK,
+    },
+  });
   await sendEmail({
     to: user.email,
     subject: "Reset Your Password!",
     template: "forgot-password",
-    data: { RESET_LINK, 
-        name: `${user.firstName} ${user.lastName}`,
-        year: new Date().getFullYear()
-     },
+    data: {
+      RESET_LINK,
+      name: `${user.firstName} ${user.lastName}`,
+      year: new Date().getFullYear(),
+      data: { RESET_LINK },
+    },
   });
 
-  return NextResponse.json({ message: "If this email exists, a reset link has been sent" })
+  return NextResponse.json({
+    message: "If this email exists, a reset link has been sent",
+  });
 }

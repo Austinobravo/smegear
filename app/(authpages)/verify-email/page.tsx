@@ -19,17 +19,17 @@ const VerifyEmailPage = () => {
     }
     const verifyEmail = async () => {
       try {
-        await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/verify-email`, { token })
-        toast.success("Email verified successfully");
-        router.push("/login");
-      } catch (error) {
-        toast.error("Verification failed. Token may have expired");
-        router.push("/resend-verification");
-
-      } finally {
-        setLoading(false)
-      }
-    }
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/verify-email?token=${token}`);
+    toast.success("Email verified successfully");
+    router.push("/login");
+  } catch (error) {
+    console.log(error);
+    toast.error("Verification failed. Token may have expired");
+    router.push("/resend-verification");
+  } finally {
+    setLoading(false);
+  }
+}
     verifyEmail()
   }, [searchParams, router])
   return (
