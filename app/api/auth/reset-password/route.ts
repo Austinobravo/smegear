@@ -112,16 +112,20 @@ export async function POST(req: Request) {
   
 
   if (!token || !newPassword) {
-    return NextResponse.json({ error: "Token and new password are required" }, { status: 400 });
+    return NextResponse.json({ message: "Token and new password are required" }, { status: 400 });
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { email: string };
-    const email = decoded.email;
+    const email = decoded.email.toLowerCase();
 
     const hashedPassword = await bcrypt.hash(newPassword, 12);
 
+    const existingUser = await prisma.user.findUnique({where: { email }})
+
+    if(!existingUser) return NextResponse.json({message: "User not found"}, {status: 404})
+
     const user = await prisma.user.update({
-      where: { email },
+      where: { email: existingUser.email },
       data: { passwordHash: hashedPassword,
         verificationLink: null
       },
@@ -143,6 +147,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: "Password reset successful" });
   } catch (err) {
-    return NextResponse.json({ error: "Invalid or expired token" }, { status: 400 });
+    return NextResponse.json({ message: "Invalid or expired token", error: err }, { status: 400 });
   }
 }
