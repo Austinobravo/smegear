@@ -72,7 +72,7 @@ export default function LoginForm() {
           localStorage.removeItem(STORAGE_KEY);
         }
 
-        return router.push("/dashboard")
+        return router.push("/student")
 
       }
 

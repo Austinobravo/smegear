@@ -11,20 +11,33 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import ChaptersList from './chapters-list';
-import Items from '@/Data/items';
-
-
-// interface DescriptionProps{
-//   initialData:Course
-//    courseId:string;
-//   
-//   
-// }
+import ChaptersList from './modules-list';
 
 
 
-const ChaptersForm = () => {
+interface ChaptersFormProps{
+  category: {
+    Title: string;
+    OverView:string;
+    id: number;
+    Modules: {
+      id: number;
+      ModuleTitle: string;
+      name: string;
+      lessons: {
+        id: string;
+        title: string;
+      }[];
+    }[];
+    isPublished: boolean;
+    free: boolean;
+    price: number;
+  } | undefined;
+}
+
+
+
+const ChaptersForm:React.FC<ChaptersFormProps> = ({category}) => {
   
   const [chapters, setIsChapters] = useState(false)
   const [isCreating, setIsCreating] = useState(false);
@@ -50,10 +63,10 @@ const ChaptersForm = () => {
   }
   return (
     <div className='mt-6 border bg-slate-100 rounded-md p-4'><div className='font-medium flex items-center justify-between'>
-      Course chapters
+      Course modules
       <Button onClick={toggleCreating} variant="ghost">
         {isCreating && (<>Cancel</>)}{!isCreating && (<><PlusCircle className='h-4 w-4 mr-2' />
-          Add a chapter
+          Add a module
         </>)}</Button>
     </div>
 
@@ -77,9 +90,9 @@ const ChaptersForm = () => {
           !chapters && "text-slate-500 italic"
            
         )}>
-     {Items.length===0 && "No chapters"}
+     {category?.Modules .length===0 && "No chapters"}
      <ChaptersList
-     Items={Items}
+     category={category}
      
      
      />

@@ -13,15 +13,17 @@ import { Textarea } from '@/components/ui/textarea';
 
 
 
-// interface DescriptionProps{
-//   initialData:Course
-//    courseId:string;
-//   
-//   
-// }
+interface TitleFormProps {
+  category: {
+    Title: string;
+    id: number;
+    OverView?: string;
+
+  } | undefined;
+}
 
 
-const DescriptionForm = () => {
+const DescriptionForm: React.FC<TitleFormProps> = ({ category }) => {
   const [isEditing, setIsEditing] = useState(false)
   const toggleEdit = () => setIsEditing((current) => !current)
   const formSchema = z.object({
@@ -48,10 +50,10 @@ const DescriptionForm = () => {
       Course description
       <Button onClick={toggleEdit} variant="ghost">
         {isEditing && (<>Cancel</>)}{!isEditing && (<><Pencil className='h-4 w-4 mr-2' />
-          Edit title
+          Edit description
         </>)}</Button>
     </div>
-      {!isEditing && (<p className='text-sm mt-2'>Initial Description</p>)}
+      {!isEditing && (<p className='text-sm mt-2'>{category?.OverView}</p>)}
       {isEditing && (<Form {...form}><form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 mt-4'>
         <FormField control={form.control} name="description" render={({ field }) => {
           return (<FormItem>
@@ -65,7 +67,7 @@ const DescriptionForm = () => {
         <Button disabled={!isValid || isSubmitting} type='submit'>
           Save
         </Button>
-        </form></Form>)}
+      </form></Form>)}
     </div>
   )
 }

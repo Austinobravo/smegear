@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import * as z from "zod";
 import axios from 'axios';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,15 +12,30 @@ import { toast } from 'sonner';
 
 
 
-// interface TitleFormProps{
-//   initialData:{
-//     title:string;
-//   };
-//   courseId:string;
+interface TitleFormProps {
+  category: {
+    Title: string;
+    id: number;
+    Modules: {
+      id: number;
+      ModuleTitle: string;
+      name: string;
+      lessons: {
+        id: string;
+        title: string;
+      }[];
+    }[];
+    isPublished: boolean;
+    free: boolean;
+    price: number;
+  } | undefined;
+}
+
+// interface ChapterAccessFormProps {
+//   chaptersId: number;
 // }
 
-
-const TitleForm = () => {
+const TitleForm: React.FC<TitleFormProps> = ({ category }) => {
   const [isEditing, setIsEditing] = useState(false)
   const toggleEdit = () => setIsEditing((current) => !current)
   const formSchema = z.object({
@@ -29,12 +44,18 @@ const TitleForm = () => {
     }),
   });
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: ""
-    },
-  })
+const form = useForm<z.infer<typeof formSchema>>({
+  resolver: zodResolver(formSchema),
+  defaultValues: {
+    title: category?.Title || "",
+  },
+});
+
+useEffect(() => {
+  if (category?.Title) {
+    form.reset({ title: category.Title });
+  }
+}, [category?.Title, form]);
   const { isSubmitting, isValid } = form.formState
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -50,7 +71,9 @@ const TitleForm = () => {
           Edit title
         </>)}</Button>
     </div>
-      {!isEditing && (<p className='text-sm mt-2'>Initial Title</p>)}
+       {!isEditing && (
+      <p className="text-sm mt-2">{category?.Title}</p>
+    )}
       {isEditing && (<Form {...form}><form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 mt-4'>
         <FormField control={form.control} name="title" render={({ field }) => {
           return (<FormItem>
@@ -64,7 +87,7 @@ const TitleForm = () => {
         <Button disabled={!isValid || isSubmitting} type='submit'>
           Save
         </Button>
-        </form></Form>)}
+      </form></Form>)}
     </div>
   )
 }

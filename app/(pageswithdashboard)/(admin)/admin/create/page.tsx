@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
-
+import Items from '@/Data/items';
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
   // description:z.string().min(1, "Description is required"),
@@ -27,15 +27,33 @@ const CreatePage = () => {
   })
   const { isSubmitting, isValid } = form.formState;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      // const response = await axios.post("/api/courses", values)
-      route.push(`/admin/courses/${1}`)
-      toast.success("Course Created");
+const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const payload = {
+    title: values.title,
+    // include others if required:
+    // description: values.description,
+    // imageUrl: values.imageUrl,
+    // price: Number(values.price),
+    // published: false,
+  };
 
-    } catch { toast.error("Something went wrong") }
-
+  try {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/courses`,
+      payload,
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+    console.log(res.data);
+    toast.success("Course Created");
+    // route.push(`/admin/courses/${res.data.id}`) // if your API returns an id
+  } catch (err: any) {
+    const msg =
+      err.response?.data?.message ||
+      err.message ||
+      "An error occurred while creating the course";
+    toast.error(msg);
   }
+};
   return (
     <div className='max-w-5xl mx-auto flex md:justify-center h-full md:items-center p-6  '>
       <div>

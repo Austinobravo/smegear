@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 
 interface ChapterAccessFormProps {
-  chaptersId: string;
+  chaptersId: number;
 }
 
 // ✅ Schema definition

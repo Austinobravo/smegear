@@ -7,51 +7,59 @@ import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+
 import { toast } from 'sonner';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
+import { Editor } from '@/components/globals/editor';
 
 
 
-interface ChapterTitleFormProps{
+interface LessonDescriptionFormProps {
 
-  chaptersId:string;
+  chaptersId: number;
+
+
 }
 
 
-const ChapterTitleForm = ({chaptersId}:ChapterTitleFormProps) => {
+const LessonDescriptionForm = ({ chaptersId }: LessonDescriptionFormProps) => {
+  const [isChapter,setIsChapter]=useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const toggleEdit = () => setIsEditing((current) => !current)
   const formSchema = z.object({
-    title: z.string().min(1),
+    description: z.string().min(1),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: ""
+      description: ""
     },
   })
   const { isSubmitting, isValid } = form.formState
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values)
-    toast.success("Chapter Title Saved")
+    toast.success("Chapter updated")
 
   }
   return (
     <div className='mt-6 border bg-slate-100 rounded-md p-4'><div className='font-medium flex items-center justify-between'>
-      Chapter title
+      Lesson description
       <Button onClick={toggleEdit} variant="ghost">
         {isEditing && (<>Cancel</>)}{!isEditing && (<><Pencil className='h-4 w-4 mr-2' />
-          Edit title
+          Edit description
         </>)}</Button>
     </div>
-      {!isEditing && (<p className='text-sm mt-2'>{chaptersId}</p>)}
+      {!isEditing && (<div className={cn('text-sm mt-2', !isChapter && "text-slate-500 italic")}>{!isChapter && "No description"}
+        {isChapter && chaptersId}
+      </div>)}
       {isEditing && (<Form {...form}><form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 mt-4'>
-        <FormField control={form.control} name="title" render={({ field }) => {
+        <FormField control={form.control} name="description" render={({ field }) => {
           return (<FormItem>
             <FormControl>
-              <Input disabled={isSubmitting} placeholder="e.g 'Introduction to the course'" {...field} className='bg-white' />
+              <Editor  {...field}  />
             </FormControl>
             <FormMessage />
           </FormItem>)
@@ -60,9 +68,9 @@ const ChapterTitleForm = ({chaptersId}:ChapterTitleFormProps) => {
         <Button disabled={!isValid || isSubmitting} type='submit'>
           Save
         </Button>
-        </form></Form>)}
+      </form></Form>)}
     </div>
   )
 }
 
-export default ChapterTitleForm
+export default LessonDescriptionForm

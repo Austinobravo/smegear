@@ -8,7 +8,7 @@ import React, { useState } from 'react'
 
 interface ChapterActionsProps {
   disabled: boolean;
-  chaptersId: string;
+  chaptersId: number;
   checkPublished: boolean;
 }
 

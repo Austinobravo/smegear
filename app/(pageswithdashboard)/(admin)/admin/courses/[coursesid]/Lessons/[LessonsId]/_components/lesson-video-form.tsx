@@ -22,7 +22,7 @@ import Image from 'next/image';
 // }
 
 
-const ChapterVideoForm = () => {
+const LessonVideoForm = () => {
   const [imgUpload, setImgUpload] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const toggleEdit = () => setIsEditing((current) => !current)
@@ -58,4 +58,4 @@ const ChapterVideoForm = () => {
   )
 }
 
-export default ChapterVideoForm
+export default LessonVideoForm
