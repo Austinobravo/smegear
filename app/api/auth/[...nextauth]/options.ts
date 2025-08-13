@@ -48,6 +48,8 @@ export const options:NextAuthOptions = {
                     
                 })
 
+                if(!user?.isEmailVerified) throw new Error("Unverified email")
+
                 if (!user) throw new Error("Invalid credentials")
 
                 const isCorrectPassword = await comparePassword(password, user.passwordHash.trim())
