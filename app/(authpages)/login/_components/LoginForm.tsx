@@ -23,6 +23,7 @@ import Link from "next/link"
 import { signIn, useSession } from 'next-auth/react'
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 const formSchema = z.object({
   email: z.string().min(1, { message: "This field is required" }),
@@ -35,7 +36,7 @@ type FormSchema = z.infer<typeof formSchema>
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const STORAGE_KEY = "rememberedUser";
-  const router = useRouter()
+  const router = useRouter();
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -46,45 +47,73 @@ export default function LoginForm() {
     },
   })
 
-  async function onSubmit(values: FormSchema) {
-    console.log(values)
-     try{
-      const data = await signIn("credentials", 
-        {
+async function onSubmit(values: FormSchema) {
+
+  try {
+    if (process.env.NODE_ENV === "development") {
+      // -------- DEV MODE: call production auth --------
+      const csrfRes = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/csrf`,
+        { withCredentials: true }
+      );
+
+      const csrfToken = csrfRes.data?.csrfToken;
+      if (!csrfToken) throw new Error("Unable to get CSRF token");
+
+      const loginRes = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/callback/credentials`,
+        new URLSearchParams({
+          csrfToken,
           email: values.email.trim(),
           password: values.password.trim(),
-          redirect: false
+          json: "true"
+        }),
+        {
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          withCredentials: true
         }
-      )
+      );
 
-      if (data?.error) return  toast.error("Error", {
-        description: data.error,
-    })
+      const data = loginRes.data;
+      if (data?.error) {
+        toast.error("Error", { description: data.error });
+        return;
+      }
 
-    if(data?.url){
-        toast.success("Success", {
-          description: "Login successful.",
-      })
-
+      toast.success("Success", { description: "Login successful." });
       if (values.remember) {
         localStorage.setItem(STORAGE_KEY, values.email.trim());
       } else {
         localStorage.removeItem(STORAGE_KEY);
       }
+      router.push("/student");
+    } else {
+      // -------- PROD MODE: normal NextAuth signIn --------
+      const res = await signIn("credentials", {
+        redirect: false,
+        email: values.email.trim(),
+        password: values.password.trim()
+      });
 
-      return router.push("/dashboard")
+      if (res?.error) {
+        toast.error("Error", { description: res.error });
+        return;
+      }
 
-    } 
-
-
-
-    }catch(error: any){
-      toast.error("Error", {
-        description: error,
-    })
-
+      toast.success("Success", { description: "Login successful." });
+      if (values.remember) {
+        localStorage.setItem(STORAGE_KEY, values.email.trim());
+      } else {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+      router.push("/student");
     }
+  } catch (error: any) {
+    console.error(error);
+    toast.error("Error", { description: error.message || "Login failed" });
   }
+}
+
 
   const isSubmitting = form.formState.isSubmitting
 

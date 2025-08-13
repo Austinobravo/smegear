@@ -4,9 +4,9 @@ import { z } from "zod";
 
 export const CourseCreateSchema = z.object({
   title: z.string().min(1, "Title is required").refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
-  description: z.string().min(1, "Description is required").refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
+  description: z.string().optional().refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value || !value.match(emojiRegex), {message: "No emoji's alllowed."}),
   imageUrl: z.string().url("Invalid URL").optional(),
-  price: z.coerce.number().min(0, "Price must be >= 0"),
+  price: z.coerce.number().min(0, "Price must be >= 0").optional(),
   published: z.boolean().optional(),
   // instructorId: z.string().min(1, "Instructor ID is required").refine((value) => !value || validateForEmptySpaces(value), {message: "No empty spaces"}).refine((value) => !value.match(emojiRegex), {message: "No emoji's alllowed."}),
 });
