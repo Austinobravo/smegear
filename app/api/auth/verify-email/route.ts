@@ -61,6 +61,6 @@ export const GET = async (req: Request) => {
     return NextResponse.json({message: `Verified successfully`}, {status: 200});
   } catch (err) {
     console.log("error in verify email endpoint", err)
-    return NextResponse.json({ error: "Token expired or invalid" }, { status: 400 });
+    return NextResponse.json({ message: "Token expired or invalid", error: err }, { status: 400 });
   }
 };

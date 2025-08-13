@@ -147,6 +147,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: "Password reset successful" });
   } catch (err) {
-    return NextResponse.json({ message: "Invalid or expired token", error: err }, { status: 400 });
+    return NextResponse.json({ message: "Internal Server Error", error: err }, { status: 400 });
   }
 }

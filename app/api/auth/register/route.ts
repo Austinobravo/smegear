@@ -140,6 +140,6 @@ export async function POST(req: Request) {
     return NextResponse.json({data: user, message: "User created successfully, Please verify your email."}, { status: 201 });
   } catch (error) {
     console.error("Error creating user:", error);
-    return NextResponse.json({ message: error }, { status: 500 });
+    return NextResponse.json({message: "Internal Server Error", error: error }, { status: 500 });
   }
 }
