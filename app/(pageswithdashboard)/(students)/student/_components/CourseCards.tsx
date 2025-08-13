@@ -13,6 +13,7 @@ import { Book, CheckCircle, Clock } from 'lucide-react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import courses from '@/Data/popularcourseslist'
+import Link from 'next/link'
 
 
 
@@ -53,7 +54,9 @@ export default function CourseCards() {
       {/* Course Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {displayedCourses.map((course, index) => (
-          <Card key={index} className="shadow-sm py-0 transition-transform duration-300 bg-white hover:scale-[1.02] hover:shadow-xl cursor-pointer">
+          <Link key={index}  href={`/purchasedCourses/${course.id}`}>
+         
+          <Card className="shadow-sm py-0 transition-transform duration-300 bg-white hover:scale-[1.02] hover:shadow-xl cursor-pointer">
             <CardHeader className="p-0">
               <Image
                 src={course.image}
@@ -67,7 +70,7 @@ export default function CourseCards() {
             <CardContent className="space-y-1 pt-4 px-4">
               <CardTitle className="text-xl font-semibold">{course.title}</CardTitle>
               <CardDescription className="text-muted-foreground text-sm">{course.Category}</CardDescription>
-              <p className="text-muted-foreground text-sm">{course.Category}</p>
+             
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <Book size={14} />
                 <span>{course.chapters} Chapters</span>
@@ -81,6 +84,7 @@ export default function CourseCards() {
               </p>
             </CardFooter>
           </Card>
+           </Link>
         ))}
       </div>
     </div>

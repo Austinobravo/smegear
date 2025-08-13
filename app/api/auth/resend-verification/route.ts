@@ -1,15 +1,13 @@
-// /app/api/auth/resend-verification/route.ts
-
-import { NextResponse } from "next/server"
-import prisma from "@/prisma/prisma"
-import { sendEmail } from "@/emails/mailer" // You'll define this
-import { BASE_URL, createVerificationToken } from "@/lib/globals"
+import { NextResponse } from "next/server";
+import prisma from "@/prisma/prisma";
+import jwt from "jsonwebtoken";
+import { sendEmail } from "@/emails/mailer";
 
 /**
  * @swagger
  * /api/auth/resend-verification:
  *   post:
- *     summary: Request for a new verification link
+ *     summary: Resend verification email
  *     tags:
  *       - Auth
  *     requestBody:
@@ -23,50 +21,57 @@ import { BASE_URL, createVerificationToken } from "@/lib/globals"
  *             properties:
  *               email:
  *                 type: string
- *                 format: email
  *     responses:
  *       200:
- *         description: Verification email sent.
+ *         description: Verification email sent
  *       400:
- *         description: Invalid request
+ *         description: Email not found or already verified
  */
-export async function POST(req: Request) {
-  const { email } = await req.json()
 
+export const POST = async (req: Request) => {
+  try {
+    const { email } = await req.json();
 
-  if (!email) {
-    return NextResponse.json({ message: "Email is required" }, { status: 400 })
-  }
+    if (!email) {
+      return NextResponse.json({ message: "Email is required" }, { status: 400 });
+    }
 
-  const user = await prisma.user.findUnique({ where: { email } })
+    const user = await prisma.user.findUnique({ where: { email } });
 
-  if (!user) {
-    return NextResponse.json({ message: "User not found" }, { status: 404 })
-  }
+    if (!user) {
+      return NextResponse.json({ message: "Email not found" }, { status: 404 });
+    }
 
-  if (user.isEmailVerified) {
-    return NextResponse.json({ message: "Email already verified" }, { status: 400 })
-  }
+    if (user.isEmailVerified) {
+      return NextResponse.json({ message: "Email is already verified" }, { status: 400 });
+    }
 
-  const token = createVerificationToken(user.email)
-  const VERIFICATION_LINK = `${BASE_URL}/verify-email?token=${token}`;
-
-  await prisma.user.update({
-        where:{
-          id: user.id
-        },
-        data:{
-          verificationLink: VERIFICATION_LINK
-        }
-      })
-  
-  await sendEmail({
-      to: email,
-      subject: "You're In! Welcome to SmeGear 🎉",
-      template: "signup-verification",
-      data: { VERIFICATION_LINK }
+    // Generate token
+    const token = jwt.sign({ email }, process.env.JWT_SECRET!, {
+      expiresIn: "1h",
     });
 
+    const verificationUrl = `${process.env.NEXT_PUBLIC_API_URL}/verify?token=${token}`;
 
-  return NextResponse.json({ message: "Verification email sent" })
-}
+    // Update verification link (optional)
+    await prisma.user.update({
+      where: { email },
+      data: { verificationLink: token },
+    });
+
+    
+
+      await sendEmail({
+          to: email,
+          subject: "You're In! Welcome to SmeGear 🎉",
+          template: "signup-verification",
+          data: { verificationUrl },
+        });
+
+    return NextResponse.json({ message: "Verification email sent" }, { status: 200 });
+
+  } catch (error) {
+    console.error("Error resending verification:", error);
+    return NextResponse.json({ message: "Something went wrong" }, { status: 500 });
+  }
+};

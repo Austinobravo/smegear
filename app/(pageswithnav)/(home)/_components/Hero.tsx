@@ -32,7 +32,7 @@ export default function HeroSection() {
             <span className="md:inline-block bg-smegear-accent md:text-lg font-semibold md:px-5 md:py-3 rounded-full  py-2 px-4">
               35% OFF
             </span>
-            <h2 className="text-[16px] md:text-xl font-bold uppercase md:mb-2 tracking-wide leading-[56px]">
+            <h2 className="text-[15px] md:text-xl font-bold uppercase md:mb-2 tracking-wide leading-[56px]">
               Earn 6 figure with our
             </h2>
           </div>
@@ -56,6 +56,7 @@ export default function HeroSection() {
 
             <DialogContent className="sm:max-w-md p-0 border-2 rounded-lg shadow-xl">
               {/* Remove DialogHeader to mimic card layout */}
+              <DialogTitle className="sr-only">Login</DialogTitle>
               <div className="w-full  overflow-hidden">
                 <LoginForm />
               </div>

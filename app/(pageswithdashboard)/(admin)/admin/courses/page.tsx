@@ -1,14 +1,17 @@
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
+import { columns } from './_components/columns'
 import React from 'react'
+import { DataTable } from './_components/data-table'
+import Items from '@/Data/items'
 
-const CoursesPage = () => {
+
+
+const CoursesPage = async () => {
+
   return (
-    <div><Link href="/admin/create">
-      <Button>New Course</Button>
-    </Link>
+    <div>  <DataTable columns={columns} data={Items} />
     </div>
   )
 }
 
 export default CoursesPage
+

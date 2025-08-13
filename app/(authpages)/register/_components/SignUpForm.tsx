@@ -15,12 +15,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { register } from "module";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z
   .object({
+    userName: z.string().min(1, "User name is required"),
     firstName: z.string().min(1, "First name is required"),
     lastName: z.string().min(1, "Last name is required"),
-    username: z.string().min(1, "User name is required"),
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string().min(6, "Please confirm your password"),
@@ -31,23 +35,76 @@ const formSchema = z
   });
 
 export default function RegistrationForm() {
+  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      userName: "",
       firstName: "",
       lastName: "",
-      username: "",
       email: "",
       password: "",
       confirmPassword: "",
     },
   });
+  const isSubmitting = form.formState.isSubmitting
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const payload = {
+      username: values.userName,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      password: values.password,
+      confirmPassword: values.confirmPassword,
+    };
 
-  function onSubmit(values: any) {
-    console.log("Form Data:", values);
-  }
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`,
+        payload
+      );
+
+      // ✅ Log full response for inspection
+      console.log("✅ API Response:", response);
+      console.log("🔁 Response Data:", response.data);
+      console.log("📦 Status Code:", response.status);
+
+      if (response.status === 201) {
+        toast.success("Registration successful", {
+          description: response.data.message,
+        });
+        router.push("/student");
+      }
+
+      form.reset();
+    } catch (error: any) {
+      // Safely extract error message
+      let errorMessage = "Something went wrong. Please try again.";
+
+      if (error?.response?.data) {
+        const rawMessage =
+          error.response.data.error || error.response.data.message;
+
+        errorMessage =
+          typeof rawMessage === "string"
+            ? rawMessage
+            : JSON.stringify(rawMessage);
+
+        // ✅ Log error response for debugging
+        console.error("API Error Response:", error.response.data);
+      } else if (typeof error === "string") {
+        errorMessage = error;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+
+      toast.error("Error", {
+        description: errorMessage,
+      });
+    }
+  };
 
   return (
     <div className="w-full px-4 md:px-12 py-8">
@@ -56,6 +113,22 @@ export default function RegistrationForm() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
+          <FormField
+            control={form.control}
+            name="userName"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="User Name"
+                    className="h-14 text-lg border-2"
+                  />
+                </FormControl>
+                <FormMessage className="text-red-500 text-sm" />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="firstName"
@@ -88,22 +161,7 @@ export default function RegistrationForm() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="User Name"
-                    className="h-14 text-lg border-2"
-                  />
-                </FormControl>
-                <FormMessage className="text-red-500 text-sm" />
-              </FormItem>
-            )}
-          />
+
           <FormField
             control={form.control}
             name="email"

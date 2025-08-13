@@ -12,21 +12,17 @@ import { toast } from 'sonner';
 
 
 
-// interface TitleFormProps{
-//   initialData:{
-//     title:string;
-//   };
-//   courseId:string;
-// }
+interface LessonTitleFormProps{
+
+  chaptersId:number;
+}
 
 
-const TitleForm = () => {
+const LessonTitleForm = ({chaptersId}:LessonTitleFormProps) => {
   const [isEditing, setIsEditing] = useState(false)
   const toggleEdit = () => setIsEditing((current) => !current)
   const formSchema = z.object({
-    title: z.string().min(1, {
-      message: "Title is required",
-    }),
+    title: z.string().min(1),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -39,23 +35,23 @@ const TitleForm = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values)
-    toast.success("Title Saved")
+    toast.success("Chapter Title Saved")
 
   }
   return (
     <div className='mt-6 border bg-slate-100 rounded-md p-4'><div className='font-medium flex items-center justify-between'>
-      Course title
+      Lesson title
       <Button onClick={toggleEdit} variant="ghost">
         {isEditing && (<>Cancel</>)}{!isEditing && (<><Pencil className='h-4 w-4 mr-2' />
           Edit title
         </>)}</Button>
     </div>
-      {!isEditing && (<p className='text-sm mt-2'>Initial Title</p>)}
+      {!isEditing && (<p className='text-sm mt-2'>{chaptersId}</p>)}
       {isEditing && (<Form {...form}><form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 mt-4'>
         <FormField control={form.control} name="title" render={({ field }) => {
           return (<FormItem>
             <FormControl>
-              <Input disabled={isSubmitting} placeholder="Edit Title" {...field} className='bg-white' />
+              <Input disabled={isSubmitting} placeholder="e.g 'Introduction to the course'" {...field} className='bg-white' />
             </FormControl>
             <FormMessage />
           </FormItem>)
@@ -69,4 +65,4 @@ const TitleForm = () => {
   )
 }
 
-export default TitleForm
+export default LessonTitleForm
