@@ -200,7 +200,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         data: user,
-        message: "User created successfully, PLease verify your email.",
+        message: "User created successfully, Please verify your email.",
       },
       { status: 201 }
     );

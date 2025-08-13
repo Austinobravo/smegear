@@ -27,7 +27,7 @@ const formSchema = z
     lastName: z.string().min(1, "Last name is required"),
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string().min(6, "Please confirm your password"),
+    confirmPassword: z.string().min(6, "Confirm Password must be at least 6 characters"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -235,8 +235,12 @@ export default function RegistrationForm() {
 
 
           <div className="col-span-1 md:col-span-2">
-            <Button className="px-10 py-6 bg-smegear-secondary text-white font-semibold uppercase flex items-center gap-2 justify-center">
-              <h4>Register</h4>
+            <Button className="px-10 py-6 bg-smegear-secondary text-white font-semibold uppercase flex items-center gap-2 justify-center disabled:cursor-not-allowed" disabled={isSubmitting}>
+              {isSubmitting ?
+                <div className="loader"></div>
+                :
+                <span>Register</span>
+                }
 
             </Button>
           </div>
