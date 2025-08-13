@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 
 interface LessonTitleFormProps{
 
-  chaptersId:number;
+  chaptersId:string;
 }
 
 

@@ -11,15 +11,25 @@ import ChaptersForm from "./_components/modules-form";
 import Items from "@/Data/items";
 import { notFound } from "next/navigation";
 import prisma from "@/prisma/prisma";
+import axios from "axios";
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
+const fetchAdminCoursesId = async (id: string) => {
+  try{
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/courses/${id}`)
+    console.log("response", response)
+    return response.data
 
+  }catch(error){
+    console.error("error", error)
+    return null
+  }
+}
 const AdminCoursesPage= async({ params }: PageProps)=> {
-  const course = await prisma.course.findUnique({
-    where: { id: params.id },
-  });
+  const id = (await params).id
+  const course = await fetchAdminCoursesId(id);
 
   if (!course) return notFound();
 

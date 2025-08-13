@@ -36,7 +36,7 @@ const ChapterAccessForm = ({ chaptersId }: ChapterAccessFormProps) => {
 
   const toggleEdit = () => setIsEditing((current) => !current);
 
-  const form = useForm<FormData>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       isFree: false,

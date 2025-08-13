@@ -1,48 +1,12 @@
-"use client"
-import React from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
-import { useEffect, useState } from "react"
-import axios from 'axios'
-import { toast } from "sonner"
-import { Loader2 } from 'lucide-react'
-const VerifyEmailPage = () => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
+import React, { Suspense } from 'react'
+import VerifyEmailPage from './_components/VerifyEmailSection'
 
-  useEffect(() => {
-    const token = searchParams.get("token");
-    if (!token) {
-      toast.error("Invalid token");
-      setLoading(false);
-      return;
-    }
-    const verifyEmail = async () => {
-      try {
-    const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/verify-email?token=${token}`);
-    toast.success("Email verified successfully");
-    router.push("/login");
-  } catch (error) {
-    console.log(error);
-    toast.error("Verification failed. Token may have expired");
-    router.push("/resend-verification");
-  } finally {
-    setLoading(false);
-  }
-}
-    verifyEmail()
-  }, [searchParams, router])
+const ResetPasswordPage = () => {
   return (
-    <div className='flex items-center justify-center h-screen'>
-      {loading ? (
-        <div className='flex items-center gap-2'>
-          <Loader2 className='animate-spin' />
-          <p>Verifying email...</p>
-        </div>
-      ) : null}
-
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <VerifyEmailPage />
+    </Suspense>
   )
 }
 
-export default VerifyEmailPage
+export default ResetPasswordPage

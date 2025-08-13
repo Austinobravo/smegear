@@ -6,7 +6,7 @@ interface PurchasedCourseSidebarProps {
 
     date: string; progress: number; chapters: number; Category: string; id: number; title: string; description: string; image: string; rating: number;
     icon: LucideIcon;
-    oldPrice: null;
+    oldPrice: string | null;
   }
 }
 const PurchasedCourseSidebar = ({ category }: PurchasedCourseSidebarProps) => {

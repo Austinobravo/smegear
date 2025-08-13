@@ -10,12 +10,12 @@ import ChapterVideoForm from './_components/lesson-video-form';
 import Banner from '@/components/banner';
 import ChapterActions from './_components/lesson-actions';
 interface PageProps {
-  params: { LessonsId: number };
+  params: Promise<{ LessonsId: string }>;
 }
 
-const ChapterId = ({ params }: PageProps) => {
+const ChapterId = async ({ params }: PageProps) => {
 
-  const chaptersId = Number(params.LessonsId);
+  const chaptersId = (await params).LessonsId
   const category = Items.find((cat) => cat.id === chaptersId);
 
   const chapters = {
@@ -41,7 +41,7 @@ const ChapterId = ({ params }: PageProps) => {
       <div className='p-4'>
         <div className='flex items-center justify-between'>
           <div className='w-full'>
-            <Link href={`/admin/courses/${params.LessonsId}`} className='flex items-center text-sm hover:opacity-75 mb-6 transition'>
+            <Link href={`/admin/courses/${chaptersId}`} className='flex items-center text-sm hover:opacity-75 mb-6 transition'>
               <ArrowLeft className='h-4 w-4 mr-2' />
               Back to course setup
             </Link>

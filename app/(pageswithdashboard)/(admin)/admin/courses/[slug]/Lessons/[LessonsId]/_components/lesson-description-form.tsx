@@ -17,7 +17,7 @@ import { Editor } from '@/components/globals/editor';
 
 interface LessonDescriptionFormProps {
 
-  chaptersId: number;
+  chaptersId: string;
 
 
 }
