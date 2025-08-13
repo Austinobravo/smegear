@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/prisma/prisma";
 import jwt from "jsonwebtoken";
 import { sendEmail } from "@/emails/mailer";
+import { BASE_URL, createVerificationToken } from "@/lib/globals";
 
 /**
  * @swagger
@@ -46,32 +47,28 @@ export const POST = async (req: Request) => {
       return NextResponse.json({ message: "Email is already verified" }, { status: 400 });
     }
 
-    // Generate token
-    const token = jwt.sign({ email }, process.env.JWT_SECRET!, {
-      expiresIn: "1h",
-    });
 
-    const verificationUrl = `${process.env.NEXT_PUBLIC_API_URL}/verify?token=${token}`;
+    const token = createVerificationToken(email);
+    const VERIFICATION_LINK = `${BASE_URL}/verify-email?token=${token}`;
+    
 
-    // Update verification link (optional)
     await prisma.user.update({
-      where: { email },
-      data: { verificationLink: token },
+      where: { id: user?.id },
+      data: { verificationLink: VERIFICATION_LINK },
     });
 
     
-
-      await sendEmail({
-          to: email,
-          subject: "You're In! Welcome to SmeGear 🎉",
-          template: "signup-verification",
-          data: { verificationUrl },
-        });
+    await sendEmail({
+      to: email,
+      subject: "You're In! Welcome to SmeGear 🎉",
+      template: "signup-verification",
+      data: { VERIFICATION_LINK },
+    });
 
     return NextResponse.json({ message: "Verification email sent" }, { status: 200 });
 
   } catch (error) {
     console.error("Error resending verification:", error);
-    return NextResponse.json({ message: "Something went wrong" }, { status: 500 });
+    return NextResponse.json({ message: "Something went wrong" , error: error}, { status: 500 });
   }
 };
