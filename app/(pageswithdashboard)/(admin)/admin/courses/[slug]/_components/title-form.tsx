@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 interface TitleFormProps {
   category: {
     Title: string;
-    id: number;
+    id: string;
     Modules: {
       id: number;
       ModuleTitle: string;

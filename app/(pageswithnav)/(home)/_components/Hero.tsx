@@ -56,6 +56,7 @@ export default function HeroSection() {
 
             <DialogContent className="sm:max-w-md p-0 border-2 rounded-lg shadow-xl">
               {/* Remove DialogHeader to mimic card layout */}
+              <DialogTitle className="sr-only">Login</DialogTitle>
               <div className="w-full  overflow-hidden">
                 <LoginForm />
               </div>

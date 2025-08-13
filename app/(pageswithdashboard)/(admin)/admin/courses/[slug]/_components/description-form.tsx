@@ -16,7 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 interface TitleFormProps {
   category: {
     Title: string;
-    id: number;
+    id: string;
     OverView?: string;
 
   } | undefined;

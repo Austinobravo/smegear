@@ -82,6 +82,7 @@ const CreateUserSchema = z
  *             required:
  *               - email
  *               - password
+ *               - username
  *             properties:
  *               email:
  *                 type: string
@@ -90,13 +91,15 @@ const CreateUserSchema = z
  *                 type: string
  *               lastName:
  *                 type: string
+ *               username:
+ *                 type: string
  *               password:
  *                 type: string
  *               confirmPassword:
  *                 type: string
  *     responses:
  *       201:
- *         description: User created successfully, PLease verify your email.
+ *         description: User created successfully, Please verify your email.
  *         content:
  *           application/json:
  *             schema:
@@ -129,8 +132,17 @@ export async function POST(req: Request) {
     const { email, firstName, lastName, password, role } = parsed.data;
 
     // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
+    const existingUser = await prisma.user.findFirst({
+      where:{
+          OR: [
+          {
+              email: email
+          },
+          {
+              username: username
+          }
+          ]
+      },
     });
 
     if (existingUser) {
@@ -149,6 +161,7 @@ export async function POST(req: Request) {
         email,
         firstName,
         lastName,
+        username,
         passwordHash: hashedPassword,
         role: role || "STUDENT",
       },

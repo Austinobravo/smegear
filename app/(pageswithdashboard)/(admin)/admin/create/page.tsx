@@ -7,53 +7,64 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
-import axios from 'axios'
+import { CourseTitleSchema } from "@/lib/formSchema";
 import { useRouter } from 'next/navigation'
-import Items from '@/Data/items';
+import { useState } from 'react'
+
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
   // description:z.string().min(1, "Description is required"),
   // price:z.number().min(0, "Price must be a positive number"),
 })
 
+
 const CreatePage = () => {
-  const route = useRouter();
+  const router = useRouter()
+
   const form = useForm({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(CourseTitleSchema),
     defaultValues: {
       title: "",
+      // description: "",
+      // imageUrl: "",
+      // price: 0,
+      // published: false,
+    },
+    mode: "onChange",
+  });
 
-    }
-  })
   const { isSubmitting, isValid } = form.formState;
 
-const onSubmit = async (values: z.infer<typeof formSchema>) => {
-  const payload = {
-    title: values.title,
-    // include others if required:
-    // description: values.description,
-    // imageUrl: values.imageUrl,
-    // price: Number(values.price),
-    // published: false,
-  };
+  const [result, setResult] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  async function onSubmit(values: z.infer<typeof CourseTitleSchema>) {
 
-  try {
-    const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/courses`,
-      payload,
-      { headers: { 'Content-Type': 'application/json' } }
-    );
-    console.log(res.data);
-    toast.success("Course Created");
-    // route.push(`/admin/courses/${res.data.id}`) // if your API returns an id
-  } catch (err: any) {
-    const msg =
-      err.response?.data?.message ||
-      err.message ||
-      "An error occurred while creating the course";
-    toast.error(msg);
+    setError(null);
+    setResult(null);
+    try {
+      const res = await fetch("/api/courses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.error || `Request failed (${res.status})`);
+      }
+      const data = await res.json();
+      setResult(data);
+      console.log("Created course:", data);
+      toast.success("Course created successfully!");
+      router.push(`/admin/courses/${data.id}`)
+      form.reset(); // optional
+
+    } catch (e: any) {
+      setError(e.message || "Something went wrong");
+    } finally {
+
+    }
   }
-};
   return (
     <div className='max-w-5xl mx-auto flex md:justify-center h-full md:items-center p-6  '>
       <div>
@@ -84,6 +95,16 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
           </form>
         </Form>
       </div>
+
+
+      {error && (
+        <p className="text-sm text-red-600">{error}</p>
+      )}
+      {result && (
+        <pre className="rounded-md bg-muted p-4 text-sm overflow-auto">
+          {JSON.stringify(result, null, 2)}
+        </pre>
+      )}
 
     </div>
   )

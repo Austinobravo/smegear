@@ -19,7 +19,7 @@ interface ChaptersFormProps{
   category: {
     Title: string;
     OverView:string;
-    id: number;
+    id: string;
     Modules: {
       id: number;
       ModuleTitle: string;

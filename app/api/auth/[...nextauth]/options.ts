@@ -3,7 +3,7 @@ import  CredentialsProvider  from "next-auth/providers/credentials";
 
 import prisma from '@/prisma/prisma'
 import { comparePassword } from "@/lib/utils";
-import { emojiRegex } from "@/lib/formSchema";
+import { emailRegex, emojiRegex } from "@/lib/formSchema";
 
 export const options:NextAuthOptions = {
     providers: [
@@ -23,23 +23,34 @@ export const options:NextAuthOptions = {
             },
             async authorize(credentials){
                 if (!credentials?.email || !credentials.password) throw new Error('Invalid credentials')
+                const email = credentials.email.toLowerCase()
+                const password = credentials.password
 
-                if(credentials.email.trim().length <= 1 || credentials.password.trim().length <= 1) throw new Error('Invalid credentials')
+                if(email.trim().length <= 1 || password.trim().length <= 1) throw new Error('Invalid credentials')
 
-                if (credentials.email.match(emojiRegex) || credentials.password.match(emojiRegex)) {
+                if (email.match(emojiRegex) || password.match(emojiRegex)) {
                 throw new Error("Invalid credentials");
                 }
 
-                const user = await prisma.user.findUnique({
+                const isEmail = email.match(emailRegex)
+
+                const user = await prisma.user.findFirst({
                     where:{
-                        email: credentials.email.trim(), 
+                       OR: [
+                        {
+                            email: email
+                        },
+                        {
+                            username: email
+                        }
+                       ]
                     },
                     
                 })
 
                 if (!user) throw new Error("Invalid credentials")
 
-                const isCorrectPassword = await comparePassword(credentials.password, user.passwordHash.trim())
+                const isCorrectPassword = await comparePassword(password, user.passwordHash.trim())
                 if(!isCorrectPassword) throw new Error("Invalid credentials")
 
                 const { passwordHash, ...UserWithoutPassword } = user 

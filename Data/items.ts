@@ -1,7 +1,7 @@
 const Items = [
   {
     Title: "Comprehensive Guide to NAFDAC and SON Registration in Nigeria",
-    id: 1,
+    id: "1e087f46-321b-4fee-a2ed-6afb7da2f624",
     OverView:
       "This course provides a comprehensive overview of the registration processes with NAFDAC and SON in Nigeria, including requirements, procedures, and best practices.",
     Modules: [
@@ -38,7 +38,7 @@ const Items = [
   },
   {
     Title: "Comprehensive Guide to Exploration and Mining Licenses in Nigeria",
-    id: 2,
+    id: "1e087f46-321b-4fee-a2ed-6afb7da2f624",
     OverView:
       "This course is designed for business consultants, entrepreneurs, and professionals interested in the mining sector of Nigeria. It provides an in-depth understanding of the Exploration License and the Mining License, two critical permits required for exploration and mining operations in Nigeria.",
     Modules: [

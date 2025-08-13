@@ -10,21 +10,23 @@ import AttachmentForm from "./_components/attachment-form";
 import ChaptersForm from "./_components/modules-form";
 import Items from "@/Data/items";
 import { notFound } from "next/navigation";
+import prisma from "@/prisma/prisma";
 
 interface PageProps {
-  params: { coursesid: string }; // <-- Next.js passes params as strings
+  params: { id: string };
 }
 
-export default function AdminCoursesPage({ params }: PageProps) {
-  const courseId = Number(params.coursesid);
-  const course = Items.find((item) => item.id === courseId);
+const AdminCoursesPage= async({ params }: PageProps)=> {
+  const course = await prisma.course.findUnique({
+    where: { id: params.id },
+  });
 
   if (!course) return notFound();
 
   return (
     <div className="p-6">
       {/* Show the specific course title based on its id */}
-      <h1 className="text-2xl font-semibold">{course.Title}</h1>
+      <h1 className="text-2xl font-semibold">{course.title}</h1>
 
       <div className="flex items-center justify-between mt-2">
         <div className="flex flex-col gap-y-2">
@@ -74,3 +76,4 @@ export default function AdminCoursesPage({ params }: PageProps) {
     </div>
   );
 }
+export default AdminCoursesPage;

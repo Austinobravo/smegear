@@ -31,7 +31,7 @@ type Module = {
 interface ChaptersListProps {
   category?: {
     Title: string
-    id: number
+    id: string
     OverView?: string
     Modules: Module[]
     isPublished: boolean
