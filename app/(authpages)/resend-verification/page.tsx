@@ -33,6 +33,7 @@ export default function ResendVerificationPage() {
       });
 
       toast.success("A new verification link has been sent to your email.");
+      form.reset()
     } catch (error: any) {
       error?.response?.data?.message || "Something went wrong."
       toast.error(`${error?.response?.data?.message || "Something went wrong."}`);
