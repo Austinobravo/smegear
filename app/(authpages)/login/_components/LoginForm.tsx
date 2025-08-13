@@ -75,6 +75,7 @@ async function onSubmit(values: FormSchema) {
       );
 
       const data = loginRes.data;
+
       if (data?.error) {
         toast.error("Error", { description: data.error });
         return;

@@ -68,7 +68,7 @@ export async function GET() {
  *         description: Course created successfully
  */
 export async function POST(req: Request) {
-    const user = await getCurrentUser()
+    const user = await getCurrentUser(req)
     if(!user){
       return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }

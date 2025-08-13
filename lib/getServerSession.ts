@@ -12,16 +12,17 @@ export const getCurrentUser = async (req?: NextRequest): Promise<User | null> =>
       return session.user as User;
     }
 
-    // 2 Fallback: try getToken (e.g., from Authorization header)
-    if (req) {
-      const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-      if (token && token.id) {
-        return token as User;
+        // 2 Fallback: ask production backend directly using stored cookies
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/users`,
+      {
+        withCredentials: true, // sends stored cookies to prod backend
+        headers: req ? { cookie: req.headers.get("cookie") || "" } : undefined
       }
-    }
+    );
 
-    // Not authenticated
-    return null;
+    return res.data || null;
+
   } catch (error) {
     console.error("Error in getCurrentUser:", error);
     return null;

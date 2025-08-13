@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { Jost } from 'next/font/google';
 
 import localFont from 'next/font/local';
+import SessionClientProvider from "@/lib/getClientSession";
 
 const satoshi = localFont({
   src: [
@@ -86,8 +87,9 @@ export default function RootLayout({
           }}
         />
 
-
-        {children}
+        <SessionClientProvider>
+          {children}
+        </SessionClientProvider>
         <ScrollToTop />
         <WhatsAppIcon />
       </body>

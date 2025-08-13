@@ -9,7 +9,10 @@ import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { CourseTitleSchema } from "@/lib/formSchema";
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import React, { useState } from 'react'
+import axios from 'axios'
+import { useSession } from 'next-auth/react'
+ 
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -17,9 +20,30 @@ const formSchema = z.object({
   // price:z.number().min(0, "Price must be a positive number"),
 })
 
+async function ensureDevLogin() {
+
+  // 1. Check if already logged in
+  try {
+    const me = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, {
+      withCredentials: true,
+    });
+    console.log("dataa", me)
+    if (me.data) return true; // already logged in
+  } catch {
+    // no valid session, proceed to login
+  }
+
+
+}
+
 
 const CreatePage = () => {
   const router = useRouter()
+  const {data:session} = useSession()
+
+  React.useEffect(()=> {
+    console.log("session", session)
+  }, [session])
 
   const form = useForm({
     resolver: zodResolver(CourseTitleSchema),
@@ -42,21 +66,12 @@ const CreatePage = () => {
     setError(null);
     setResult(null);
     try {
-      const res = await fetch("/api/courses", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/courses`, values, {withCredentials: true});
 
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body?.error || `Request failed (${res.status})`);
-      }
-      const data = await res.json();
-      setResult(data);
-      console.log("Created course:", data);
+      // setResult(res.data);
+      // console.log("Created course:", res.data);
       toast.success("Course created successfully!");
-      router.push(`/admin/courses/${data.id}`)
+      router.push(`/admin/courses`)
       form.reset(); // optional
 
     } catch (e: any) {
@@ -88,8 +103,13 @@ const CreatePage = () => {
             />
             <div className='flex items-center gap-x-2'>
               <Link href="/"><Button className='bg-slate-600 hover:bg-slate-700' type='button'>Cancel</Button></Link>
-              <Button type='submit' disabled={!isValid || isSubmitting}>
-                Continue
+              <Button type='submit' className="min-w-40" disabled={!isValid || isSubmitting} >
+                 {isSubmitting ?
+                <div className="loader"></div>
+                :
+                <span>Continue</span>
+                }
+                
               </Button>
             </div>
           </form>
