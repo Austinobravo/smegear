@@ -14,8 +14,9 @@ export async function middleware(req: NextRequest) {
     }
 
     headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    // headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
     headers.set("Access-Control-Allow-Credentials", "true");
+    headers.set("Access-Control-Allow-Headers", "X-CSRF-Token, X-Requested-With, Accept, Content-Type, Authorization");
 
     // Handle CORS Preflight Requests
     if (req.method === "OPTIONS") {

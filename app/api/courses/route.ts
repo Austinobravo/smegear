@@ -2,7 +2,7 @@ import { getCurrentUser } from "@/lib/getServerSession";
 import { createNewSlug } from "@/lib/globals";
 import prisma from "@/prisma/prisma";
 import { CourseCreateSchema, CourseUpdateSchema } from "@/schemas/backendFormSchema";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 /**
@@ -16,10 +16,10 @@ import { z } from "zod";
  *         description: List of courses
  */
 export async function GET() {
-    // const user = await getCurrentUser()
-    // if(!user){
-    //   return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
-    // }
+    const user = await getCurrentUser()
+    if(!user){
+      return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
+    }
   try {
     const courses = await prisma.course.findMany({
       include: {
@@ -67,7 +67,7 @@ export async function GET() {
  *       201:
  *         description: Course created successfully
  */
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     const user = await getCurrentUser(req)
     if(!user){
       return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
