@@ -15,8 +15,8 @@ import { getCurrentUser } from "@/lib/getServerSession";
  *       200:
  *         description: User progress list
  */
-export async function GET(_: NextRequest) {
-  const user = await getCurrentUser()
+export async function GET(req: NextRequest) {
+  const user = await getCurrentUser(req)
   const userId = user?.id
   try{
       const progress = await prisma.progress.findMany({

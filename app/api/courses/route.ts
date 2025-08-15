@@ -3,7 +3,6 @@ import { createNewSlug } from "@/lib/globals";
 import prisma from "@/prisma/prisma";
 import { CourseCreateSchema, CourseUpdateSchema } from "@/schemas/backendFormSchema";
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 
 /**
  * @swagger
@@ -16,17 +15,19 @@ import { z } from "zod";
  *         description: List of courses
  */
 export async function GET(req: Request) {
-  const user = await getCurrentUser(req as any);
-  console.log("user in current", user)
-    if(!user){
-      return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
-    }
+
   try {
     const courses = await prisma.course.findMany({
       include: {
         instructor: {
           select: { id: true, email: true, firstName: true, lastName: true },
         },
+        modules: {
+          include:{
+            lessons: true
+          }
+        },
+        
       },
     });
     return NextResponse.json(courses);
@@ -128,8 +129,8 @@ export async function POST(req: NextRequest) {
  *       200:
  *         description: Course updated successfully
  */
-export async function PATCH(req: Request) {
-    const user = await getCurrentUser()
+export async function PATCH(req: NextRequest) {
+    const user = await getCurrentUser(req)
     if(!user){
       return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
@@ -183,8 +184,8 @@ export async function PATCH(req: Request) {
  *       200:
  *         description: Course deleted successfully
  */
-export async function DELETE(req: Request) {
-     const user = await getCurrentUser()
+export async function DELETE(req: NextRequest) {
+     const user = await getCurrentUser(req)
     if(!user){
       return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }

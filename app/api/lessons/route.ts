@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/prisma";
 import { LessonUpdateSchema, LessonSchema } from "@/schemas/backendFormSchema";
 import { getCurrentUser } from "@/lib/getServerSession";
@@ -79,8 +79,8 @@ export async function GET(req:Request) {
  *       400:
  *         description: Validation failed
  */
-export async function POST(req: Request) {
-    const user = await getCurrentUser()
+export async function POST(req: NextRequest) {
+    const user = await getCurrentUser(req)
     if(!user){
         return NextResponse.json({message: "Unauthorized"}, {status:401})
     }
@@ -120,8 +120,8 @@ export async function POST(req: Request) {
  *       200:
  *         description: Module deleted successfully
  */
-export async function DELETE(req: Request) {
-      const user = await getCurrentUser()
+export async function DELETE(req: NextRequest) {
+      const user = await getCurrentUser(req)
     if(!user){
         return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
@@ -186,7 +186,11 @@ export async function DELETE(req: Request) {
  *       404:
  *         description: Lesson not found
  */
-export async function PATCH(req: Request,) {
+export async function PATCH(req: NextRequest,) {
+   const user = await getCurrentUser(req)
+    if(!user){
+        return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
+    }
   try {
     const body = await req.json();
     const { id } = body

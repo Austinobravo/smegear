@@ -30,8 +30,8 @@ import { getCurrentUser } from "@/lib/getServerSession";
  *       201:
  *         description: Progress started
  */
-export async function POST(req: Request) {
-  const user = await getCurrentUser()
+export async function POST(req: NextRequest) {
+  const user = await getCurrentUser(req)
     if(!user){
         return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
@@ -81,7 +81,7 @@ export async function POST(req: Request) {
  *         description: Progress record
  */
 export async function GET(req: NextRequest) {
-    const user = await getCurrentUser()
+    const user = await getCurrentUser(req)
     if(!user){
         return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
@@ -134,8 +134,8 @@ export async function GET(req: NextRequest) {
  *       200:
  *         description: Updated progress
  */
-export async function PATCH(req: Request) {
-  const user = await getCurrentUser()
+export async function PATCH(req: NextRequest) {
+  const user = await getCurrentUser(req)
   if(!user){
         return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
@@ -183,8 +183,8 @@ export async function PATCH(req: Request) {
  *       204:
  *         description: Deleted
  */
-export async function DELETE(req: Request) {
-    const user = await getCurrentUser()
+export async function DELETE(req: NextRequest) {
+    const user = await getCurrentUser(req)
     if(!user){
         return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }

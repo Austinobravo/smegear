@@ -1,7 +1,7 @@
 import { getCurrentUser } from "@/lib/getServerSession";
 import prisma from "@/prisma/prisma";
 import bcrypt from "bcryptjs";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 
@@ -31,8 +31,8 @@ const UpdateUserSchema = z.object({
  *               items:
  *                 type: object
  */
-export async function GET() {
-  const  user = await getCurrentUser()
+export async function GET(req:NextRequest) {
+  const  user = await getCurrentUser(req)
   if(!user){
     return NextResponse.json({message: "Unauthorized"}, {status: 401})
   }
@@ -69,8 +69,8 @@ export async function GET() {
  *       200:
  *         description: User updated successfully
  */
-export async function PATCH(req: Request) {
-    const user = await getCurrentUser()
+export async function PATCH(req: NextRequest) {
+    const user = await getCurrentUser(req)
     if(!user){
         return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
@@ -132,7 +132,11 @@ export async function PATCH(req: Request) {
  *       200:
  *         description: User deleted successfully
  */
-export async function DELETE(req: Request) {
+export async function DELETE(req: NextRequest) {
+  const user = await getCurrentUser(req)
+    if(!user){
+        return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
+    }
   try {
     const body = await req.json();
     const { id } = body;

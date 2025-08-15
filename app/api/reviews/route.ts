@@ -22,8 +22,8 @@ import { getCurrentUser } from "@/lib/getServerSession";
  *               items:
  *                 type: object
  */
-export async function GET() {
-    const user = await getCurrentUser()
+export async function GET(req: NextRequest) {
+    const user = await getCurrentUser(req)
     if(!user){
         return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
@@ -68,7 +68,7 @@ export async function GET() {
  *         description: Invalid input
  */
 export async function POST(req: NextRequest) {
-    const user = await getCurrentUser()
+    const user = await getCurrentUser(req)
     if(!user){
         return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
@@ -126,6 +126,10 @@ export async function POST(req: NextRequest) {
  *         description: Review not found
  */
 export async function PATCH(req: NextRequest) {
+    const user = await getCurrentUser(req)
+    if(!user){
+        return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
+    }
   const body = await req.json();
   const { id } = body
   const validated = ReviewUpdateSchema.safeParse(body);
@@ -184,7 +188,11 @@ export async function PATCH(req: NextRequest) {
  *         description: Review not found
  */
 export async function DELETE(req: NextRequest) {
-   const body = await req.json();
+    const user = await getCurrentUser(req)
+    if(!user){
+        return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
+    }
+  const body = await req.json();
   const { id } = body
 
   try{

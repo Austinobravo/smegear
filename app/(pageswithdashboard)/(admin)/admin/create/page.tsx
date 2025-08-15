@@ -11,7 +11,7 @@ import { CourseTitleSchema } from "@/lib/formSchema";
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import axios from 'axios'
-import { useSession } from 'next-auth/react'
+import { getSession, useSession } from 'next-auth/react'
  
 
 const formSchema = z.object({
@@ -62,11 +62,18 @@ const CreatePage = () => {
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   async function onSubmit(values: z.infer<typeof CourseTitleSchema>) {
-
+    const token = await getSession()
+    const accessToken = token?.accessToken
+    console.log("accesstoken", accessToken)
     setError(null);
     setResult(null);
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/courses`, values, {withCredentials: true});
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/courses`, values, 
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+      );
+      console.log("res", res)
 
       // setResult(res.data);
       // console.log("Created course:", res.data);

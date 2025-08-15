@@ -1,5 +1,6 @@
+import { getCurrentUser } from "@/lib/getServerSession";
 import prisma from "@/prisma/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 
 /**
@@ -18,8 +19,11 @@ import { NextResponse } from "next/server";
  *       200:
  *         description: Module found
  */
-export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
-    
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const user = await getCurrentUser(req)
+    if(!user){
+        return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
+    }
   try {
     const { id } = await params;
 

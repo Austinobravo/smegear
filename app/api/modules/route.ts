@@ -1,7 +1,7 @@
 import { getCurrentUser } from "@/lib/getServerSession";
 import prisma from "@/prisma/prisma";
 import { ModuleCreateSchema, ModuleUpdateSchema } from "@/schemas/backendFormSchema";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 /**
  * @swagger
@@ -20,8 +20,8 @@ import { NextResponse } from "next/server";
  *       200:
  *         description: List of modules
  */
-export async function GET(req: Request) {
-    const user = await getCurrentUser()
+export async function GET(req: NextRequest) {
+    const user = await getCurrentUser(req)
     if(!user){
         return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
@@ -77,8 +77,8 @@ export async function GET(req: Request) {
  *       201:
  *         description: Module created successfully
  */
-export async function POST(req: Request) {
-    const user = await getCurrentUser()
+export async function POST(req: NextRequest) {
+    const user = await getCurrentUser(req)
     if(!user){
         return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
@@ -124,8 +124,8 @@ export async function POST(req: Request) {
  *       200:
  *         description: Module deleted successfully
  */
-export async function DELETE(req: Request) {
-      const user = await getCurrentUser()
+export async function DELETE(req: NextRequest) {
+      const user = await getCurrentUser(req)
     if(!user){
         return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
@@ -182,8 +182,8 @@ export async function DELETE(req: Request) {
  *       200:
  *         description: Module updated successfully
  */
-export async function PATCH(req: Request) {
-    const user = await getCurrentUser()
+export async function PATCH(req: NextRequest) {
+    const user = await getCurrentUser(req)
     if(!user){
       return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }

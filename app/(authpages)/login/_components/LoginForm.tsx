@@ -50,20 +50,41 @@ export default function LoginForm() {
 async function onSubmit(values: FormSchema) {
 
   try {
-      const res = await signIn("credentials", {
-        redirect: false,
-        email: values.email.trim(),
-        password: values.password.trim()
-      });
+    if (process.env.NODE_ENV === "development") {
+      // -------- DEV MODE: call production auth --------
+      const csrfRes = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/csrf`,
+        { withCredentials: true }
+      );
 
-      console.log("res in login",res)
-      const session = await getSession();
-      console.log("session", session)
-      if (res?.error) {
-        toast.error("Error", { description: res.error });
+      const csrfToken = csrfRes.data?.csrfToken;
+      if (!csrfToken) throw new Error("Unable to get CSRF token");
+
+      const loginRes = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/callback/credentials`,
+        new URLSearchParams({
+          csrfToken,
+          email: values.email.trim(),
+          password: values.password.trim(),
+          json: "true"
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "application/json",        
+            "X-Requested-With": "XMLHttpRequest",
+          },
+          withCredentials: true
+        }
+      );
+
+      const data = loginRes.data;
+      const session = await getSession()
+
+      if (data?.error) {
+        toast.error("Error", { description: data.error });
         return;
       }
-
 
       toast.success("Success", { description: "Login successful." });
       if (values.remember) {
@@ -72,86 +93,27 @@ async function onSubmit(values: FormSchema) {
         localStorage.removeItem(STORAGE_KEY);
       }
       router.push("/student");
-    // if (process.env.NODE_ENV === "development") {
-    //   // -------- DEV MODE: call production auth --------
-    //   const csrfRes = await axios.get(
-    //     `${process.env.NEXT_PUBLIC_API_URL}/api/auth/csrf`,
-    //     { withCredentials: true }
-    //   );
+    } else {
+      // -------- PROD MODE: normal NextAuth signIn --------
+      const res = await signIn("credentials", {
+        redirect: false,
+        email: values.email.trim(),
+        password: values.password.trim()
+      });
 
-    //   const csrfToken = csrfRes.data?.csrfToken;
-    //   if (!csrfToken) throw new Error("Unable to get CSRF token");
-    //   console.log("csrftoken", csrfToken)
-    //   console.log("csrfres", csrfRes)
+      if (res?.error) {
+        toast.error("Error", { description: res.error });
+        return;
+      }
 
-    //   const loginRes = await axios.post(
-    //     `${process.env.NEXT_PUBLIC_API_URL}/api/auth/callback/credentials`,
-    //     new URLSearchParams({
-    //       csrfToken,
-    //       email: values.email.trim(),
-    //       password: values.password.trim(),
-    //       json: "true"
-    //     }),
-    //     {
-    //       headers: {
-    //         "Content-Type": "application/x-www-form-urlencoded",
-    //         "Accept": "application/json",            // 🚀 important
-    //         "X-Requested-With": "XMLHttpRequest",    // 🚀 important
-    //       },
-    //       withCredentials: true
-    //     }
-    //   );
-
-    //   const data = loginRes.data;
-    //   console.log("data", data)
-    //   console.log("loginRes", loginRes)
-    //   const sessionRes = await axios.get(
-    //     `${process.env.NEXT_PUBLIC_API_URL}/api/auth/session`,
-    //     {
-    //       withCredentials: true,
-    //       headers: {
-    //         "Accept": "application/json",
-    //         "X-Requested-With": "XMLHttpRequest"
-    //       }
-    //     }
-    //   );
-
-    //   console.log("session data", sessionRes);
-    //   await axios.post('/api/auth/set-cookie', values);
-
-    //   if (data?.error) {
-    //     toast.error("Error", { description: data.error });
-    //     return;
-    //   }
-
-    //   toast.success("Success", { description: "Login successful." });
-    //   if (values.remember) {
-    //     localStorage.setItem(STORAGE_KEY, values.email.trim());
-    //   } else {
-    //     localStorage.removeItem(STORAGE_KEY);
-    //   }
-    //   router.push("/student");
-    // } else {
-    //   // -------- PROD MODE: normal NextAuth signIn --------
-    //   const res = await signIn("credentials", {
-    //     redirect: false,
-    //     email: values.email.trim(),
-    //     password: values.password.trim()
-    //   });
-
-    //   if (res?.error) {
-    //     toast.error("Error", { description: res.error });
-    //     return;
-    //   }
-
-    //   toast.success("Success", { description: "Login successful." });
-    //   if (values.remember) {
-    //     localStorage.setItem(STORAGE_KEY, values.email.trim());
-    //   } else {
-    //     localStorage.removeItem(STORAGE_KEY);
-    //   }
-    //   router.push("/student");
-    // }
+      toast.success("Success", { description: "Login successful." });
+      if (values.remember) {
+        localStorage.setItem(STORAGE_KEY, values.email.trim());
+      } else {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+      router.push("/student");
+    }
   } catch (error: any) {
     console.error(error);
     toast.error("Error", { description: error.message || "Login failed" });
@@ -161,15 +123,14 @@ async function onSubmit(values: FormSchema) {
 
   const isSubmitting = form.formState.isSubmitting
 
-  const session = useSession()
     React.useEffect(() => {
-      console.log("sesion un effect", session)
     const savedEmail = localStorage.getItem(STORAGE_KEY)
     if(savedEmail){
       form.setValue("email", savedEmail)
       form.setValue("remember", true)
     }
-  }, [session])
+
+  }, [])
   return (
     <div className="flex items-center justify-center min-h-[50vh] px-4 bg-white">
       <Card className="w-full max-w-md shadow-lg border-2">
