@@ -13,10 +13,13 @@ export const getCurrentUser = async (req?: NextRequest): Promise<User | null> =>
     if (session?.user?.id) {
       return session.user;
     }
-     // 2 Fallback: Bearer token from Authorization header
+    console.log("sesioni", session)
+    console.log("req", req)
+    // 2 Fallback: Bearer token from Authorization header
     // First try the cookie/session way
     if(req){
       const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+      console.log("token", token)
     
       if (token?.id) {
         return await prisma.user.findUnique({

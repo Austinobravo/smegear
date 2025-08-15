@@ -17,6 +17,7 @@ import { z } from "zod";
  */
 export async function GET(req: Request) {
   const user = await getCurrentUser(req as any);
+  console.log("user in current", user)
     if(!user){
       return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
