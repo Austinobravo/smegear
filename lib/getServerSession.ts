@@ -5,6 +5,7 @@ import { NextRequest } from "next/server";
 import { User } from "./generated/prisma";
 import { Session } from "next-auth";
 import prisma from "@/prisma/prisma";
+import jwt from "jsonwebtoken";
 
 export const getCurrentUser = async (req?: NextRequest): Promise<User | null> => {
   try {
@@ -18,6 +19,7 @@ export const getCurrentUser = async (req?: NextRequest): Promise<User | null> =>
     // 2 Fallback: Bearer token from Authorization header
     // First try the cookie/session way
     if(req){
+      
       const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
       console.log("token", token)
     
@@ -29,8 +31,11 @@ export const getCurrentUser = async (req?: NextRequest): Promise<User | null> =>
     
       // No cookie session found — maybe a Bearer token
       const authHeader = req.headers.get("authorization");
+      console.log("authHeader", authHeader)
       if (authHeader?.startsWith("Bearer ")) {
         const bearerToken = authHeader.split(" ")[1];
+        const decoded = jwt.verify(bearerToken, process.env.NEXTAUTH_SECRET!) as unknown as { id: string };
+        console.log("decoded", decoded)
         const bearerData = await getToken({
           req: new NextRequest(req.url, {
             headers: { authorization: `Bearer ${bearerToken}` },
