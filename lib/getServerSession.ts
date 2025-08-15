@@ -14,15 +14,9 @@ export const getCurrentUser = async (req?: NextRequest): Promise<User | null> =>
     if (session?.user?.id) {
       return session.user;
     }
-    console.log("sesioni", session)
-    console.log("req", req)
-    // 2 Fallback: Bearer token from Authorization header
-    // First try the cookie/session way
-    if(req){
-      
+
+    if(req){   
       const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-      console.log("token", token)
-    
       if (token?.id) {
         return await prisma.user.findUnique({
           where: { id: token.id as string },
@@ -31,21 +25,12 @@ export const getCurrentUser = async (req?: NextRequest): Promise<User | null> =>
     
       // No cookie session found — maybe a Bearer token
       const authHeader = req.headers.get("authorization");
-      console.log("authHeader", authHeader)
       if (authHeader?.startsWith("Bearer ")) {
         const bearerToken = authHeader.split(" ")[1];
         const decoded = jwt.verify(bearerToken, process.env.NEXTAUTH_SECRET!) as unknown as { id: string };
-        console.log("decoded", decoded)
-        const bearerData = await getToken({
-          req: new NextRequest(req.url, {
-            headers: { authorization: `Bearer ${bearerToken}` },
-          }),
-          secret: process.env.NEXTAUTH_SECRET,
-        });
-    
-        if (bearerData?.id) {
+        if (decoded?.id) {
           return await prisma.user.findUnique({
-            where: { id: bearerData.id as string },
+            where: { id: decoded.id as string },
           });
         }
       }
