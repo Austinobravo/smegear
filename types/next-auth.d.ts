@@ -10,5 +10,6 @@ declare module 'next-auth'{
 declare module 'next-auth'{
     interface Session{
         user:UserType
+        accessToken: string
     }
 }

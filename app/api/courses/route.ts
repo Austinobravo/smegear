@@ -72,6 +72,7 @@ export async function POST(req: NextRequest) {
     if(!user){
       return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
+    
   try {
     const body = await req.json();
     const parsed = CourseCreateSchema.safeParse(body);

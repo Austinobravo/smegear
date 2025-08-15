@@ -2,15 +2,13 @@ import React from 'react'
 import CourseCards from './_components/CourseCards'
 import RecommendedCourses from './_components/RecommendedCourses'
 import axios from 'axios'
-import { cookies } from 'next/headers'
+import { getCurrentSession } from '@/lib/getServerSession'
 
 const fetchAllCourses = async () => {
   try{
-      const token = (await cookies()).get("accessToken")?.value;
+      const session = await getCurrentSession();
+      const token = (session as any).accessToken
 
-    if (!token) {
-      throw new Error("No access token found");
-    }
     console.log("token", token)
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/courses`,
       {
