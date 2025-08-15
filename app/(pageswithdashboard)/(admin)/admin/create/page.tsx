@@ -20,22 +20,6 @@ const formSchema = z.object({
   // price:z.number().min(0, "Price must be a positive number"),
 })
 
-async function ensureDevLogin() {
-
-  // 1. Check if already logged in
-  try {
-    const me = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, {
-      withCredentials: true,
-    });
-    console.log("dataa", me)
-    if (me.data) return true; // already logged in
-  } catch {
-    // no valid session, proceed to login
-  }
-
-
-}
-
 
 const CreatePage = () => {
   const router = useRouter()
