@@ -75,6 +75,7 @@ async function onSubmit(values: FormSchema) {
       );
 
       const data = loginRes.data;
+      await axios.post('/api/auth/set-cookie', values);
 
       if (data?.error) {
         toast.error("Error", { description: data.error });

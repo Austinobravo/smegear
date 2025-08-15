@@ -3,22 +3,23 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/prisma/prisma";
 import { comparePassword } from "@/lib/utils";
 import { emailRegex, emojiRegex } from "@/lib/formSchema";
+import jwt from "jsonwebtoken";
 
 export const options: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      name: 'Credentials',
+      name: "Credentials",
       credentials: {
-        email: { label: 'email', placeholder: 'Your email', type: 'email' },
-        password: { label: 'password', placeholder: 'Your Password', type: 'password' },
+        email: { label: "email", placeholder: "Your email", type: "email" },
+        password: { label: "password", placeholder: "Your Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials.password) throw new Error('Invalid credentials');
+        if (!credentials?.email || !credentials.password) throw new Error("Invalid credentials");
 
         const email = credentials.email.toLowerCase();
         const password = credentials.password;
 
-        if (email.trim().length <= 1 || password.trim().length <= 1) throw new Error('Invalid credentials');
+        if (email.trim().length <= 1 || password.trim().length <= 1) throw new Error("Invalid credentials");
         if (email.match(emojiRegex) || password.match(emojiRegex)) throw new Error("Invalid credentials");
 
         const user = await prisma.user.findFirst({
@@ -37,30 +38,24 @@ export const options: NextAuthOptions = {
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === "development",
   session: { strategy: "jwt", maxAge: 24 * 60 * 60 },
-  cookies: {
-    sessionToken: {
-      name: process.env.NODE_ENV === "production"
-        ? "__Secure-next-auth.session-token"
-        : "next-auth.session-token",
-      options: {
-        httpOnly: true,
-        sameSite: "none", // important for cross-site cookies
-        secure: true,     // must be true when sameSite is 'none'
-      },
-    },
-  },
   callbacks: {
-    session: async ({ session, token }) => ({
-      ...session,
-      user: { ...session.user, id: token.id as string, email: token.email as string },
-    }),
     async jwt({ token, user }) {
       if (user) {
-        return { ...token, id: user?.id, email: (user as any).email };
+        token.id = (user as any).id;
+        token.email = (user as any).email;
       }
       return token;
+    },
+    async session({ session, token }) {
+      session.user = {
+        ...session.user,
+        id: token.id as string,
+        email: token.email as string,
+      };
+      // Embed signed JWT for cross-domain use
+      (session as any).accessToken = jwt.sign(token, process.env.NEXTAUTH_SECRET!);
+      return session;
     },
   },
 };

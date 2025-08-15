@@ -15,8 +15,8 @@ import { z } from "zod";
  *       200:
  *         description: List of courses
  */
-export async function GET() {
-    const user = await getCurrentUser()
+export async function GET(req: Request) {
+  const user = await getCurrentUser(req as any);
     if(!user){
       return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
     }
