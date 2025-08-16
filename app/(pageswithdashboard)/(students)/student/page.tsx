@@ -7,7 +7,9 @@ import { getCurrentSession } from '@/lib/getServerSession'
 const fetchAllCourses = async () => {
   try{
       const session = await getCurrentSession();
+      console.log("sesion", session)
       const token = (session as any).accessToken
+      console.log("token", token)
 
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/courses`,
       {

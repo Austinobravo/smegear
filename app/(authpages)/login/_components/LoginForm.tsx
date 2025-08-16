@@ -20,7 +20,7 @@ import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Link from "next/link"
-import { getSession, signIn, useSession } from 'next-auth/react'
+import { getSession, signIn, signOut, useSession } from 'next-auth/react'
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -50,56 +50,14 @@ export default function LoginForm() {
 async function onSubmit(values: FormSchema) {
 
   try {
-    if (process.env.NODE_ENV === "development") {
-      // -------- DEV MODE: call production auth --------
-      const csrfRes = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/csrf`,
-        { withCredentials: true }
-      );
-
-      const csrfToken = csrfRes.data?.csrfToken;
-      if (!csrfToken) throw new Error("Unable to get CSRF token");
-
-      const loginRes = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/callback/credentials`,
-        new URLSearchParams({
-          csrfToken,
-          email: values.email.trim(),
-          password: values.password.trim(),
-          json: "true"
-        }),
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Accept": "application/json",        
-            "X-Requested-With": "XMLHttpRequest",
-          },
-          withCredentials: true
-        }
-      );
-
-      const data = loginRes.data;
-      const session = await getSession()
-
-      if (data?.error) {
-        toast.error("Error", { description: data.error });
-        return;
-      }
-
-      toast.success("Success", { description: "Login successful." });
-      if (values.remember) {
-        localStorage.setItem(STORAGE_KEY, values.email.trim());
-      } else {
-        localStorage.removeItem(STORAGE_KEY);
-      }
-      router.push("/student");
-    } else {
-      // -------- PROD MODE: normal NextAuth signIn --------
-      const res = await signIn("credentials", {
+     const res = await signIn("credentials", {
         redirect: false,
         email: values.email.trim(),
         password: values.password.trim()
       });
+
+      const session = await getSession()
+      console.log("session", session)
 
       if (res?.error) {
         toast.error("Error", { description: res.error });
@@ -113,7 +71,71 @@ async function onSubmit(values: FormSchema) {
         localStorage.removeItem(STORAGE_KEY);
       }
       router.push("/student");
-    }
+    // if (process.env.NODE_ENV === "development") {
+    //   // -------- DEV MODE: call production auth --------
+    //   const csrfRes = await axios.get(
+    //     `${process.env.NEXT_PUBLIC_API_URL}/api/auth/csrf`,
+    //     { withCredentials: true }
+    //   );
+
+    //   const csrfToken = csrfRes.data?.csrfToken;
+    //   if (!csrfToken) throw new Error("Unable to get CSRF token");
+
+    //   const loginRes = await axios.post(
+    //     `${process.env.NEXT_PUBLIC_API_URL}/api/auth/callback/credentials`,
+    //     new URLSearchParams({
+    //       csrfToken,
+    //       email: values.email.trim(),
+    //       password: values.password.trim(),
+    //       json: "true"
+    //     }),
+    //     {
+    //       headers: {
+    //         "Content-Type": "application/x-www-form-urlencoded",
+    //         "Accept": "application/json",        
+    //         "X-Requested-With": "XMLHttpRequest",
+    //       },
+    //       withCredentials: true
+    //     }
+    //   );
+
+    //   const data = loginRes.data;
+    //   const session = await getSession()
+    //   console.log("session", session)
+
+    //   if (data?.error) {
+    //     toast.error("Error", { description: data.error });
+    //     return;
+    //   }
+
+    //   toast.success("Success", { description: "Login successful." });
+    //   if (values.remember) {
+    //     localStorage.setItem(STORAGE_KEY, values.email.trim());
+    //   } else {
+    //     localStorage.removeItem(STORAGE_KEY);
+    //   }
+    //   // router.push("/student");
+    // } else {
+    //   // -------- PROD MODE: normal NextAuth signIn --------
+    //   const res = await signIn("credentials", {
+    //     redirect: false,
+    //     email: values.email.trim(),
+    //     password: values.password.trim()
+    //   });
+
+    //   if (res?.error) {
+    //     toast.error("Error", { description: res.error });
+    //     return;
+    //   }
+
+    //   toast.success("Success", { description: "Login successful." });
+    //   if (values.remember) {
+    //     localStorage.setItem(STORAGE_KEY, values.email.trim());
+    //   } else {
+    //     localStorage.removeItem(STORAGE_KEY);
+    //   }
+    //   router.push("/student");
+    // }
   } catch (error: any) {
     console.error(error);
     toast.error("Error", { description: error.message || "Login failed" });
@@ -121,21 +143,36 @@ async function onSubmit(values: FormSchema) {
 }
 
 
+const usesession = useSession()
   const isSubmitting = form.formState.isSubmitting
 
     React.useEffect(() => {
     const savedEmail = localStorage.getItem(STORAGE_KEY)
+    console.log("useSessioin", usesession)
     if(savedEmail){
       form.setValue("email", savedEmail)
       form.setValue("remember", true)
     }
 
-  }, [])
+  }, [usesession])
+  const logOut = async () => {
+
+      const SignOut = await signOut({redirect:false})
+       toast.success("Success", {
+                description: "We'll miss you. Come back shortly",
+            });
+        
+      if(SignOut.url){
+          window.location.reload()
+          return router.push("/login")
+      }
+  }
   return (
     <div className="flex items-center justify-center min-h-[50vh] px-4 bg-white">
       <Card className="w-full max-w-md shadow-lg border-2">
         <CardContent className="py-10 space-y-10">
           <h2 className="text-xl font-semibold">Hi, Welcome back!</h2>
+          {/* <button onClick={()=> logOut()}>Sign out</button> */}
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">

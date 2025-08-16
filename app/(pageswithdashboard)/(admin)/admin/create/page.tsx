@@ -46,8 +46,8 @@ const CreatePage = () => {
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   async function onSubmit(values: z.infer<typeof CourseTitleSchema>) {
-    const token = await getSession()
-    const accessToken = token?.accessToken
+    const user = await getSession()
+    const accessToken = user?.accessToken
     console.log("accesstoken", accessToken)
     setError(null);
     setResult(null);
