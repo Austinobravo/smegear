@@ -22,7 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import Link from "next/link"
 import { getSession, signIn, signOut, useSession } from 'next-auth/react'
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import axios from "axios";
 
 const formSchema = z.object({
@@ -37,6 +37,7 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const STORAGE_KEY = "rememberedUser";
   const router = useRouter();
+  const pathname = window.location.href
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -50,14 +51,12 @@ export default function LoginForm() {
 async function onSubmit(values: FormSchema) {
 
   try {
-     const res = await signIn("credentials", {
+      const res = await signIn("credentials", {
         redirect: false,
         email: values.email.trim(),
         password: values.password.trim()
       });
-
-      const session = await getSession()
-      console.log("session", session)
+      console.log("res", res)
 
       if (res?.error) {
         toast.error("Error", { description: res.error });
@@ -70,7 +69,7 @@ async function onSubmit(values: FormSchema) {
       } else {
         localStorage.removeItem(STORAGE_KEY);
       }
-      router.push("/student");
+      // router.push("/student");
     // if (process.env.NODE_ENV === "development") {
     //   // -------- DEV MODE: call production auth --------
     //   const csrfRes = await axios.get(
@@ -87,7 +86,8 @@ async function onSubmit(values: FormSchema) {
     //       csrfToken,
     //       email: values.email.trim(),
     //       password: values.password.trim(),
-    //       json: "true"
+    //       callbackUrl: pathname,
+    //       // json: "true"
     //     }),
     //     {
     //       headers: {
@@ -99,9 +99,35 @@ async function onSubmit(values: FormSchema) {
     //     }
     //   );
 
+    //   const loginResponse = await axios.post(
+    //     `${process.env.NEXT_PUBLIC_API_URL}/api/auth/signin?csrf=true`,
+    //     new URLSearchParams({
+    //       csrfToken,
+    //       email: values.email.trim(),
+    //       password: values.password.trim(),
+    //       callbackUrl: pathname,
+    //       // json: "true"
+    //     }),
+    //     {
+    //       headers: {
+    //         "Content-Type": "application/x-www-form-urlencoded",
+    //         "Accept": "application/json",        
+    //         "X-Requested-With": "XMLHttpRequest",
+    //       },
+    //       withCredentials: true
+    //     }
+    //   );
+    //   const sessionRes = await axios.get(
+    //     `${process.env.NEXT_PUBLIC_API_URL}/api/auth/session`,
+    //     { withCredentials: true }
+    //   );
+
     //   const data = loginRes.data;
     //   const session = await getSession()
+    //   console.log("loginVerificationRes", loginResponse)
+    //   console.log("data", loginRes)
     //   console.log("session", session)
+    //   console.log("sessionRes", sessionRes)
 
     //   if (data?.error) {
     //     toast.error("Error", { description: data.error });
@@ -149,6 +175,7 @@ const usesession = useSession()
     React.useEffect(() => {
     const savedEmail = localStorage.getItem(STORAGE_KEY)
     console.log("useSessioin", usesession)
+    // console.log("pathname", pathname, window.location.href)
     if(savedEmail){
       form.setValue("email", savedEmail)
       form.setValue("remember", true)
@@ -161,10 +188,11 @@ const usesession = useSession()
        toast.success("Success", {
                 description: "We'll miss you. Come back shortly",
             });
+          console.log("signout", SignOut)
         
       if(SignOut.url){
           window.location.reload()
-          return router.push("/login")
+          // return router.push("/login")
       }
   }
   return (
@@ -172,7 +200,7 @@ const usesession = useSession()
       <Card className="w-full max-w-md shadow-lg border-2">
         <CardContent className="py-10 space-y-10">
           <h2 className="text-xl font-semibold">Hi, Welcome back!</h2>
-          {/* <button onClick={()=> logOut()}>Sign out</button> */}
+          <button onClick={()=> logOut()}>Sign out</button>
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">

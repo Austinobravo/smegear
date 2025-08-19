@@ -26,8 +26,8 @@ export const options: NextAuthOptions = {
           where: { OR: [{ email }, { username: email }] },
         });
 
-        if (!user?.isEmailVerified) throw new Error("Unverified email");
         if (!user) throw new Error("Invalid credentials");
+        if (!user?.isEmailVerified) throw new Error("Unverified email");
 
         const isCorrectPassword = await comparePassword(password, user.passwordHash.trim());
         if (!isCorrectPassword) throw new Error("Invalid credentials");
