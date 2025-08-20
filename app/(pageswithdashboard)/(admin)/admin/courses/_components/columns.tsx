@@ -1,21 +1,28 @@
-'use client'
+'use client';
 
-import { ColumnDef } from "@tanstack/react-table"
-import Items from "@/Data/items"
-import { ArrowUpDown, MoreHorizontal, Pencil } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
+import { ColumnDef } from '@tanstack/react-table';
+import { ArrowUpDown, MoreHorizontal, Pencil } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
-export const columns: ColumnDef<(typeof Items)[number]>[] = [
+// Shape the table expects
+export type CourseRow = {
+  id: string;
+  title: string;
+  price: number;
+  published: boolean;
+};
+
+export const columns: ColumnDef<CourseRow>[] = [
   {
-    accessorKey: "Title",
+    accessorKey: 'title',
     header: ({ column }) => (
       <Button
         variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         className="flex items-center gap-2"
       >
         Title
@@ -24,11 +31,11 @@ export const columns: ColumnDef<(typeof Items)[number]>[] = [
     ),
   },
   {
-    accessorKey: "price",
+    accessorKey: 'price',
     header: ({ column }) => (
       <Button
         variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         className="flex items-center gap-2"
       >
         Price
@@ -36,20 +43,20 @@ export const columns: ColumnDef<(typeof Items)[number]>[] = [
       </Button>
     ),
     cell: ({ row }) => {
-      const price = parseFloat(row.getValue("price") || "0");
-      const formatted = new Intl.NumberFormat("en-NG", {
-        style: "currency",
-        currency: "NGN",
+      const price = Number(row.getValue('price') ?? 0);
+      const formatted = new Intl.NumberFormat('en-NG', {
+        style: 'currency',
+        currency: 'NGN',
       }).format(price);
       return <div className="text-sm font-medium">{formatted}</div>;
     },
   },
   {
-    accessorKey: "isPublished",
+    accessorKey: 'published',
     header: ({ column }) => (
       <Button
         variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         className="flex items-center gap-2"
       >
         Published
@@ -57,37 +64,36 @@ export const columns: ColumnDef<(typeof Items)[number]>[] = [
       </Button>
     ),
     cell: ({ row }) => {
-      const isPublished = row.getValue("isPublished") || false;
+      const published = Boolean(row.getValue('published'));
       return (
-        <Badge className={cn("bg-slate-500", isPublished && "bg-sky-700")}>
-          {isPublished ? "Published" : "Draft"}
+        <Badge className={cn('bg-slate-500', published && 'bg-sky-700')}>
+          {published ? 'Published' : 'Draft'}
         </Badge>
       );
     },
   },
- {
-  id: "actions",
-  cell: ({ row }) => {
-    const { id } = row.original;
-
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem asChild>
-            <Link href={`/admin/courses/${id}`} className="flex items-center">
-              <Pencil className="mr-2 h-4 w-4" />
-              Edit
-            </Link>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    );
+  {
+    id: 'actions',
+    cell: ({ row }) => {
+      const { id } = row.original;
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem asChild>
+              <Link href={`/admin/courses/${id}`} className="flex items-center">
+                <Pencil className="mr-2 h-4 w-4" />
+                Edit
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
   },
-},
 ];
