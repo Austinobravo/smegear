@@ -67,16 +67,16 @@ async function onSubmit(values: FormSchema) {
 
         if (!data?.error) {
           const session = await getSession();
+          toast.success("Success", { description: "Login successful." });
+          if (values.remember) {
+            localStorage.setItem(STORAGE_KEY, values.email.trim());
+          } else {
+            localStorage.removeItem(STORAGE_KEY);
+          }
+          router.push("/student");
         }
 
 
-      toast.success("Success", { description: "Login successful." });
-      if (values.remember) {
-        localStorage.setItem(STORAGE_KEY, values.email.trim());
-      } else {
-        localStorage.removeItem(STORAGE_KEY);
-      }
-      router.push("/student");
     } else {
       // -------- PROD MODE: normal NextAuth signIn --------
       const res = await signIn("credentials", {
