@@ -23,7 +23,16 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
     const { slug } = await params;
 
     const course = await prisma.course.findFirst({
-      where: { slug },
+      where: { 
+        OR:[
+          {
+            id: slug
+          },
+          {
+            slug
+          }
+        ]
+       },
     });
 
     if (!course) {
