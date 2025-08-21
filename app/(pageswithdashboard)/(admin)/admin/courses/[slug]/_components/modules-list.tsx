@@ -16,13 +16,13 @@ import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
 // NOTE: rename to your real path
-import ProductModal, { ProductFormValues } from './moduleModal'
+import ProductModal from './moduleModal'
 
 // ---- Types ----
 type Lesson = { id: string; title: string }
 
 type Module = {
-  id: number
+  id: string // id as string so we can delete directly
   ModuleTitle: string
   lessons: Lesson[]
   name: string
@@ -44,23 +44,53 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
   const [isEditing, setIsEditing] = useState(false)
   const toggleEditing = () => setIsEditing((c) => !c)
 
-  // keep a local copy so we can update the UI immediately
   const [modules, setModules] = useState<Module[]>(() => category?.modules ?? [])
 
   const [modalOpen, setModalOpen] = useState(false)
-  const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null)
+  const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null)
+
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   if (!category) return null
 
-  const onEditModule = (moduleId: number) => {
+  const onEditModule = (moduleId: string) => {
     setSelectedModuleId(moduleId)
     setModalOpen(true)
   }
 
-  const onEditLesson = (lessonId: string) => router.push(`/admin/courses/${category.id}/Lessons/${lessonId}`)
+  const onDeleteModule = async (moduleId: string) => {
+    const ok = window.confirm('Delete this module? This cannot be undone.')
+    if (!ok) return
+
+    try {
+      setDeletingId(moduleId)
+
+      const res = await fetch('/api/modules', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ id: moduleId }),
+      })
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err?.message || `Request failed: ${res.status}`)
+      }
+
+      setModules((prev) => prev.filter((m) => m.id !== moduleId))
+      toast.success('Module deleted')
+      router.refresh()
+    } catch (e: any) {
+      toast.error(e?.message || 'Failed to delete module')
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
+  const onEditLesson = (lessonId: string) =>
+    router.push(`/admin/courses/${category.id}/Lessons/${lessonId}`)
   const onDeleteLesson = (lessonId: string) => console.log('Delete lesson', lessonId)
 
-  // Legacy inline form (unchanged)
   const formSchema = z.object({ title: z.string().min(1) })
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -73,31 +103,33 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
     toggleEditing()
   }
 
-  // derive the currently selected module
-  const selectedModule = selectedModuleId != null ? modules.find((m) => m.id === selectedModuleId) : undefined
+  const selectedModule =
+    selectedModuleId != null ? modules.find((m) => m.id === selectedModuleId) : undefined
+
+  // --- FIX: Convert selectedModuleId to number ONLY if it's numeric ---
+  const numericModuleId =
+    selectedModuleId != null && !Number.isNaN(Number(selectedModuleId))
+      ? Number(selectedModuleId)
+      : undefined
+  // --------------------------------------------------------------------
 
   return (
     <>
       <ProductModal
-        key={selectedModuleId ?? 'no-module'} // force re-mount when switching ids
+        key={selectedModuleId ?? 'no-module'}
         open={modalOpen}
         onOpenChange={setModalOpen}
-        moduleId={selectedModuleId ?? undefined}
+        moduleId={numericModuleId}                // ✅ now number | undefined
         initialTitle={selectedModule?.ModuleTitle ?? ''}
         onSave={async (values, ctx) => {
-          // ctx.moduleId is provided by the modal; fall back to local state if needed
-          const id = ctx?.moduleId ?? selectedModuleId
-          if (id == null) return
+          // ctx?.moduleId may be a number (from ProductModal), normalize to string for comparison
+          const idStr =
+            ctx?.moduleId != null ? String(ctx.moduleId) : selectedModuleId ?? undefined
+          if (idStr == null) return
 
-          // TODO: wire up to your API
-          // await axios.patch(`/api/categories/${category.id}/modules/${id}`, { title: values.title })
-
-          // optimistic UI update
           setModules((prev) =>
-            prev.map((m) => (m.id === id ? { ...m, ModuleTitle: values.title } : m))
+            prev.map((m) => (m.id === idStr ? { ...m, ModuleTitle: values.title } : m))
           )
-
-         
         }}
       />
 
@@ -134,6 +166,7 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
             {modules.map((module) => {
               const courseIsPublished = category.isPublished
               const courseIsFree = category.free
+              const isDeletingThis = deletingId === module.id
               return (
                 <AccordionItem
                   key={module.id}
@@ -163,10 +196,33 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
                         {courseIsPublished ? 'Published' : 'Draft'}
                       </Badge>
 
-                      <Pencil
+                      {/* Edit button */}
+                      <button
+                        type="button"
                         onClick={() => onEditModule(module.id)}
-                        className="w-4 h-4 cursor-pointer hover:opacity-75"
-                      />
+                        className={cn(
+                          'p-1 rounded hover:opacity-75',
+                          isDeletingThis && 'pointer-events-none opacity-40'
+                        )}
+                        title="Edit module"
+                        aria-label="Edit module"
+                      >
+                        <Pencil className="w-4 h-4" aria-hidden="true" />
+                      </button>
+
+                      {/* Delete button */}
+                      <button
+                        type="button"
+                        onClick={() => !isDeletingThis && onDeleteModule(module.id)}
+                        className={cn(
+                          'p-1 rounded hover:opacity-75',
+                          isDeletingThis && 'pointer-events-none opacity-40'
+                        )}
+                        title={isDeletingThis ? 'Deleting…' : 'Delete module'}
+                        aria-label={isDeletingThis ? 'Deleting…' : 'Delete module'}
+                      >
+                        <Trash2 className="w-4 h-4 text-red-500" aria-hidden="true" />
+                      </button>
                     </div>
 
                     <AccordionTrigger className="ml-2 px-2 py-1 rounded hover:bg-black/5 transition text-smegear-accent" />
@@ -179,14 +235,24 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
                           <span className="text-sm">└─ {lesson.title}</span>
                         </div>
                         <div className="flex items-center gap-x-2">
-                          <Pencil
+                          <button
+                            type="button"
                             onClick={() => onEditLesson(lesson.id)}
-                            className="w-4 h-4 cursor-pointer hover:opacity-75"
-                          />
-                          <Trash2
+                            className="p-1 rounded hover:opacity-75"
+                            title="Edit lesson"
+                            aria-label="Edit lesson"
+                          >
+                            <Pencil className="w-4 h-4" aria-hidden="true" />
+                          </button>
+                          <button
+                            type="button"
                             onClick={() => onDeleteLesson(lesson.id)}
-                            className="w-4 h-4 cursor-pointer hover:opacity-75 text-red-500"
-                          />
+                            className="p-1 rounded hover:opacity-75"
+                            title="Delete lesson"
+                            aria-label="Delete lesson"
+                          >
+                            <Trash2 className="w-4 h-4 text-red-500" aria-hidden="true" />
+                          </button>
                         </div>
                       </div>
                     ))}

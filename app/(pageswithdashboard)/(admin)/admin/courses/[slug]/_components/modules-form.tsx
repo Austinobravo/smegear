@@ -1,9 +1,12 @@
 "use client";
+
 import React, { useEffect, useMemo, useState } from "react";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import {
+  Form, FormControl, FormField, FormItem, FormMessage,
+} from "@/components/ui/form";
 import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -18,7 +21,7 @@ interface ChaptersFormProps {
         OverView: string;
         id: string; // courseId
         modules?: {
-          id: number;
+          id: number; // incoming SSR can be number — that's ok, we normalize later
           ModuleTitle: string;
           name: string;
           lessons: { id: string; title: string }[];
@@ -30,7 +33,6 @@ interface ChaptersFormProps {
     | undefined;
 }
 
-// API module shape (from your backend)
 type ApiModule = {
   id: string;
   title: string;
@@ -38,15 +40,31 @@ type ApiModule = {
   courseId: string;
 };
 
+const formSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+});
+
+const mapCategoryModulesToApi = (
+  courseId?: string,
+  modules?: { id: number; ModuleTitle: string }[]
+): ApiModule[] => {
+  if (!courseId || !modules) return [];
+  return modules.map((m, idx) => ({
+    id: String(m.id ?? idx + 1), // normalize to string here
+    title: m.ModuleTitle,
+    order: idx + 1,
+    courseId,
+  }));
+};
+
 const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
   const [isCreating, setIsCreating] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [apiModules, setApiModules] = useState<ApiModule[]>([]);
-  const toggleCreating = () => setIsCreating((c) => !c);
 
-  const formSchema = z.object({
-    title: z.string().min(1, "Title is required"),
-  });
+  // Seed from SSR data so it shows on first paint
+  const [apiModules, setApiModules] = useState<ApiModule[]>(
+    () => mapCategoryModulesToApi(category?.id, category?.modules)
+  );
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,15 +72,27 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
   });
   const { isSubmitting, isValid } = form.formState;
 
-  // fetch modules for this course
-  const fetchModules = async () => {
+  const fetchModules = async (retries = 3, delayMs = 400) => {
     if (!category?.id) return;
     try {
       setLoading(true);
-      const res = await fetch(`/api/modules?courseId=${category.id}`);
-      if (!res.ok) throw new Error("Failed to load modules");
+      const res = await fetch(`/api/modules?courseId=${category.id}`, {
+        credentials: "include",
+        cache: "no-store",
+        headers: { "cache-control": "no-cache", pragma: "no-cache" },
+      });
+
+      if (!res.ok) {
+        if ((res.status === 401 || res.status === 403 || res.status >= 500) && retries > 0) {
+          await new Promise((r) => setTimeout(r, delayMs));
+          return fetchModules(retries - 1, delayMs * 1.5);
+        }
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.message || `Failed to load modules (${res.status})`);
+      }
+
       const data: ApiModule[] = await res.json();
-      setApiModules(data);
+      setApiModules(Array.isArray(data) ? data : []);
     } catch (e: any) {
       toast.error(e?.message ?? "Could not load modules");
     } finally {
@@ -70,26 +100,46 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
     }
   };
 
+  // Load (and refresh) on course change
   useEffect(() => {
+    // Re-seed when course changes (helps if SSR passed new category)
+    setApiModules(mapCategoryModulesToApi(category?.id, category?.modules));
+    // Then reconcile with API
     fetchModules();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category?.id]);
 
-  const modulesLength = apiModules.length; // use live data
+  // Revalidate on focus/visibility
+  useEffect(() => {
+    const onFocus = () => fetchModules();
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") fetchModules();
+    };
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category?.id]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!category?.id) {
       toast.error("Missing course id.");
       return;
     }
+
     try {
       const res = await fetch("/api/modules", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        cache: "no-store",
         body: JSON.stringify({
           title: values.title,
           courseId: category.id,
-          order: modulesLength + 1, // append to end
+          order: apiModules.length + 1,
         }),
       });
 
@@ -98,35 +148,60 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
         throw new Error(err?.message || "Failed to create module");
       }
 
+      const newModule: ApiModule = await res.json();
+
+      // Optimistic update so it shows instantly
+      setApiModules((prev) => [...prev, newModule]);
+
       toast.success("Module created");
       form.reset({ title: "" });
       setIsCreating(false);
-      await fetchModules(); // refresh the list
+
+      // Re-fetch to confirm order/data with DB
+      fetchModules();
     } catch (e: any) {
       toast.error(e?.message ?? "Something went wrong");
     }
   };
 
-  // Map API modules to the shape your ChaptersList expects
+  // ----------- FIX IS HERE: ensure module id is a STRING for ChaptersList -----------
   const categoryForList = useMemo(() => {
     if (!category) return undefined;
     const mapped = apiModules
       .slice()
-      .sort((a, b) => a.order - b.order)
-      .map((m) => ({
-        id: (m.id as unknown) as number, // keep your downstream types happy
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+      .map((m, idx) => ({
+        id: String(m.id ?? idx + 1), // <-- force string, not number
         ModuleTitle: m.title,
         name: m.title,
         lessons: [] as { id: string; title: string }[],
       }));
-    return { ...category, modules: mapped };
+    // Keep only the fields ChaptersList cares about; extra fields are fine, but this keeps it clean
+    return {
+      Title: category.Title,
+      id: category.id,
+      OverView: category.OverView,
+      modules: mapped, // <-- now Module[] with id: string
+      isPublished: category.isPublished,
+      free: category.free,
+    };
   }, [category, apiModules]);
+  // -------------------------------------------------------------------------------
+
+  // A stable key that changes when the module list changes forces a remount of ChaptersList
+  const modulesKey = useMemo(
+    () =>
+      apiModules.length === 0
+        ? "empty"
+        : apiModules.map((m) => `${m.id}:${m.order}`).join("|"),
+    [apiModules]
+  );
 
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
         Course modules
-        <Button onClick={toggleCreating} variant="ghost">
+        <Button onClick={() => setIsCreating((c) => !c)} variant="ghost">
           {isCreating ? "Cancel" : (
             <>
               <PlusCircle className="h-4 w-4 mr-2" /> Add a module
@@ -163,11 +238,20 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
       )}
 
       {!isCreating && (
-        <div className={cn("text-sm mt-2", apiModules.length === 0 && "text-slate-500 italic")}>
+        <div
+          className={cn(
+            "text-sm mt-2",
+            apiModules.length === 0 && "text-slate-500 italic"
+          )}
+        >
           {loading && "Loading modules..."}
-          {!loading && modulesLength === 0 && "No chapters"}
-          {/* Render using your existing list component */}
-          {categoryForList && <ChaptersList category={categoryForList} />}
+          {!loading && apiModules.length === 0 && "No chapters"}
+          {categoryForList && (
+            <ChaptersList
+              key={modulesKey}                // forces update when modules change
+              category={categoryForList}      // ✔ now matches ChaptersListProps
+            />
+          )}
         </div>
       )}
 

@@ -56,7 +56,7 @@ export default async function AdminCoursesPage({ params }: PageProps) {
           {/* Keep your existing prop names; change if your components expect `course` or `initialData` */}
           <TitleForm category={course} />
           <DescriptionForm category={course} />
-          <ImageForm courseId={course.id} initialImg={course.imageUrl}/>
+          <ImageForm courseId={course.id} initialImg={course.imageUrl} />
           <CategoryForm />
         </div>
 
