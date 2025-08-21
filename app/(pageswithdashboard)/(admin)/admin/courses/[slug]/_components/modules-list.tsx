@@ -97,7 +97,7 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
             prev.map((m) => (m.id === id ? { ...m, ModuleTitle: values.title } : m))
           )
 
-          toast.success('Module updated', { description: `Module #${id} saved.` })
+         
         }}
       />
 

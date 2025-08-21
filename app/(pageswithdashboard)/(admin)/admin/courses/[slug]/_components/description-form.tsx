@@ -12,13 +12,13 @@ import { toast } from "sonner";
 
 interface DescriptionFormProps {
   category?:
-    | {
-        title?: string;     // normalized name for display only
-        id: string;
-        description?: string; // ✅ prefer this going forward
-        OverView?: string;    // legacy source, if your loader still sends this
-      }
-    | undefined;
+  | {
+    title?: string;
+    id: string;
+    description?: string;
+    OverView?: string;
+  }
+  | undefined;
 }
 
 const formSchema = z.object({

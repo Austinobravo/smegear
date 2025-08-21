@@ -7,8 +7,9 @@ import ImageForm from "./_components/image-form";
 import CategoryForm from "./_components/category-form";
 import PriceForm from "./_components/price-form";
 import AttachmentForm from "./_components/attachment-form";
-import ChaptersForm from "./_components/modules-form";
+
 import { notFound } from "next/navigation";
+import ModulesForm from "./_components/modules-form";
 
 type PageProps = { params: { slug: string } };
 
@@ -65,7 +66,7 @@ export default async function AdminCoursesPage({ params }: PageProps) {
               <IconBadge icon={ListChecks} />
               <h2 className="text-xl">Course modules</h2>
             </div>
-            <ChaptersForm category={course} />
+            <ModulesForm category={course} />
           </div>
 
           <div>
