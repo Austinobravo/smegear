@@ -30,12 +30,14 @@ export default async function AdminCoursesPage({ params }: PageProps) {
   const { slug } = params;
   const course = await fetchAdminCourseBySlug(slug);
 
+  console.log("Fetched course:", course);
+
   if (!course) return notFound();
 
   return (
     <div className="p-6">
       {/* Show the specific course title based on its slug */}
-      <h1 className="text-2xl font-semibold">{course.title}</h1>
+      <h1 className="text-2xl font-semibold">Course setup</h1>
 
       <div className="flex items-center justify-between mt-2">
         <div className="flex flex-col gap-y-2">
@@ -53,7 +55,7 @@ export default async function AdminCoursesPage({ params }: PageProps) {
           {/* Keep your existing prop names; change if your components expect `course` or `initialData` */}
           <TitleForm category={course} />
           <DescriptionForm category={course} />
-          <ImageForm />
+          <ImageForm courseId={course.id} initialImg={course.imageUrl}/>
           <CategoryForm />
         </div>
 
@@ -71,7 +73,8 @@ export default async function AdminCoursesPage({ params }: PageProps) {
               <IconBadge icon={CircleDollarSign} />
               <h2 className="text-xl">Sell your course</h2>
             </div>
-            <PriceForm />
+            <PriceForm courseId={course.id} initialPrice={course.price} />
+
           </div>
 
           <div>

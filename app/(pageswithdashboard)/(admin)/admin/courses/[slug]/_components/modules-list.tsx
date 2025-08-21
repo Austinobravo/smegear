@@ -33,7 +33,7 @@ interface ChaptersListProps {
     Title: string
     id: string
     OverView?: string
-    Modules: Module[]
+    modules: Module[]
     isPublished: boolean
     free: boolean
   }
@@ -45,7 +45,7 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
   const toggleEditing = () => setIsEditing((c) => !c)
 
   // keep a local copy so we can update the UI immediately
-  const [modules, setModules] = useState<Module[]>(() => category?.Modules ?? [])
+  const [modules, setModules] = useState<Module[]>(() => category?.modules ?? [])
 
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null)
