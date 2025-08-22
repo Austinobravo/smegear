@@ -21,10 +21,10 @@ import { NextRequest, NextResponse } from "next/server";
  *         description: List of modules
  */
 export async function GET(req: NextRequest) {
-    const user = await getCurrentUser(req)
-    if(!user){
-        return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
-    }
+    // const user = await getCurrentUser(req)
+    // if(!user){
+    //     return NextResponse.json({ message: "Unauthorized"}, { status: 401 });
+    // }
   try {
     const { searchParams } = new URL(req.url);
     const courseId = searchParams.get("courseId");

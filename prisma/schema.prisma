@@ -68,7 +68,7 @@ model Module {
 model Lesson {
   id        String   @id @default(uuid())
   title     String
-  content   String   @db.Text
+  content   String?   @db.Text @default("New Lesson")
   videoUrl  String?
   module    Module   @relation(fields: [moduleId], references: [id])
   moduleId  String
