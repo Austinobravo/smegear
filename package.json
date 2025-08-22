@@ -61,6 +61,7 @@
     "react-hook-form": "^7.60.0",
     "react-hot-toast": "^2.5.2",
     "react-password-strength-bar": "^0.4.1",
+    "react-quill": "^2.0.0",
     "react-quill-new": "^3.6.0",
     "recharts": "^3.0.2",
     "slug": "^11.0.0",
