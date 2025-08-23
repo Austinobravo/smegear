@@ -1,118 +1,185 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { useSearchParams } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
-import {
-  Clock,
-  BookOpen,
-  Users,
-  SignalHigh,
-  Search,
-  X
-} from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import courses from "@/Data/popularcourseslist";
 import Link from "next/link";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
-const PopularCourses = () => {
- const searchParams = useSearchParams();
-const query = searchParams.get("q")?.toLowerCase() || "";
+// If your fetchAllCourses is in another file, import it:
+// import { fetchAllCourses } from "@/lib/fetchAllCourses";
 
-const filteredCourses = courses.filter(course =>
-  course.title.toLowerCase().includes(query.toLocaleLowerCase())
-);
- 
-
-
-
-  return (
-    <div className=" p-4 space-y-8">
-      <h2 className="text-2xl   text-gray-800 font-bold  ">
-            Search Courses
-          </h2>
-
-      {/* Courses Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {filteredCourses.map((course, index) => (
-          <Link
-            href={`/student/search/${course.id}`}
-            className="no-underline"
-            key={index}
-          >
-            <Card className="overflow-hidden shadow-lg rounded-xl transition-transform duration-300 bg-white hover:scale-[1.02] hover:shadow-xl pb-4 pt-0">
-              <Image
-                src={course.image}
-                alt={course.title}
-                width={600}
-                height={300}
-                className="w-full h-48 object-cover"
-              />
-              <CardContent className="px-6 space-y-4">
-                <div className="flex items-center gap-1 text-yellow-500">
-                  {Array(5).fill(0).map((_, i) => (
-                    <svg
-                      key={i}
-                      className="w-5 h-5 fill-yellow-500"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 .587l3.668 7.568 8.332 1.151-6.001 5.855 1.42 8.292L12 18.896l-7.419 4.557 1.42-8.292-6.001-5.855 8.332-1.151z" />
-                    </svg>
-                  ))}
-                  <span className="ml-2 text-sm text-gray-600">(5.00)</span>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900">
-                  {course.title}
-                </h3>
-                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <BookOpen className="w-4 h-4" /> Lesson {course.lessons}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Users className="w-4 h-4" /> Students {course.students}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <SignalHigh className="w-4 h-4" /> {course.level}
-                  </span>
-                  {course.duration && (
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" /> {course.duration}
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center justify-between pt-4">
-                  <div className="text-base font-semibold text-primary">
-                    Smegear
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-primary">
-                      {course.price}
-                    </p>
-                    {course.oldPrice && (
-                      <p className="line-through text-sm text-gray-400">
-                        {course.oldPrice}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
-
-      {/* View All Courses Button */}
-      {/* <div className="flex justify-center">
-        <Link href="/courses">
-          <Button className="px-9 py-7 bg-smegear-secondary text-white font-semibold uppercase hover:bg-smegear-accent">
-            View All Courses →
-          </Button>
-        </Link>
-      </div> */}
-    </div>
-  );
+// --- types (keep in sync with your API) ---
+type Course = {
+  id: string | number;
+  title: string;
+  imageUrl: string;
+  price?: string | number | null;
 };
 
-export default PopularCourses;
+// --- API helper (uses your provided code) ---
+async function fetchAllCourses(): Promise<Course[]> {
+  try {
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+    };
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/courses`, {
+      method: "GET",
+      headers,
+      next: { revalidate: 300 }, // ISR + cache-friendly
+    });
+
+    if (!res.ok) {
+      console.error("Failed to fetch courses:", res.status, await res.text());
+      return [];
+    }
+
+    const data = (await res.json()) as Course[] | { data: Course[] };
+    const list = Array.isArray(data) ? data : data?.data ?? [];
+    return list;
+  } catch (err) {
+    console.error("Error fetching courses:", err);
+    return [];
+  }
+}
+
+// --- small helpers ---
+const formatPrice = (price?: string | number | null) => {
+  if (price === null || price === undefined || price === "") return "Free";
+  if (typeof price === "number") return new Intl.NumberFormat().format(price);
+  return price; // already a string coming from API
+};
+
+// keep card tiny & memoized (prevents extra rerenders)
+const CourseCard = React.memo(function CourseCard({ course }: { course: Course }) {
+  return (
+    <Link href={`/student/search/${course.id}`} className="no-underline">
+      <Card className="overflow-hidden shadow-lg rounded-xl bg-white  p-0 group">
+        <div className="overflow-hidden">
+          <Image
+            src={course.imageUrl}
+            alt={course.title}
+            width={600}
+            height={400}
+            className="w-full h-72 object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
+         <CardContent className="px-6 space-y-4 pb-6">
+                  <h3 className=" cursor-pointer text-lg font-semibold text-gray-900 line-clamp-2">
+                    {course.title}
+                  </h3>
+
+                  <div className="flex items-center justify-between pt-2">
+                    <div className="text-base font-semibold text-primary">
+                      Smegear
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-primary text-smegear-accent">
+                        ₦ {course.price ?? "—"}
+                      </p>
+                    </div>
+                  </div>
+
+                  
+                </CardContent>
+      </Card>
+    </Link>
+  );
+});
+
+export default function PopularCourses() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const initialQ = searchParams.get("q") ?? "";
+  const [query, setQuery] = useState(initialQ);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [errored, setErrored] = useState(false);
+
+  // fetch on mount
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      setLoading(true);
+      setErrored(false);
+      const list = await fetchAllCourses();
+      if (!mounted) return;
+      setCourses(list);
+      setLoading(false);
+      setErrored(list.length === 0); // treat empty as possible error/empty state
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // keep input + URL in sync (lightweight; no debounce needed for small lists)
+  useEffect(() => {
+    const current = searchParams.get("q") ?? "";
+    if (current !== query) {
+      const p = new URLSearchParams(searchParams);
+      if (query) p.set("q", query);
+      else p.delete("q");
+      router.replace(`${pathname}?${p.toString()}`, { scroll: false });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
+
+  const normalizedQ = query.trim().toLowerCase();
+
+  const filteredCourses = useMemo(() => {
+    if (!normalizedQ) return courses;
+    return courses.filter((c) => c.title?.toLowerCase().includes(normalizedQ));
+  }, [courses, normalizedQ]);
+
+  return (
+    <div className="p-4 space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <h2 className="text-2xl text-gray-800 font-bold">Search Courses</h2>
+        <div className="flex gap-2">
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search by title…"
+            className="w-full sm:w-80"
+            aria-label="Search courses"
+          />
+          {query ? (
+            <Button variant="outline" onClick={() => setQuery("")}>
+              Clear
+            </Button>
+          ) : null}
+        </div>
+      </div>
+
+      {/* states */}
+      {loading && (
+        <div className="text-gray-500">Loading courses…</div>
+      )}
+
+      {!loading && errored && courses.length === 0 && (
+        <div className="text-gray-500">
+          No courses found right now. Please try again later.
+        </div>
+      )}
+
+      {!loading && !errored && filteredCourses.length === 0 && (
+        <div className="text-gray-500">
+          No results for <span className="font-semibold">“{query}”</span>.
+        </div>
+      )}
+
+      {/* grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {filteredCourses.map((course) => (
+          <CourseCard key={course.id} course={course} />
+        ))}
+      </div>
+    </div>
+  );
+}

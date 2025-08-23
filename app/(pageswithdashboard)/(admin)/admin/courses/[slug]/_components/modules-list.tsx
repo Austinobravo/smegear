@@ -15,14 +15,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Grip, Pencil, Trash2, Plus } from 'lucide-react'
+import { Grip, Pencil, Trash2, Plus, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-// NOTE: rename to your real path
 import ProductModal from './moduleModal'
 import axios from 'axios'
 
-/* ===================== Types ===================== */
 type Lesson = { id: string; title: string }
 
 type Module = {
@@ -43,7 +41,6 @@ interface ChaptersListProps {
   }
 }
 
-/* ===================== Schemas ===================== */
 const addLessonSchema = z.object({
   title: z.string().min(1, 'Please enter a title').max(120, 'Keep it short'),
 })
@@ -52,7 +49,6 @@ const inlineChapterSchema = z.object({
   title: z.string().min(1),
 })
 
-/* ===================== Component ===================== */
 const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
   const router = useRouter()
   const { data: session } = useSession()
@@ -65,10 +61,8 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  // Add-lesson dialog state (module id that we're adding to)
   const [addOpenFor, setAddOpenFor] = useState<string | null>(null)
 
-  // RHF for the Add-Lesson dialog
   const addForm = useForm<z.infer<typeof addLessonSchema>>({
     resolver: zodResolver(addLessonSchema),
     defaultValues: { title: '' },
@@ -83,41 +77,18 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
     setModalOpen(true)
   }
 
-  const onDeleteModule = async (moduleId: string) => {
-    const ok = window.confirm('Delete this module? This cannot be undone.')
-    if (!ok) return
-    try {
-      setDeletingId(moduleId)
-      const res = await fetch('/api/modules', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ id: moduleId }),
-      })
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}))
-        throw new Error(err?.message || `Request failed: ${res.status}`)
-      }
-      setModules((prev) => prev.filter((m) => m.id !== moduleId))
-      toast.success('Module deleted')
-      router.refresh()
-    } catch (e: any) {
-      toast.error(e?.message || 'Failed to delete module')
-    } finally {
-      setDeletingId(null)
-    }
-  }
 
-  /* -------- Lesson editing -------- */
+
+
+
   const onEditLesson = (lessonId: string) => {
     router.push(`/admin/courses/${category.id}/Lessons/${lessonId}`)
   }
   const onDeleteLesson = (lessonId: string) => {
-    // hook your delete here
     console.log('Delete lesson', lessonId)
   }
 
-  /* -------- Optional inline chapter create (unchanged) -------- */
+
   const inlineForm = useForm<z.infer<typeof inlineChapterSchema>>({
     resolver: zodResolver(inlineChapterSchema),
     defaultValues: { title: '' },
@@ -138,57 +109,64 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
       ? Number(selectedModuleId)
       : undefined
 
-  /* ===================== Create Lesson + Redirect ===================== */
- const handleCreateLesson = addForm.handleSubmit(async ({ title }) => {
-  if (!addOpenFor) {
-    toast.error('No module selected.')
-    return
-  }
 
-  const targetModule = modules.find((m) => m.id === addOpenFor)
-  const nextOrder = (targetModule?.lessons?.length ?? 0) + 1
+  const handleCreateLesson = addForm.handleSubmit(async ({ title }) => {
+    if (!addOpenFor) {
+      toast.error('No module selected.')
+      return
+    }
 
-  const payload = {
-    title,
-    moduleId: addOpenFor,
-    order: nextOrder,
-  }
+    const targetModule = modules.find((m) => m.id === addOpenFor)
+    const nextOrder = (targetModule?.lessons?.length ?? 0) + 1
 
+    const payload = { title, moduleId: addOpenFor, order: nextOrder }
+
+    try {
+      const user = await getSession()
+      const accessToken = (user as any)?.accessToken
+      if (!accessToken) throw new Error('Missing access token')
+
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/lessons`,
+        payload,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      )
+
+      const newLessonId = res?.data?.id ?? res?.data?.lesson?.id ?? res?.data?.data?.id
+      if (!newLessonId) throw new Error('Could not determine created lesson id')
+
+      toast.success('Lesson created successfully!')
+      setAddOpenFor(null)
+      addForm.reset({ title: '' })
+      router.push(`/admin/courses/${category.id}/Lessons/${newLessonId}`)
+    } catch (e: any) {
+      console.error(e)
+      toast.error(e?.response?.data?.message || e?.message || 'Something went wrong')
+    }
+  })
+
+const onDeleteModule = async (moduleId: string) => {
+if (deletingId) return;
+if (!window.confirm('Delete this module? This cannot be undone.')) return;
   try {
-    const user = await getSession()
-    const accessToken = (user as any)?.accessToken
-    if (!accessToken) throw new Error('Missing access token')
-
-    const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/lessons`,
-      payload,
-      { headers: { Authorization: `Bearer ${accessToken}` } }
-    )
-
-    // Try common response shapes to get the new lesson id
-    const newLessonId =
-      res?.data?.id ??
-      res?.data?.lesson?.id ??
-      res?.data?.data?.id
-
-    if (!newLessonId) throw new Error('Could not determine created lesson id')
-
-    toast.success('Lesson created successfully!')
-
-    // close/reset dialog before navigating
-    setAddOpenFor(null)
-    addForm.reset({ title: '' })
-
-    // Redirect to /admin/courses/[slug]/Lessons/[LessonsId]
-    router.push(`/admin/courses/${category.id}/Lessons/${newLessonId}`)
+    setDeletingId(moduleId);
+ const user = await getSession();
+    const accessToken = (user as any)?.accessToken;
+    if (!accessToken) throw new Error('Missing access token');
+ await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/modules`, {
+      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+      data: { id: moduleId },
+    });
+ setModules((prev) => prev.filter((m) => m.id !== moduleId));
+    toast.success('Module deleted successfully');
   } catch (e: any) {
-    console.error(e)
-    toast.error(e?.response?.data?.message || e?.message || 'Something went wrong')
+    console.error(e);
+    toast.error(e?.response?.data?.message || e?.message || 'Failed to delete module');
+  } finally {
+    setDeletingId(null);
   }
-})
+};
 
-
-  /* ===================== Render ===================== */
   return (
     <>
       <ProductModal
@@ -207,7 +185,6 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
         }}
       />
 
-      {/* Optional: existing inline chapter create form */}
       {isEditing && (
         <Form {...inlineForm}>
           <form onSubmit={inlineForm.handleSubmit(onSubmitInline)} className="space-y-4 mt-4">
@@ -285,18 +262,21 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
                         <Pencil className="w-4 h-4" aria-hidden="true" />
                       </button>
 
-                      {/* Delete module */}
                       <button
                         type="button"
-                        onClick={() => !isDeletingThis && onDeleteModule(module.id)}
+                        onClick={() => onDeleteModule(module.id)}
                         className={cn(
-                          'p-1 rounded hover:opacity-75',
+                          'p-1 rounded hover:opacity-75 flex items-center gap-1',
                           isDeletingThis && 'pointer-events-none opacity-40'
                         )}
                         title={isDeletingThis ? 'Deleting…' : 'Delete module'}
                         aria-label={isDeletingThis ? 'Deleting…' : 'Delete module'}
                       >
-                        <Trash2 className="w-4 h-4 text-red-500" aria-hidden="true" />
+                        {isDeletingThis ? (
+                          <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                        ) : (
+                          <Trash2 className="w-4 h-4 text-red-500" aria-hidden="true" />
+                        )}
                       </button>
                     </div>
 
@@ -321,7 +301,7 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
                           </button>
                           <button
                             type="button"
-                            onClick={() => onDeleteLesson(lesson.id)}
+
                             className="p-1 rounded hover:opacity-75"
                             title="Delete lesson"
                             aria-label="Delete lesson"
@@ -332,7 +312,7 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
                       </div>
                     ))}
 
-                    {/* Add lesson button — opens shadcn Dialog */}
+
                     <Button
                       variant="ghost"
                       size="sm"
@@ -350,7 +330,7 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
         </div>
       )}
 
-      {/* Add-Lesson Dialog */}
+
       <Dialog
         open={Boolean(addOpenFor)}
         onOpenChange={(open) => {

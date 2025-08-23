@@ -41,6 +41,7 @@ function ActionsCell({ id }: { id: string }) {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
+        console.log(err)
         throw new Error(err?.message || `Request failed: ${res.status}`);
       }
 

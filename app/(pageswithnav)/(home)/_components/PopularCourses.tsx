@@ -1,33 +1,55 @@
-import React from "react";
+// app/components/PopularCourses.tsx (Server Component)
+import Image from "next/image";
+import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Clock3,
-  BookText,
-  Users,
-  BarChart3,
-  BadgeCheck,
-  ArrowRight,
-  BookOpen,
-  SignalHigh,
-  Clock,
+import { BookText } from "lucide-react";
 
-} from "lucide-react";
-import Image from "next/image";
-import courses from "@/Data/popularcourseslist"
-import Link from "next/link";
+type Course = {
+  id: string | number;
+  title: string;
+  imageUrl: string;
+  price?: string | number | null;
+};
 
+async function fetchAllCourses(): Promise<Course[]> {
+  try {
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+    };
 
-// ...existing code...
-const PopularCourses = () => {
-  // Only display the first 6 courses
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/courses`,
+      {
+        method: "GET",
+        headers,
+        next: { revalidate: 300 },
+      }
+    );
+
+    if (!res.ok) {
+      console.error("Failed to fetch courses:", res.status, await res.text());
+      return [];
+    }
+
+    const data = (await res.json()) as Course[] | { data: Course[] };
+    const list = Array.isArray(data) ? data : (data?.data ?? []);
+    return list;
+  } catch (err) {
+    console.error("Error fetching courses:", err);
+    return [];
+  }
+}
+
+export default async function PopularCourses() {
+  const courses = await fetchAllCourses();
   const displayedCourses = courses.slice(0, 6);
 
   return (
     <div className="bg-[#F4F5F4] py-16 px-4 md:px-12">
       <div className="flex md:justify-between flex-col items-center mb-8 md:flex-row">
         <div className="text-center md:text-left mb-4 md:mb-0">
-          <p className="text-[16px] uppercase text-smegear-accent font-semibold flex justify-center gap-1 items-center md:justify-start ">
+          <p className="text-[16px] uppercase text-smegear-accent font-semibold flex justify-center gap-1 items-center md:justify-start">
             <BookText size={18} />
             Popular Courses
           </p>
@@ -36,75 +58,74 @@ const PopularCourses = () => {
           </h2>
         </div>
         <Link href="/courses">
-        <Button className="px-9  py-7 bg-smegear-secondary text-white font-semibold uppercase">View All Courses →</Button>
+          <Button className="px-9 py-7 bg-smegear-secondary text-white font-semibold uppercase">
+            View All Courses →
+          </Button>
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {displayedCourses.map((course, index) => (
-          <Link key={`course-${index}`} href={`/courses/popularcourses/${course.id}`} className="no-underline">
-            <Card className="overflow-hidden shadow-lg rounded-xl transition-transform duration-300 bg-white py-0  hover:scale-[1.02] hover:shadow-xl cursor-pointer" key={index}>
-              <Image
-                src={course.image}
-                alt={course.title}
-                width={600}
-                height={300}
-                className="w-full h-48 object-cover"
-              />
+      {displayedCourses.length === 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Card
+              key={`skeleton-${i}`}
+              className="overflow-hidden shadow-lg rounded-xl bg-white animate-pulse"
+            >
+              <div className="w-full h-48 bg-gray-200" />
               <CardContent className="p-6 space-y-4">
-                <div className="flex items-center gap-1 text-yellow-500">
-                  {Array(5).fill(0).map((_, i) => (
-                    <svg
-                      key={i}
-                      className="w-5 h-5 fill-yellow-500"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 .587l3.668 7.568 8.332 1.151-6.001 5.855 1.42 8.292L12 18.896l-7.419 4.557 1.42-8.292-6.001-5.855 8.332-1.151z" />
-                    </svg>
-                  ))}
-                  <span className="ml-2 text-sm text-gray-600">(5.00)</span>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900">
-                  {course.title}
-                </h3>
-                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <BookOpen className="w-4 h-4" /> Lesson {course.lessons}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Users className="w-4 h-4" /> Students {course.students}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <SignalHigh className="w-4 h-4" /> {course.level}
-                  </span>
-                  {course.duration && (
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" /> {course.duration}
-                    </span>
-                  )}
-                </div>
+                <div className="h-6 w-3/4 bg-gray-200 rounded" />
                 <div className="flex items-center justify-between pt-4">
-                  <div className="text-base font-semibold text-primary">
-                    Smegear
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-primary">
-                      {course.price}
-                    </p>
-                    {course.oldPrice && (
-                      <p className="line-through text-lg  text-gray-400">
-                        {course.oldPrice}
-                      </p>
-                    )}
-                  </div>
+                  <div className="h-5 w-24 bg-gray-200 rounded" />
+                  <div className="h-6 w-16 bg-gray-200 rounded" />
                 </div>
               </CardContent>
             </Card>
-          </Link>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {displayedCourses.map((course, index) => (
+            <Link
+              key={`course-${index}`}
+              href={`/courses/${course.id}`}
+              className="no-underline"
+            >
+              <Card className="overflow-hidden shadow-lg rounded-xl bg-white  p-0 group">
+                <div className="overflow-hidden">
+                  <Image
+                    src={course.imageUrl}
+                    alt={course.title}
+                    width={600}
+                    height={400}
+                    className="w-full h-72 object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+
+                <CardContent className="px-6 space-y-4 pb-6">
+                  <h3 className=" cursor-pointer text-lg font-semibold text-gray-900 line-clamp-2">
+                    {course.title}
+                  </h3>
+
+                  <div className="flex items-center justify-between pt-2">
+                    <div className="text-base font-semibold text-primary">
+                      Smegear
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-primary text-smegear-accent">
+                        ₦ {course.price ?? "—"}
+                      </p>
+                    </div>
+                  </div>
+
+                  
+                </CardContent>
+              </Card>
+
+
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
-};
-
-export default PopularCourses;
+}

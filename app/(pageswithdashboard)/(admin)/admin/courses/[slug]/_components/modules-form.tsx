@@ -19,9 +19,9 @@ interface ChaptersFormProps {
     | {
         Title: string;
         OverView: string;
-        id: string; // courseId
+        id: string; 
         modules?: {
-          id: number; // incoming SSR can be number — that's ok, we normalize later
+          id: number; 
           ModuleTitle: string;
           name: string;
           lessons: { id: string; title: string }[];
@@ -50,7 +50,7 @@ const mapCategoryModulesToApi = (
 ): ApiModule[] => {
   if (!courseId || !modules) return [];
   return modules.map((m, idx) => ({
-    id: String(m.id ?? idx + 1), // normalize to string here
+    id: String(m.id ?? idx + 1), 
     title: m.ModuleTitle,
     order: idx + 1,
     courseId,
@@ -61,7 +61,6 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
   const [isCreating, setIsCreating] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Seed from SSR data so it shows on first paint
   const [apiModules, setApiModules] = useState<ApiModule[]>(
     () => mapCategoryModulesToApi(category?.id, category?.modules)
   );
@@ -100,16 +99,16 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
     }
   };
 
-  // Load (and refresh) on course change
+
   useEffect(() => {
-    // Re-seed when course changes (helps if SSR passed new category)
+
     setApiModules(mapCategoryModulesToApi(category?.id, category?.modules));
-    // Then reconcile with API
+
     fetchModules();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  
   }, [category?.id]);
 
-  // Revalidate on focus/visibility
+
   useEffect(() => {
     const onFocus = () => fetchModules();
     const onVisibility = () => {
@@ -121,7 +120,7 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
       window.removeEventListener("focus", onFocus);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  
   }, [category?.id]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -150,7 +149,7 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
 
       const newModule: ApiModule = await res.json();
 
-      // Optimistic update so it shows instantly
+    
       setApiModules((prev) => [...prev, newModule]);
 
       toast.success("Module created");
@@ -164,7 +163,7 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
     }
   };
 
-  // ----------- FIX IS HERE: ensure module id is a STRING for ChaptersList -----------
+
   const categoryForList = useMemo(() => {
     if (!category) return undefined;
     const mapped = apiModules
@@ -176,19 +175,18 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
         name: m.title,
         lessons: [] as { id: string; title: string }[],
       }));
-    // Keep only the fields ChaptersList cares about; extra fields are fine, but this keeps it clean
+    
     return {
       Title: category.Title,
       id: category.id,
       OverView: category.OverView,
-      modules: mapped, // <-- now Module[] with id: string
+      modules: mapped, 
       isPublished: category.isPublished,
       free: category.free,
     };
   }, [category, apiModules]);
-  // -------------------------------------------------------------------------------
 
-  // A stable key that changes when the module list changes forces a remount of ChaptersList
+
   const modulesKey = useMemo(
     () =>
       apiModules.length === 0
@@ -248,8 +246,8 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
           {!loading && apiModules.length === 0 && "No chapters"}
           {categoryForList && (
             <ChaptersList
-              key={modulesKey}                // forces update when modules change
-              category={categoryForList}      // ✔ now matches ChaptersListProps
+              key={modulesKey}               
+              category={categoryForList}      
             />
           )}
         </div>
