@@ -123,16 +123,16 @@ const CoursesCarousel = () => {
           {!loading &&
             courses.map((course) => (
               <SwiperSlide key={course.id}>
-                <Link href={`/courses/popularcourses/${course.id}`} className="no-underline">
+                <Link href={`/courses/${course.id}`} className="no-underline">
                   {/* No hover/group/scale classes on card or image */}
                   <Card className="overflow-hidden shadow-lg rounded-xl bg-white p-0">
                     <div className="overflow-hidden">
                       <Image
                         src={course.imageUrl}
-                    alt={course.title}
-                    width={600}
-                    height={400}
-                    className="w-full h-72 object-cover transition-transform duration-300 group-hover:scale-105"
+                        alt={course.title}
+                        width={600}
+                        height={400}
+                        className="w-full h-72 object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                     </div>
 

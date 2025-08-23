@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { fetchAllCourses } from "@/lib/fetchAllCourses";
 
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,24 +23,36 @@ import {
   Eye,
 } from "lucide-react";
 
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import LoginForm from "@/app/(pageswithnav)/(home)/_components/LoginForm";
+import ModalLoginForm from "@/components/globals/ModalLoginForm";
+import { DialogTitle } from "@radix-ui/react-dialog";
+
+
+
+type Lesson = {
+  id: string | number;
+  title: string;
+  order?: number | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+};
+
+type Module = {
+  id: string | number;
+  title: string;
+  order?: number | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+  lessons?: Lesson[];
+};
+
 type Course = {
   id: string | number;
   title: string;
@@ -49,46 +60,21 @@ type Course = {
   price?: string | number | null;
   description?: string | null;
   slug?: string | null;
-
-
   students?: number | null;
   views?: number | null;
   category?: string | null;
   updatedAt?: string | null;
   info?: string[];
+  published?: boolean | null;
+  // ⬇️ modules coming from your backend
+  modules?: Module[];
 };
-
-
 
 export const revalidate = 300;
 
 type PageProps = {
   params: { coursedetails: string };
 };
-
-const curriculum = [
-  {
-    id: "item-1",
-    sectionTitle: "Introduction to Copyright registration",
-    lessons: [
-      { title: "Introduction to copyright registration", duration: "17:55", locked: true },
-    ],
-  },
-  {
-    id: "item-2",
-    sectionTitle: "How to create an account on NCC portal",
-    lessons: [
-      { title: "How to create an account on NCC portal", duration: "05:35", locked: true },
-    ],
-  },
-  {
-    id: "item-3",
-    sectionTitle: "How to name search on NCC portal",
-    lessons: [
-      { title: "How to do name search on NCC portal", duration: "08:37", locked: true },
-    ],
-  },
-];
 
 const reviews = [
   {
@@ -103,7 +89,7 @@ const reviews = [
 
 const instructorInfo = {
   name: "Smegear Academy",
-  contact: "Moniepoint/81816245632",
+  contact: "Mobile Number: +2348161195352",
   profileImage: "/emma.webp",
   courses: 25,
   students: 2786,
@@ -114,9 +100,6 @@ const instructorInfo = {
     { icon: Github, url: "#" },
   ],
 };
-
-
-
 
 function formatPrice(price?: string | number | null) {
   if (price === null || price === undefined || price === "") return "Free";
@@ -134,7 +117,6 @@ function formatPrice(price?: string | number | null) {
   }
 }
 
-
 export async function generateStaticParams() {
   const courses = await fetchAllCourses();
   return courses.map((c) => ({ coursedetails: String(c.id) }));
@@ -149,6 +131,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
   );
 
   if (!course) return notFound();
+
+  const modules: Module[] = Array.isArray(course.modules) ? course.modules : [];
 
   return (
     <div className="max-w-7xl mx-auto p-2 md:p-6  md:py-20">
@@ -185,11 +169,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
             </h2>
 
             <div className="flex items-center gap-4 mt-4 text-[16px] text-muted-foreground">
-              {/* <div className="flex items-center gap-2">
-                <FileText size={20} /> Category: {course.category ?? "—"}
-              </div> */}
               <div className="flex items-center gap-2">
-                <Calendar size={20} /> Last Updated: {course.updatedAt
+                <Calendar size={20} /> Last Updated:{" "}
+                {course.updatedAt
                   ? new Date(course.updatedAt).toISOString().split("T")[0]
                   : "—"}
               </div>
@@ -233,53 +215,77 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
             {/* Overview */}
             <TabsContent value="overview" className="mt-8 space-y-6">
-              <div >
-                <h2 className="text-2xl font-bold text-gray-800 mb-1">About The Course</h2>
-                <p className="text-lg text-muted-foreground">{course.description}</p></div>
-              <div >
-                <h2 className="text-2xl font-bold text-gray-800 mb-1">What Will You Learn</h2>
-                <p className="text-lg text-muted-foreground">{course.slug
-                  ? course.slug.replace(/\b\w/g, c => c.toUpperCase())
-                  : "—"}
-                  .</p>
-
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-1">
+                  About The Course
+                </h2>
+                <p className="text-lg text-muted-foreground">
+                  {course.description}
+                </p>
               </div>
 
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-1">
+                  What Will You Learn
+                </h2>
+                <p className="text-lg text-muted-foreground">
+                  {course.slug
+                    ? course.slug.charAt(0).toUpperCase() + course.slug.slice(1)
+                    : "—"}
+                  .
+                </p>
+              </div>
             </TabsContent>
 
-            {/* Curriculum */}
+            {/* Curriculum — now driven by course.modules */}
             <TabsContent value="curriculum" className="mt-8 space-y-5">
-              <h2 className="text-[22px] font-bold">Course Curriculum</h2>
-              <Accordion type="single" collapsible className="w-full">
-                {curriculum.map((section) => (
-                  <AccordionItem key={section.id} value={section.id}>
-                    <AccordionTrigger className="text-lg font-bold text-indigo-900 bg-indigo-50 px-6 py-4 rounded-md ">
-                      {section.sectionTitle}
-                    </AccordionTrigger>
-                    {section.lessons.map((lesson, index) => (
-                      <AccordionContent
-                        key={index}
-                        className="pl-6 pr-4 py-4 flex justify-between items-center text-base"
-                      >
-                        <div className="flex items-center gap-3">
-                          <PlayCircle size={20} />
-                          <span>{lesson.title}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <span>{lesson.duration}</span>
-                          {lesson.locked && <Lock size={18} />}
-                        </div>
-                      </AccordionContent>
+              <h2 className="text-[22px] font-bold">Course Modules</h2>
+
+              {modules.length === 0 ? (
+                <p className="text-muted-foreground text-lg">No modules yet.</p>
+              ) : (
+                <Accordion type="single" collapsible className="w-full">
+                  {modules
+                    .slice()
+                    .sort(
+                      (a, b) => (a.order ?? Number.MAX_SAFE_INTEGER) - (b.order ?? Number.MAX_SAFE_INTEGER)
+                    )
+                    .map((m, mIdx) => (
+                      <AccordionItem key={String(m.id)} value={`module-${mIdx}`}>
+                        <AccordionTrigger className="text-lg font-bold text-indigo-900 bg-indigo-50 px-6 py-4 rounded-md">
+                          {m.title || `Module ${mIdx + 1}`}
+                        </AccordionTrigger>
+
+                        {(m.lessons ?? [])
+                          .slice()
+                          .sort(
+                            (a, b) =>
+                              (a.order ?? Number.MAX_SAFE_INTEGER) -
+                              (b.order ?? Number.MAX_SAFE_INTEGER)
+                          )
+                          .map((lesson, lIdx) => (
+                            <AccordionContent
+                              key={String(lesson.id) || `${mIdx}-${lIdx}`}
+                              className="pl-6 pr-4 py-4 flex justify-between items-center text-base"
+                            >
+                              <div className="flex items-center gap-3">
+                                <PlayCircle size={20} />
+                                <span>{lesson.title || `Lesson ${lIdx + 1}`}</span>
+                              </div>
+
+                              {/* Show a lock if the course isn't published */}
+                              {!course.published && <Lock size={18} />}
+                            </AccordionContent>
+                          ))}
+                      </AccordionItem>
                     ))}
-                  </AccordionItem>
-                ))}
-              </Accordion>
+                </Accordion>
+              )}
             </TabsContent>
 
             {/* Instructor */}
             <TabsContent value="instructor" className="mt-8">
               <div className="flex flex-col md:flex-row gap-8 md:items-start bg-indigo-50 p-8 rounded-lg items-center">
-                {/* Using <img> here to keep parity with your code */}
                 <img
                   src={instructorInfo.profileImage}
                   alt={instructorInfo.name}
@@ -335,7 +341,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
                           className={`h-full ${star === 5 ? "bg-indigo-800 w-[80%]" : "w-0"}`}
                         ></div>
                       </div>
-                      <span className="ml-3 text-gray-500">{star === 5 ? "1 Rating" : "0 Rating"}</span>
+                      <span className="ml-3 text-gray-500">
+                        {star === 5 ? "1 Rating" : "0 Rating"}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -381,22 +389,22 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 alt={course.title}
                 width={400}
                 height={300}
-                className="rounded-md"
+                className="rounded-none"
               />
-              <h3 className="text-3xl font-bold text-gray-800">
+              <h3 className="text-3xl font-extrabold text-gray-800">
                 {formatPrice(course.price)}
               </h3>
 
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button className="w-full font-bold bg-smegear-secondary text-white text-lg">
+                  <Button className="w-full py-8 font-bold bg-smegear-secondary text-white text-lg">
                     Buy Now
                   </Button>
                 </DialogTrigger>
-
-                <DialogContent className="sm:max-w-md p-0 border-2 rounded-lg shadow-xl">
-                  <div className="w-full overflow-hidden">
-                    <LoginForm />
+                <DialogTitle></DialogTitle>
+                <DialogContent className="sm:max-w-md ">
+                  <div className="w-full overflow-hidden p-5">
+                    <ModalLoginForm />
                   </div>
                 </DialogContent>
               </Dialog>

@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import LoginForm from "./LoginForm";
+import ModalLoginForm from "@/components/globals/ModalLoginForm";
 
 
 export default function HeroSection() {
@@ -54,11 +54,10 @@ export default function HeroSection() {
               </Button>
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-md p-0 border-2 rounded-lg shadow-xl">
-              {/* Remove DialogHeader to mimic card layout */}
-              <DialogTitle className="sr-only">Login</DialogTitle>
-              <div className="w-full  overflow-hidden">
-                <LoginForm />
+            <DialogTitle></DialogTitle>
+            <DialogContent className="sm:max-w-md ">
+              <div className="w-full overflow-hidden p-5">
+                <ModalLoginForm />
               </div>
             </DialogContent>
           </Dialog>

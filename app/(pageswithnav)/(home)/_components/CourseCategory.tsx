@@ -63,7 +63,7 @@ const CourseCategories = () => {
                     {category.description}
                   </p>
 
-                  <Link href={`/courses/${category.id}`}>
+                  <Link href={`/courses`}>
                     <Button className="mt-4 bg-smegear-secondary text-white text-[14px] leading-[14px] uppercase " variant="default">
                       Learn More
                       <ArrowRight size={20} className="ml-2" />

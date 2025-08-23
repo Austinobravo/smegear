@@ -250,7 +250,7 @@ export default function FilterCoursesPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {paginatedCourses.map((course) => {
-            const href = `/courses/popularcourses/${course.id}`;
+            const href = `/courses/${course.id}`;
             const img = course.imageUrl || "/placeholder-course.jpg";
             return (
               <Link key={course.id} href={href} className="no-underline">
