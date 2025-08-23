@@ -7,7 +7,7 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
+import { fetchAllCourses } from "@/lib/fetchAllCourses";
 
 type Course = {
   id: string | number;
@@ -17,31 +17,6 @@ type Course = {
 };
 
 
-async function fetchAllCourses(): Promise<Course[]> {
-  try {
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-    };
-
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/courses`, {
-      method: "GET",
-      headers,
-      next: { revalidate: 300 },
-    });
-
-    if (!res.ok) {
-      console.error("Failed to fetch courses:", res.status, await res.text());
-      return [];
-    }
-
-    const data = (await res.json()) as Course[] | { data: Course[] };
-    const list = Array.isArray(data) ? data : data?.data ?? [];
-    return list;
-  } catch (err) {
-    console.error("Error fetching courses:", err);
-    return [];
-  }
-}
 
 
 const formatPrice = (price?: string | number | null) => {

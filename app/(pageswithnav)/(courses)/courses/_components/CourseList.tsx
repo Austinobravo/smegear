@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { BookOpen, Users, SignalHigh, Clock, ChevronDown } from "lucide-react";
+import {  ChevronDown } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   DropdownMenu,

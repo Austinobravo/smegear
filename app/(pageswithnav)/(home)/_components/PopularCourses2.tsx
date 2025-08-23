@@ -10,7 +10,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, BookText } from "lucide-react";
-
+import { fetchAllCourses } from "@/lib/fetchAllCourses";
 type Course = {
   id: string | number;
   title: string;
@@ -18,21 +18,7 @@ type Course = {
   price?: string | number | null;
 };
 
-async function fetchAllCourses(): Promise<Course[]> {
-  try {
-    const headers: HeadersInit = { "Content-Type": "application/json" };
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/courses`, {
-      method: "GET",
-      headers,
-      next: { revalidate: 300 },
-    });
-    if (!res.ok) return [];
-    const data = (await res.json()) as Course[] | { data: Course[] };
-    return Array.isArray(data) ? data : (data?.data ?? []);
-  } catch {
-    return [];
-  }
-}
+
 
 function formatPrice(value?: string | number | null) {
   if (value == null || value === "") return "—";

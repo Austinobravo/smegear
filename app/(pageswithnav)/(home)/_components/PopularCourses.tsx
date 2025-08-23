@@ -4,42 +4,9 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BookText } from "lucide-react";
+import { fetchAllCourses } from "@/lib/fetchAllCourses";
 
-type Course = {
-  id: string | number;
-  title: string;
-  imageUrl: string;
-  price?: string | number | null;
-};
 
-async function fetchAllCourses(): Promise<Course[]> {
-  try {
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-    };
-
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/courses`,
-      {
-        method: "GET",
-        headers,
-        next: { revalidate: 300 },
-      }
-    );
-
-    if (!res.ok) {
-      console.error("Failed to fetch courses:", res.status, await res.text());
-      return [];
-    }
-
-    const data = (await res.json()) as Course[] | { data: Course[] };
-    const list = Array.isArray(data) ? data : (data?.data ?? []);
-    return list;
-  } catch (err) {
-    console.error("Error fetching courses:", err);
-    return [];
-  }
-}
 
 export default async function PopularCourses() {
   const courses = await fetchAllCourses();

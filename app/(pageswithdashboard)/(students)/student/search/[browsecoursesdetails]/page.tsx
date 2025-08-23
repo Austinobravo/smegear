@@ -1,17 +1,11 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// app/(courses)/courses/[coursedetails]/page.tsx
 import { notFound } from "next/navigation";
+import Image from "next/image";
+import { fetchAllCourses } from "@/lib/fetchAllCourses";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
-import LoginForm from "@/app/(pageswithnav)/(home)/_components/LoginForm";
-
-import {
-
   BookOpen,
   LayoutList,
   User,
@@ -27,59 +21,61 @@ import {
   FileText,
   Calendar,
   Eye,
-  ArrowRight,
 } from "lucide-react";
-import Image from "next/image";
-import courses from "@/Data/popularcourseslist"
-import { ca } from "zod/v4/locales";
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import ModalLoginForm from "@/components/globals/ModalLoginForm";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 
-interface PageProps {
-  params: Promise<{ browsecoursesdetails: string }>;
-}
-const curriculum = [
-  {
-    id: 'item-1',
-    sectionTitle: 'Introduction to Copyright registration',
-    lessons: [
-      {
-        title: 'Introduction to copyright registration',
-        duration: '17:55',
-        locked: true,
-      },
-    ],
-  },
-  {
-    id: 'item-2',
-    sectionTitle: 'How to create an account on NCC portal',
-    lessons: [
-      {
-        title: 'How to create an account on NCC portal',
-        duration: '05:35',
-        locked: true,
-      },
-    ],
-  },
-  {
-    id: 'item-3',
-    sectionTitle: 'How to name search on NCC portal',
-    lessons: [
-      {
-        title: 'How to do name search on NCC portal',
-        duration: '08:37',
-        locked: true,
-      },
-    ],
-  },
-]
+
+type Lesson = {
+  id: string | number;
+  title: string;
+  order?: number | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+};
+
+type Module = {
+  id: string | number;
+  title: string;
+  order?: number | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+  lessons?: Lesson[];
+};
+
+type Course = {
+  id: string | number;
+  title: string;
+  imageUrl: string;
+  price?: string | number | null;
+  description?: string | null;
+  slug?: string | null;
+  students?: number | null;
+  views?: number | null;
+  category?: string | null;
+  updatedAt?: string | null;
+  info?: string[];
+  published?: boolean | null;
+  // ⬇️ modules coming from your backend
+  modules?: Module[];
+};
+
+export const revalidate = 300;
+
+type PageProps = {
+  params: { browsecoursesdetails: string };
+};
+
 const reviews = [
   {
     id: 1,
@@ -90,9 +86,10 @@ const reviews = [
     avatar: "/testimonial1.webp",
   },
 ];
+
 const instructorInfo = {
   name: "Smegear Academy",
-  contact: "Moniepoint/81816245632",
+  contact: "Mobile Number: +2348161195352",
   profileImage: "/emma.webp",
   courses: 25,
   students: 2786,
@@ -104,22 +101,39 @@ const instructorInfo = {
   ],
 };
 
-const overviewContent = [
-  {
-    heading: "About The Course",
-    content:
-      "This course is designed to help you grasp the fundamental requirements and procedures for Copyright registration",
-  },
-  {
-    heading: "What Will You Learn?",
-    content: "Copyright registration course",
-  },
-];
-export default async function ProductDetailPage({ params }: PageProps) {
-  const categoryId = Number((await params).browsecoursesdetails);
-  const category = courses.find((cat) => cat.id === categoryId);
+function formatPrice(price?: string | number | null) {
+  if (price === null || price === undefined || price === "") return "Free";
+  const asNumber = typeof price === "string" ? Number(price) : price;
+  if (!Number.isFinite(asNumber)) return String(price);
 
-  if (!category) return notFound();
+  try {
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+      maximumFractionDigits: 0,
+    }).format(asNumber as number);
+  } catch {
+    return String(price);
+  }
+}
+
+export async function generateStaticParams() {
+  const courses = await fetchAllCourses();
+  return courses.map((c) => ({ browsecoursesdetails: String(c.id) }));
+}
+
+export default async function ProductDetailPage({ params }: PageProps) {
+  const { browsecoursesdetails } = params;
+
+  const courses = await fetchAllCourses();
+  const course: Course | undefined = courses.find(
+    (c) => String(c.id) === String(browsecoursesdetails)
+  );
+
+  if (!course) return notFound();
+
+  const modules: Module[] = Array.isArray(course.modules) ? course.modules : [];
+
   return (
     <div className="max-w-7xl mx-auto p-2 md:p-6  md:py-20">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -128,11 +142,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <Card className="p-0">
             <CardContent className="p-0">
               <Image
-                src={category.image}
-                alt={category.title}
+                src={course.imageUrl}
+                alt={course.title}
                 width={1000}
                 height={600}
                 className="rounded-t-xl w-full h-[400px] object-cover"
+                priority
               />
             </CardContent>
           </Card>
@@ -140,30 +155,31 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <div>
             <div className="flex items-center gap-6 text-[16px] text-muted-foreground">
               <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 bg-[#F3F6FA] rounded-full " /> Students: {category.students}
+                <Users className="w-4 h-4 bg-[#F3F6FA] rounded-full " />{" "}
+                Students: {course.students ?? 0}
               </div>
               <div className="flex items-center gap-2">
-                <Eye className="w-4 h-4 bg-[#F3F6FA] rounded-full " /> Views: {category.Views}
+                <Eye className="w-4 h-4 bg-[#F3F6FA] rounded-full " />{" "}
+                Views: {course.views ?? 0}
               </div>
             </div>
 
             <h2 className="text-3xl font-bold mt-4">
-              {category.description}
+              {course.title ?? "No title available"}
             </h2>
 
             <div className="flex items-center gap-4 mt-4 text-[16px] text-muted-foreground">
               <div className="flex items-center gap-2">
-                <FileText size={20} /> Category: {category.Category}
-              </div>
-              <div className="flex items-center gap-2">
-                <Calendar size={20} /> Last Updated: {category.UpdatedAt}
+                <Calendar size={20} /> Last Updated:{" "}
+                {course.updatedAt
+                  ? new Date(course.updatedAt).toISOString().split("T")[0]
+                  : "—"}
               </div>
               <div className="flex items-center gap-2">
                 <Star size={20} className="text-yellow-500" /> 5.0
               </div>
             </div>
           </div>
-
 
           {/* Tabs */}
           <Tabs defaultValue="overview" className="mt-10">
@@ -197,44 +213,74 @@ export default async function ProductDetailPage({ params }: PageProps) {
               </TabsTrigger>
             </TabsList>
 
-
             {/* Overview */}
             <TabsContent value="overview" className="mt-8 space-y-6">
-              {overviewContent.map((item, idx) => (
-                <div key={idx}>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-3">{item.heading}</h2>
-                  <p className="text-lg text-muted-foreground">{item.content}</p>
-                </div>
-              ))}
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-1">
+                  About The Course
+                </h2>
+                <p className="text-lg text-muted-foreground">
+                  {course.description}
+                </p>
+              </div>
+
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-1">
+                  What Will You Learn
+                </h2>
+                <p className="text-lg text-muted-foreground">
+                  {course.slug
+                    ? course.slug.charAt(0).toUpperCase() + course.slug.slice(1)
+                    : "—"}
+                  .
+                </p>
+              </div>
             </TabsContent>
 
-            {/* Curriculum */}
+            {/* Curriculum — now driven by course.modules */}
             <TabsContent value="curriculum" className="mt-8 space-y-5">
-              <h2 className="text-[22px] font-bold">Course Curriculum</h2>
-              <Accordion type="single" collapsible className="w-full">
-                {curriculum.map((section) => (
-                  <AccordionItem key={section.id} value={section.id}>
-                    <AccordionTrigger className="text-lg font-bold text-indigo-900 bg-indigo-50 px-6 py-4 rounded-md ">
-                      {section.sectionTitle}
-                    </AccordionTrigger>
-                    {section.lessons.map((lesson, index) => (
-                      <AccordionContent
-                        key={index}
-                        className="pl-6 pr-4 py-4 flex justify-between items-center text-base"
-                      >
-                        <div className="flex items-center gap-3">
-                          <PlayCircle size={20} />
-                          <span>{lesson.title}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <span>{lesson.duration}</span>
-                          {lesson.locked && <Lock size={18} />}
-                        </div>
-                      </AccordionContent>
+              <h2 className="text-[22px] font-bold">Course Modules</h2>
+
+              {modules.length === 0 ? (
+                <p className="text-muted-foreground text-lg">No modules yet.</p>
+              ) : (
+                <Accordion type="single" collapsible className="w-full">
+                  {modules
+                    .slice()
+                    .sort(
+                      (a, b) => (a.order ?? Number.MAX_SAFE_INTEGER) - (b.order ?? Number.MAX_SAFE_INTEGER)
+                    )
+                    .map((m, mIdx) => (
+                      <AccordionItem key={String(m.id)} value={`module-${mIdx}`}>
+                        <AccordionTrigger className="text-lg font-bold text-indigo-900 bg-indigo-50 px-6 py-4 rounded-md">
+                          {m.title || `Module ${mIdx + 1}`}
+                        </AccordionTrigger>
+
+                        {(m.lessons ?? [])
+                          .slice()
+                          .sort(
+                            (a, b) =>
+                              (a.order ?? Number.MAX_SAFE_INTEGER) -
+                              (b.order ?? Number.MAX_SAFE_INTEGER)
+                          )
+                          .map((lesson, lIdx) => (
+                            <AccordionContent
+                              key={String(lesson.id) || `${mIdx}-${lIdx}`}
+                              className="pl-6 pr-4 py-4 flex justify-between items-center text-base"
+                            >
+                              <div className="flex items-center gap-3">
+                                <PlayCircle size={20} />
+                                <span>{lesson.title || `Lesson ${lIdx + 1}`}</span>
+                              </div>
+
+                              {/* Show a lock if the course isn't published */}
+                              {!course.published && <Lock size={18} />}
+                            </AccordionContent>
+                          ))}
+                      </AccordionItem>
                     ))}
-                  </AccordionItem>
-                ))}
-              </Accordion>
+                </Accordion>
+              )}
             </TabsContent>
 
             {/* Instructor */}
@@ -246,8 +292,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   className="w-56 h-56 object-cover rounded-lg shadow-md"
                 />
                 <div className="flex-1 space-y-3">
-                  <h3 className="text-2xl font-bold text-center md:text-start">{instructorInfo.name}</h3>
-                  <p className="text-lg text-muted-foreground text-center md:text-start">{instructorInfo.contact}</p>
+                  <h3 className="text-2xl font-bold text-center md:text-start">
+                    {instructorInfo.name}
+                  </h3>
+                  <p className="text-lg text-muted-foreground text-center md:text-start">
+                    {instructorInfo.contact}
+                  </p>
 
                   <div className="flex gap-10 text-lg text-gray-700 font-semibold pt-2">
                     <div className="flex items-center gap-3">
@@ -291,7 +341,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
                           className={`h-full ${star === 5 ? "bg-indigo-800 w-[80%]" : "w-0"}`}
                         ></div>
                       </div>
-                      <span className="ml-3 text-gray-500">{star === 5 ? "1 Rating" : "0 Rating"}</span>
+                      <span className="ml-3 text-gray-500">
+                        {star === 5 ? "1 Rating" : "0 Rating"}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -326,7 +378,6 @@ export default async function ProductDetailPage({ params }: PageProps) {
               ))}
             </TabsContent>
           </Tabs>
-
         </div>
 
         {/* Right Column */}
@@ -334,36 +385,40 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <Card className="p-4">
             <CardContent className="flex flex-col gap-4">
               <Image
-                src={category.image}
-                alt={category.title}
+                src={course.imageUrl}
+                alt={course.title}
                 width={400}
                 height={300}
-                className="rounded-md"
+                className="rounded-none"
               />
-              <h3 className="text-3xl font-bold text-gray-800">{category.price}</h3>
+              <h3 className="text-3xl font-extrabold text-gray-800">
+                {formatPrice(course.price)}
+              </h3>
+
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button className="w-full font-bold bg-smegear-secondary text-white text-lg">
+                  <Button className="w-full py-8 font-bold bg-smegear-secondary text-white text-lg">
                     Buy Now
                   </Button>
                 </DialogTrigger>
-
-                <DialogContent className="sm:max-w-md p-0 border-2 rounded-lg shadow-xl">
-                  {/* Remove DialogHeader to mimic card layout */}
-                  <div className="w-full  overflow-hidden">
-                    <LoginForm />
+                <DialogTitle></DialogTitle>
+                <DialogContent className="sm:max-w-md ">
+                  <div className="w-full overflow-hidden p-5">
+                    <ModalLoginForm />
                   </div>
                 </DialogContent>
               </Dialog>
 
-              <div className="border-t pt-4">
-                <h4 className="text-xl font-semibold mb-2">Course Information</h4>
-                <ul className="text-lg text-muted-foreground list-disc pl-5 space-y-1">
-                  {category.info.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
+              {Array.isArray(course.info) && course.info.length > 0 && (
+                <div className="border-t pt-4">
+                  <h4 className="text-xl font-semibold mb-2">Course Information</h4>
+                  <ul className="text-lg text-muted-foreground list-disc pl-5 space-y-1">
+                    {course.info.map((item, idx) => (
+                      <li key={idx}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -377,6 +432,4 @@ export default async function ProductDetailPage({ params }: PageProps) {
       </div>
     </div>
   );
-};
-
-
+}
