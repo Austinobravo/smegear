@@ -1,8 +1,12 @@
+// app/(courses)/courses/[coursedetails]/page.tsx
 import { notFound } from "next/navigation";
+import Image from "next/image";
+import { fetchAllCourses } from "@/lib/fetchAllCourses";
+
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-
   BookOpen,
   LayoutList,
   User,
@@ -18,70 +22,74 @@ import {
   FileText,
   Calendar,
   Eye,
-  ArrowRight,
 } from "lucide-react";
-import Image from "next/image";
-import { categories } from "@/data";
-import { ca } from "zod/v4/locales";
+
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@/components/ui/tabs'
+} from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion'
+} from "@/components/ui/accordion";
 import LoginForm from "@/app/(pageswithnav)/(home)/_components/LoginForm";
+type Course = {
+  id: string | number;
+  title: string;
+  imageUrl: string;
+  price?: string | number | null;
+  description?: string | null;
+  slug?: string | null;
 
+
+  students?: number | null;
+  views?: number | null;
+  category?: string | null;
+  updatedAt?: string | null;
+  info?: string[];
+};
+
+
+
+export const revalidate = 300;
+
+type PageProps = {
+  params: { coursedetails: string };
+};
 
 const curriculum = [
   {
-    id: 'item-1',
-    sectionTitle: 'Introduction to Copyright registration',
+    id: "item-1",
+    sectionTitle: "Introduction to Copyright registration",
     lessons: [
-      {
-        title: 'Introduction to copyright registration',
-        duration: '17:55',
-        locked: true,
-      },
+      { title: "Introduction to copyright registration", duration: "17:55", locked: true },
     ],
   },
   {
-    id: 'item-2',
-    sectionTitle: 'How to create an account on NCC portal',
+    id: "item-2",
+    sectionTitle: "How to create an account on NCC portal",
     lessons: [
-      {
-        title: 'How to create an account on NCC portal',
-        duration: '05:35',
-        locked: true,
-      },
+      { title: "How to create an account on NCC portal", duration: "05:35", locked: true },
     ],
   },
   {
-    id: 'item-3',
-    sectionTitle: 'How to name search on NCC portal',
+    id: "item-3",
+    sectionTitle: "How to name search on NCC portal",
     lessons: [
-      {
-        title: 'How to do name search on NCC portal',
-        duration: '08:37',
-        locked: true,
-      },
+      { title: "How to do name search on NCC portal", duration: "08:37", locked: true },
     ],
   },
-]
+];
+
 const reviews = [
   {
     id: 1,
@@ -92,6 +100,7 @@ const reviews = [
     avatar: "/testimonial1.webp",
   },
 ];
+
 const instructorInfo = {
   name: "Smegear Academy",
   contact: "Moniepoint/81816245632",
@@ -106,29 +115,41 @@ const instructorInfo = {
   ],
 };
 
-const overviewContent = [
-  {
-    heading: "About The Course",
-    content:
-      "This course is designed to help you grasp the fundamental requirements and procedures for Copyright registration",
-  },
-  {
-    heading: "What Will You Learn?",
-    content: "Copyright registration course",
-  },
-];
 
 
-interface Props {
-  // coursedetails: string | PromiseLike<string>;
-   params: Promise<{ coursedetails: string }>;
+
+function formatPrice(price?: string | number | null) {
+  if (price === null || price === undefined || price === "") return "Free";
+  const asNumber = typeof price === "string" ? Number(price) : price;
+  if (!Number.isFinite(asNumber)) return String(price);
+
+  try {
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+      maximumFractionDigits: 0,
+    }).format(asNumber as number);
+  } catch {
+    return String(price);
+  }
 }
 
-export default async function ProductDetailPage({ params }: Props) {
-  const categoryId = parseInt((await params).coursedetails);
-  const category = categories.find((cat) => cat.id === categoryId);
 
-  if (!category) return notFound();
+export async function generateStaticParams() {
+  const courses = await fetchAllCourses();
+  return courses.map((c) => ({ coursedetails: String(c.id) }));
+}
+
+export default async function ProductDetailPage({ params }: PageProps) {
+  const { coursedetails } = params;
+
+  const courses = await fetchAllCourses();
+  const course: Course | undefined = courses.find(
+    (c) => String(c.id) === String(coursedetails)
+  );
+
+  if (!course) return notFound();
+
   return (
     <div className="max-w-7xl mx-auto p-2 md:p-6  md:py-20">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -137,11 +158,12 @@ export default async function ProductDetailPage({ params }: Props) {
           <Card className="p-0">
             <CardContent className="p-0">
               <Image
-                src={category.image}
-                alt={category.title}
+                src={course.imageUrl}
+                alt={course.title}
                 width={1000}
                 height={600}
                 className="rounded-t-xl w-full h-[400px] object-cover"
+                priority
               />
             </CardContent>
           </Card>
@@ -149,30 +171,33 @@ export default async function ProductDetailPage({ params }: Props) {
           <div>
             <div className="flex items-center gap-6 text-[16px] text-muted-foreground">
               <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 bg-[#F3F6FA] rounded-full " /> Students: {category.students}
+                <Users className="w-4 h-4 bg-[#F3F6FA] rounded-full " />{" "}
+                Students: {course.students ?? 0}
               </div>
               <div className="flex items-center gap-2">
-                <Eye className="w-4 h-4 bg-[#F3F6FA] rounded-full " /> Views: {category.Views}
+                <Eye className="w-4 h-4 bg-[#F3F6FA] rounded-full " />{" "}
+                Views: {course.views ?? 0}
               </div>
             </div>
 
             <h2 className="text-3xl font-bold mt-4">
-              {category.description}
+              {course.title ?? "No title available"}
             </h2>
 
             <div className="flex items-center gap-4 mt-4 text-[16px] text-muted-foreground">
+              {/* <div className="flex items-center gap-2">
+                <FileText size={20} /> Category: {course.category ?? "—"}
+              </div> */}
               <div className="flex items-center gap-2">
-                <FileText size={20} /> Category: {category.Category}
-              </div>
-              <div className="flex items-center gap-2">
-                <Calendar size={20} /> Last Updated: {category.UpdatedAt}
+                <Calendar size={20} /> Last Updated: {course.updatedAt
+                  ? new Date(course.updatedAt).toISOString().split("T")[0]
+                  : "—"}
               </div>
               <div className="flex items-center gap-2">
                 <Star size={20} className="text-yellow-500" /> 5.0
               </div>
             </div>
           </div>
-
 
           {/* Tabs */}
           <Tabs defaultValue="overview" className="mt-10">
@@ -206,15 +231,20 @@ export default async function ProductDetailPage({ params }: Props) {
               </TabsTrigger>
             </TabsList>
 
-
             {/* Overview */}
             <TabsContent value="overview" className="mt-8 space-y-6">
-              {overviewContent.map((item, idx) => (
-                <div key={idx}>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-3">{item.heading}</h2>
-                  <p className="text-lg text-muted-foreground">{item.content}</p>
-                </div>
-              ))}
+              <div >
+                <h2 className="text-2xl font-bold text-gray-800 mb-1">About The Course</h2>
+                <p className="text-lg text-muted-foreground">{course.description}</p></div>
+              <div >
+                <h2 className="text-2xl font-bold text-gray-800 mb-1">What Will You Learn</h2>
+                <p className="text-lg text-muted-foreground">{course.slug
+                  ? course.slug.replace(/\b\w/g, c => c.toUpperCase())
+                  : "—"}
+                  .</p>
+
+              </div>
+
             </TabsContent>
 
             {/* Curriculum */}
@@ -249,14 +279,19 @@ export default async function ProductDetailPage({ params }: Props) {
             {/* Instructor */}
             <TabsContent value="instructor" className="mt-8">
               <div className="flex flex-col md:flex-row gap-8 md:items-start bg-indigo-50 p-8 rounded-lg items-center">
+                {/* Using <img> here to keep parity with your code */}
                 <img
                   src={instructorInfo.profileImage}
                   alt={instructorInfo.name}
                   className="w-56 h-56 object-cover rounded-lg shadow-md"
                 />
                 <div className="flex-1 space-y-3">
-                  <h3 className="text-2xl font-bold text-center md:text-start">{instructorInfo.name}</h3>
-                  <p className="text-lg text-muted-foreground text-center md:text-start">{instructorInfo.contact}</p>
+                  <h3 className="text-2xl font-bold text-center md:text-start">
+                    {instructorInfo.name}
+                  </h3>
+                  <p className="text-lg text-muted-foreground text-center md:text-start">
+                    {instructorInfo.contact}
+                  </p>
 
                   <div className="flex gap-10 text-lg text-gray-700 font-semibold pt-2">
                     <div className="flex items-center gap-3">
@@ -335,7 +370,6 @@ export default async function ProductDetailPage({ params }: Props) {
               ))}
             </TabsContent>
           </Tabs>
-
         </div>
 
         {/* Right Column */}
@@ -343,13 +377,16 @@ export default async function ProductDetailPage({ params }: Props) {
           <Card className="p-4">
             <CardContent className="flex flex-col gap-4">
               <Image
-                src={category.image}
-                alt={category.title}
+                src={course.imageUrl}
+                alt={course.title}
                 width={400}
                 height={300}
                 className="rounded-md"
               />
-              <h3 className="text-3xl font-bold text-gray-800">{category.price}</h3>
+              <h3 className="text-3xl font-bold text-gray-800">
+                {formatPrice(course.price)}
+              </h3>
+
               <Dialog>
                 <DialogTrigger asChild>
                   <Button className="w-full font-bold bg-smegear-secondary text-white text-lg">
@@ -358,21 +395,22 @@ export default async function ProductDetailPage({ params }: Props) {
                 </DialogTrigger>
 
                 <DialogContent className="sm:max-w-md p-0 border-2 rounded-lg shadow-xl">
-                  {/* Remove DialogHeader to mimic card layout */}
-                  <div className="w-full  overflow-hidden">
+                  <div className="w-full overflow-hidden">
                     <LoginForm />
                   </div>
                 </DialogContent>
               </Dialog>
 
-              <div className="border-t pt-4">
-                <h4 className="text-xl font-semibold mb-2">Course Information</h4>
-                <ul className="text-lg text-muted-foreground list-disc pl-5 space-y-1">
-                  {category.info.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
+              {Array.isArray(course.info) && course.info.length > 0 && (
+                <div className="border-t pt-4">
+                  <h4 className="text-xl font-semibold mb-2">Course Information</h4>
+                  <ul className="text-lg text-muted-foreground list-disc pl-5 space-y-1">
+                    {course.info.map((item, idx) => (
+                      <li key={idx}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -386,6 +424,4 @@ export default async function ProductDetailPage({ params }: Props) {
       </div>
     </div>
   );
-};
-
-
+}

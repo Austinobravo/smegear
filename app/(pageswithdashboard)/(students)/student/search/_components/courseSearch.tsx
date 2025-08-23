@@ -8,10 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-// If your fetchAllCourses is in another file, import it:
-// import { fetchAllCourses } from "@/lib/fetchAllCourses";
 
-// --- types (keep in sync with your API) ---
 type Course = {
   id: string | number;
   title: string;
@@ -19,7 +16,7 @@ type Course = {
   price?: string | number | null;
 };
 
-// --- API helper (uses your provided code) ---
+
 async function fetchAllCourses(): Promise<Course[]> {
   try {
     const headers: HeadersInit = {
@@ -29,7 +26,7 @@ async function fetchAllCourses(): Promise<Course[]> {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/courses`, {
       method: "GET",
       headers,
-      next: { revalidate: 300 }, // ISR + cache-friendly
+      next: { revalidate: 300 },
     });
 
     if (!res.ok) {
@@ -46,14 +43,14 @@ async function fetchAllCourses(): Promise<Course[]> {
   }
 }
 
-// --- small helpers ---
+
 const formatPrice = (price?: string | number | null) => {
   if (price === null || price === undefined || price === "") return "Free";
   if (typeof price === "number") return new Intl.NumberFormat().format(price);
-  return price; // already a string coming from API
+  return price;
 };
 
-// keep card tiny & memoized (prevents extra rerenders)
+
 const CourseCard = React.memo(function CourseCard({ course }: { course: Course }) {
   return (
     <Link href={`/student/search/${course.id}`} className="no-underline">
@@ -67,24 +64,24 @@ const CourseCard = React.memo(function CourseCard({ course }: { course: Course }
             className="w-full h-72 object-cover transition-transform duration-300 group-hover:scale-105"
           />
         </div>
-         <CardContent className="px-6 space-y-4 pb-6">
-                  <h3 className=" cursor-pointer text-lg font-semibold text-gray-900 line-clamp-2">
-                    {course.title}
-                  </h3>
+        <CardContent className="px-6 space-y-4 pb-6">
+          <h3 className=" cursor-pointer text-lg font-semibold text-gray-900 line-clamp-2">
+            {course.title}
+          </h3>
 
-                  <div className="flex items-center justify-between pt-2">
-                    <div className="text-base font-semibold text-primary">
-                      Smegear
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold text-primary text-smegear-accent">
-                        ₦ {course.price ?? "—"}
-                      </p>
-                    </div>
-                  </div>
+          <div className="flex items-center justify-between pt-2">
+            <div className="text-base font-semibold text-primary">
+              Smegear
+            </div>
+            <div className="text-right">
+              <p className="text-lg font-bold text-primary text-smegear-accent">
+                ₦ {course.price ?? "—"}
+              </p>
+            </div>
+          </div>
 
-                  
-                </CardContent>
+
+        </CardContent>
       </Card>
     </Link>
   );
@@ -101,7 +98,7 @@ export default function PopularCourses() {
   const [loading, setLoading] = useState(true);
   const [errored, setErrored] = useState(false);
 
-  // fetch on mount
+
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -111,14 +108,14 @@ export default function PopularCourses() {
       if (!mounted) return;
       setCourses(list);
       setLoading(false);
-      setErrored(list.length === 0); // treat empty as possible error/empty state
+      setErrored(list.length === 0);
     })();
     return () => {
       mounted = false;
     };
   }, []);
 
-  // keep input + URL in sync (lightweight; no debounce needed for small lists)
+
   useEffect(() => {
     const current = searchParams.get("q") ?? "";
     if (current !== query) {
@@ -127,7 +124,7 @@ export default function PopularCourses() {
       else p.delete("q");
       router.replace(`${pathname}?${p.toString()}`, { scroll: false });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [query]);
 
   const normalizedQ = query.trim().toLowerCase();
@@ -157,7 +154,7 @@ export default function PopularCourses() {
         </div>
       </div>
 
-      {/* states */}
+
       {loading && (
         <div className="text-gray-500">Loading courses…</div>
       )}
@@ -174,7 +171,7 @@ export default function PopularCourses() {
         </div>
       )}
 
-      {/* grid */}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {filteredCourses.map((course) => (
           <CourseCard key={course.id} course={course} />
