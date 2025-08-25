@@ -33,10 +33,12 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
           }
         ]
        },
-        modules: {
-          include:{
-            lessons: true
-          }
+       include:{
+         modules: {
+           include:{
+             lessons: true
+           }
+       }
         },
     });
 

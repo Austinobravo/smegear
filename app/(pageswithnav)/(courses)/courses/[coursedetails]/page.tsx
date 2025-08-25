@@ -73,7 +73,7 @@ type Course = {
 export const revalidate = 300;
 
 type PageProps = {
-  params: { coursedetails: string };
+  params: Promise<{ coursedetails: string }>;
 };
 
 const reviews = [
@@ -123,7 +123,7 @@ export async function generateStaticParams() {
 }
 
 export default async function ProductDetailPage({ params }: PageProps) {
-  const { coursedetails } = params;
+  const coursedetails = (await params).coursedetails;
 
   const courses = await fetchAllCourses();
   const course: Course | undefined = courses.find(

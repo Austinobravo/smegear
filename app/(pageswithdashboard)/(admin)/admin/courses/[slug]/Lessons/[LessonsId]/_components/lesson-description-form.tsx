@@ -12,7 +12,8 @@ import { cn } from "@/lib/utils";
 import { Editor } from "@/components/globals/editor";
 
 // ➊ bring in Quill's default theme so read-only view looks like the editor
-import "react-quill/dist/quill.snow.css";
+import "react-quill-new/dist/quill.snow.css";
+// import "react-quill/dist/quill.snow.css";
 // ➋ sanitize before injecting html
 import DOMPurify from "isomorphic-dompurify";
 
