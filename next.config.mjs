@@ -6,7 +6,12 @@ const nextConfig = {
                 hostname: 'sme-gear.s3.amazonaws.com',
                 protocol: 'https',
                 
-            }
+            },
+               {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/**',            // or `/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/**`
+      },
         ]
     }
 };

@@ -1,4 +1,4 @@
-import React from "react";
+// app/(pageswithdashboard)/(admin)/admin/courses/[slug]/page.tsx
 import { IconBadge } from "@/components/icon-badge";
 import { CircleDollarSign, File, LayoutDashboard, ListChecks } from "lucide-react";
 import TitleForm from "./_components/title-form";
@@ -7,36 +7,38 @@ import ImageForm from "./_components/image-form";
 import CategoryForm from "./_components/category-form";
 import PriceForm from "./_components/price-form";
 import AttachmentForm from "./_components/attachment-form";
-import ChaptersForm from "./_components/modules-form";
-import Items from "@/Data/items";
+
 import { notFound } from "next/navigation";
-import prisma from "@/prisma/prisma";
-import axios from "axios";
+import ModulesForm from "./_components/modules-form";
 
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
-const fetchAdminCoursesId = async (id: string) => {
-  try{
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/courses/${id}`)
-    console.log("response", response)
-    return response.data
+type PageProps = { params: { slug: string } };
 
-  }catch(error){
-    console.error("error", error)
-    return null
+async function fetchAdminCourseBySlug(slug: string) {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/courses/${encodeURIComponent(slug)}`,
+      { cache: "no-store" }
+    );
+    if (!res.ok) return null;
+    return res.json();
+  } catch (e) {
+    console.error("Failed to fetch course by slug:", e);
+    return null;
   }
 }
-const AdminCoursesPage= async({ params }: PageProps)=> {
-  const id = (await params).id
-  const course = await fetchAdminCoursesId(id);
+
+export default async function AdminCoursesPage({ params }: PageProps) {
+  const { slug } = params;
+  const course = await fetchAdminCourseBySlug(slug);
+
+  console.log("Fetched course:", course);
 
   if (!course) return notFound();
 
   return (
     <div className="p-6">
-      {/* Show the specific course title based on its id */}
-      <h1 className="text-2xl font-semibold">{course.title}</h1>
+      {/* Show the specific course title based on its slug */}
+      <h1 className="text-2xl font-semibold">Course setup</h1>
 
       <div className="flex items-center justify-between mt-2">
         <div className="flex flex-col gap-y-2">
@@ -50,10 +52,11 @@ const AdminCoursesPage= async({ params }: PageProps)=> {
             <IconBadge icon={LayoutDashboard} />
             <h2 className="text-xl">Customize your course</h2>
           </div>
-          {/* Pass the course down if TitleForm needs it */}
+
+          {/* Keep your existing prop names; change if your components expect `course` or `initialData` */}
           <TitleForm category={course} />
           <DescriptionForm category={course} />
-          <ImageForm />
+          <ImageForm courseId={course.id} initialImg={course.imageUrl} />
           <CategoryForm />
         </div>
 
@@ -63,7 +66,7 @@ const AdminCoursesPage= async({ params }: PageProps)=> {
               <IconBadge icon={ListChecks} />
               <h2 className="text-xl">Course modules</h2>
             </div>
-            <ChaptersForm category={course} />
+            <ModulesForm category={course} />
           </div>
 
           <div>
@@ -71,7 +74,8 @@ const AdminCoursesPage= async({ params }: PageProps)=> {
               <IconBadge icon={CircleDollarSign} />
               <h2 className="text-xl">Sell your course</h2>
             </div>
-            <PriceForm />
+            <PriceForm courseId={course.id} initialPrice={course.price} />
+
           </div>
 
           <div>
@@ -86,4 +90,3 @@ const AdminCoursesPage= async({ params }: PageProps)=> {
     </div>
   );
 }
-export default AdminCoursesPage;

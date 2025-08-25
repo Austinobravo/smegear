@@ -4,20 +4,36 @@ import Link from 'next/link';
 import React from 'react'
 import LessonTitleForm from './_components/lesson-title-form';
 import LessonDescriptionForm from './_components/lesson-description-form';
-import ChapterAccessForm from './_components/lesson-access-form';
+
 import Items from '@/Data/items';
 import ChapterVideoForm from './_components/lesson-video-form';
 import Banner from '@/components/banner';
-import ChapterActions from './_components/lesson-actions';
+import { notFound } from 'next/navigation';
+
 interface PageProps {
-  params: Promise<{ LessonsId: string }>;
+  params: { LessonsId: string };
+}
+
+async function fetchLessonById(LessonsId: string) {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/lessons/${encodeURIComponent(LessonsId)}`,
+      { cache: "no-store" }
+    );
+    if (!res.ok) return null;
+    return res.json();
+  } catch (e) {
+    console.error("Failed to fetch lesson by id:", e);
+    return null;
+  }
 }
 
 const ChapterId = async ({ params }: PageProps) => {
-
   const chaptersId = (await params).LessonsId
-  const category = Items.find((cat) => cat.id === chaptersId);
-
+  const { LessonsId } = params;
+  const lesson = await fetchLessonById(LessonsId);
+  console.log("Fetched Lesson:", lesson);
+  if (!lesson) return notFound();
   const chapters = {
     title: false,
     description: true,
@@ -36,8 +52,8 @@ const ChapterId = async ({ params }: PageProps) => {
 
   return (
     <>
-      {!category?.isPublished && (<Banner variant="warning"
-        label='This chapter is unpublished. It will not be visible in the course' />)}
+      {/* {!category?.isPublished && (<Banner variant="warning"
+        label='This chapter is unpublished. It will not be visible in the course' />)} */}
       <div className='p-4'>
         <div className='flex items-center justify-between'>
           <div className='w-full'>
@@ -76,12 +92,12 @@ const ChapterId = async ({ params }: PageProps) => {
 
               </div>
               <LessonTitleForm
-                chaptersId={chaptersId}
+                lesson={lesson}
               />
-              <LessonDescriptionForm chaptersId={chaptersId} />
+              <LessonDescriptionForm lesson={lesson} />
             </div>
 
-           
+
 
 
             {/* Access settings */}
@@ -103,7 +119,7 @@ const ChapterId = async ({ params }: PageProps) => {
               <IconBadge icon={Video} />
               <h2 className="text-xl">Add a video</h2>
             </div>
-            <ChapterVideoForm />
+            <ChapterVideoForm lesson={lesson}/>
           </div>
         </div>
       </div>

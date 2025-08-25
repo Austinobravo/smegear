@@ -1,28 +1,30 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import * as React from 'react'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { getSession, useSession } from 'next-auth/react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
+
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
-import { Grip, Pencil, Trash2, Plus } from 'lucide-react'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Grip, Pencil, Trash2, Plus, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { toast } from 'sonner'
 
-// NOTE: rename to your real path
-import ProductModal, { ProductFormValues } from './moduleModal'
+import ProductModal from './moduleModal'
+import axios from 'axios'
 
-// ---- Types ----
 type Lesson = { id: string; title: string }
 
 type Module = {
-  id: number
+  id: string
   ModuleTitle: string
   lessons: Lesson[]
   name: string
@@ -33,85 +35,167 @@ interface ChaptersListProps {
     Title: string
     id: string
     OverView?: string
-    Modules: Module[]
+    modules: Module[]
     isPublished: boolean
     free: boolean
   }
 }
 
+const addLessonSchema = z.object({
+  title: z.string().min(1, 'Please enter a title').max(120, 'Keep it short'),
+})
+
+const inlineChapterSchema = z.object({
+  title: z.string().min(1),
+})
+
 const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
   const router = useRouter()
+  const { data: session } = useSession()
+
   const [isEditing, setIsEditing] = useState(false)
   const toggleEditing = () => setIsEditing((c) => !c)
 
-  // keep a local copy so we can update the UI immediately
-  const [modules, setModules] = useState<Module[]>(() => category?.Modules ?? [])
-
+  const [modules, setModules] = useState<Module[]>(() => category?.modules ?? [])
   const [modalOpen, setModalOpen] = useState(false)
-  const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null)
+  const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  const [addOpenFor, setAddOpenFor] = useState<string | null>(null)
+
+  const addForm = useForm<z.infer<typeof addLessonSchema>>({
+    resolver: zodResolver(addLessonSchema),
+    defaultValues: { title: '' },
+  })
+  const { isSubmitting, isValid } = addForm.formState
 
   if (!category) return null
 
-  const onEditModule = (moduleId: number) => {
+  /* -------- Module editing -------- */
+  const onEditModule = (moduleId: string) => {
     setSelectedModuleId(moduleId)
     setModalOpen(true)
   }
 
-  const onEditLesson = (lessonId: string) => router.push(`/admin/courses/${category.id}/Lessons/${lessonId}`)
-  const onDeleteLesson = (lessonId: string) => console.log('Delete lesson', lessonId)
 
-  // Legacy inline form (unchanged)
-  const formSchema = z.object({ title: z.string().min(1) })
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+
+
+
+  const onEditLesson = (lessonId: string) => {
+    router.push(`/admin/courses/${category.id}/Lessons/${lessonId}`)
+  }
+  const onDeleteLesson = (lessonId: string) => {
+    console.log('Delete lesson', lessonId)
+  }
+
+
+  const inlineForm = useForm<z.infer<typeof inlineChapterSchema>>({
+    resolver: zodResolver(inlineChapterSchema),
     defaultValues: { title: '' },
   })
-  const { isSubmitting, isValid } = form.formState
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const createChapterSubmitting = inlineForm.formState.isSubmitting
+  const createChapterValid = inlineForm.formState.isValid
+  const onSubmitInline = async (values: z.infer<typeof inlineChapterSchema>) => {
     console.log(values)
     toast.success('Chapter Created')
     toggleEditing()
   }
 
-  // derive the currently selected module
-  const selectedModule = selectedModuleId != null ? modules.find((m) => m.id === selectedModuleId) : undefined
+  const selectedModule =
+    selectedModuleId != null ? modules.find((m) => m.id === selectedModuleId) : undefined
+
+  const numericModuleId =
+    selectedModuleId != null && !Number.isNaN(Number(selectedModuleId))
+      ? Number(selectedModuleId)
+      : undefined
+
+
+  const handleCreateLesson = addForm.handleSubmit(async ({ title }) => {
+    if (!addOpenFor) {
+      toast.error('No module selected.')
+      return
+    }
+
+    const targetModule = modules.find((m) => m.id === addOpenFor)
+    const nextOrder = (targetModule?.lessons?.length ?? 0) + 1
+
+    const payload = { title, moduleId: addOpenFor, order: nextOrder }
+
+    try {
+      const user = await getSession()
+      const accessToken = (user as any)?.accessToken
+      if (!accessToken) throw new Error('Missing access token')
+
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/lessons`,
+        payload,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      )
+
+      const newLessonId = res?.data?.id ?? res?.data?.lesson?.id ?? res?.data?.data?.id
+      if (!newLessonId) throw new Error('Could not determine created lesson id')
+
+      toast.success('Lesson created successfully!')
+      setAddOpenFor(null)
+      addForm.reset({ title: '' })
+      router.push(`/admin/courses/${category.id}/Lessons/${newLessonId}`)
+    } catch (e: any) {
+      console.error(e)
+      toast.error(e?.response?.data?.message || e?.message || 'Something went wrong')
+    }
+  })
+
+const onDeleteModule = async (moduleId: string) => {
+if (deletingId) return;
+if (!window.confirm('Delete this module? This cannot be undone.')) return;
+  try {
+    setDeletingId(moduleId);
+ const user = await getSession();
+    const accessToken = (user as any)?.accessToken;
+    if (!accessToken) throw new Error('Missing access token');
+ await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/modules`, {
+      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+      data: { id: moduleId },
+    });
+ setModules((prev) => prev.filter((m) => m.id !== moduleId));
+    toast.success('Module deleted successfully');
+  } catch (e: any) {
+    console.error(e);
+    toast.error(e?.response?.data?.message || e?.message || 'Failed to delete module');
+  } finally {
+    setDeletingId(null);
+  }
+};
 
   return (
     <>
       <ProductModal
-        key={selectedModuleId ?? 'no-module'} // force re-mount when switching ids
+        key={selectedModuleId ?? 'no-module'}
         open={modalOpen}
         onOpenChange={setModalOpen}
-        moduleId={selectedModuleId ?? undefined}
+        moduleId={numericModuleId}
         initialTitle={selectedModule?.ModuleTitle ?? ''}
         onSave={async (values, ctx) => {
-          // ctx.moduleId is provided by the modal; fall back to local state if needed
-          const id = ctx?.moduleId ?? selectedModuleId
-          if (id == null) return
-
-          // TODO: wire up to your API
-          // await axios.patch(`/api/categories/${category.id}/modules/${id}`, { title: values.title })
-
-          // optimistic UI update
+          const idStr =
+            ctx?.moduleId != null ? String(ctx.moduleId) : selectedModuleId ?? undefined
+          if (idStr == null) return
           setModules((prev) =>
-            prev.map((m) => (m.id === id ? { ...m, ModuleTitle: values.title } : m))
+            prev.map((m) => (m.id === idStr ? { ...m, ModuleTitle: values.title } : m))
           )
-
-          toast.success('Module updated', { description: `Module #${id} saved.` })
         }}
       />
 
       {isEditing && (
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
+        <Form {...inlineForm}>
+          <form onSubmit={inlineForm.handleSubmit(onSubmitInline)} className="space-y-4 mt-4">
             <FormField
-              control={form.control}
+              control={inlineForm.control}
               name="title"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
-                      disabled={isSubmitting}
+                      disabled={createChapterSubmitting}
                       placeholder="e.g Introduction to the course"
                       {...field}
                       className="bg-white"
@@ -121,7 +205,7 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
                 </FormItem>
               )}
             />
-            <Button disabled={!isValid || isSubmitting} type="submit">
+            <Button disabled={!createChapterValid || createChapterSubmitting} type="submit">
               Create
             </Button>
           </form>
@@ -134,6 +218,7 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
             {modules.map((module) => {
               const courseIsPublished = category.isPublished
               const courseIsFree = category.free
+              const isDeletingThis = deletingId === module.id
               return (
                 <AccordionItem
                   key={module.id}
@@ -163,10 +248,36 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
                         {courseIsPublished ? 'Published' : 'Draft'}
                       </Badge>
 
-                      <Pencil
+                      {/* Edit module */}
+                      <button
+                        type="button"
                         onClick={() => onEditModule(module.id)}
-                        className="w-4 h-4 cursor-pointer hover:opacity-75"
-                      />
+                        className={cn(
+                          'p-1 rounded hover:opacity-75',
+                          isDeletingThis && 'pointer-events-none opacity-40'
+                        )}
+                        title="Edit module"
+                        aria-label="Edit module"
+                      >
+                        <Pencil className="w-4 h-4" aria-hidden="true" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => onDeleteModule(module.id)}
+                        className={cn(
+                          'p-1 rounded hover:opacity-75 flex items-center gap-1',
+                          isDeletingThis && 'pointer-events-none opacity-40'
+                        )}
+                        title={isDeletingThis ? 'Deleting…' : 'Delete module'}
+                        aria-label={isDeletingThis ? 'Deleting…' : 'Delete module'}
+                      >
+                        {isDeletingThis ? (
+                          <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                        ) : (
+                          <Trash2 className="w-4 h-4 text-red-500" aria-hidden="true" />
+                        )}
+                      </button>
                     </div>
 
                     <AccordionTrigger className="ml-2 px-2 py-1 rounded hover:bg-black/5 transition text-smegear-accent" />
@@ -179,19 +290,35 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
                           <span className="text-sm">└─ {lesson.title}</span>
                         </div>
                         <div className="flex items-center gap-x-2">
-                          <Pencil
+                          <button
+                            type="button"
                             onClick={() => onEditLesson(lesson.id)}
-                            className="w-4 h-4 cursor-pointer hover:opacity-75"
-                          />
-                          <Trash2
-                            onClick={() => onDeleteLesson(lesson.id)}
-                            className="w-4 h-4 cursor-pointer hover:opacity-75 text-red-500"
-                          />
+                            className="p-1 rounded hover:opacity-75"
+                            title="Edit lesson"
+                            aria-label="Edit lesson"
+                          >
+                            <Pencil className="w-4 h-4" aria-hidden="true" />
+                          </button>
+                          <button
+                            type="button"
+
+                            className="p-1 rounded hover:opacity-75"
+                            title="Delete lesson"
+                            aria-label="Delete lesson"
+                          >
+                            <Trash2 className="w-4 h-4 text-red-500" aria-hidden="true" />
+                          </button>
                         </div>
                       </div>
                     ))}
 
-                    <Button variant="ghost" size="sm" className="mt-2 text-sky-700 hover:text-sky-900">
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="mt-2 text-sky-700 hover:text-sky-900"
+                      onClick={() => setAddOpenFor(module.id)}
+                    >
                       <Plus className="w-4 h-4 mr-1" />
                       Add Lesson to {module.name}
                     </Button>
@@ -202,6 +329,57 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
           </Accordion>
         </div>
       )}
+
+
+      <Dialog
+        open={Boolean(addOpenFor)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setAddOpenFor(null)
+            addForm.reset({ title: '' })
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add lesson</DialogTitle>
+          </DialogHeader>
+
+          <Form {...addForm}>
+            <form onSubmit={handleCreateLesson} className="space-y-3">
+              <FormField
+                control={addForm.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="input lesson title" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <DialogFooter className="gap-2 sm:gap-0">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => {
+                    setAddOpenFor(null)
+                    addForm.reset({ title: '' })
+                  }}
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={!isValid || isSubmitting}>
+                  {isSubmitting ? 'Creating…' : 'Create'}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
