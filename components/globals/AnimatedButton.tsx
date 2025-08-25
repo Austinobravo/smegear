@@ -31,7 +31,7 @@ export default function AnimatedButton({
   // base style sets
   const base =
     'group relative inline-flex items-center justify-center rounded-xl px-5 py-3 font-medium select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2';
-  const variants: Record<typeof variant, string> = {
+  const variants: Record<'primary' | 'secondary', string> = {
     primary:
       'bg-gradient-to-b from-indigo-600 to-indigo-700 text-white shadow-[0_8px_20px_-6px_rgba(79,70,229,0.45)] focus-visible:ring-indigo-400/70',
     secondary:
@@ -41,11 +41,17 @@ export default function AnimatedButton({
   // subtle idle float + shimmer
   const floatAnim = reduce
     ? {}
-    : { y: [0, -1.5, 0], transition: { duration: 3, repeat: Infinity, ease: 'easeInOut' } };
+    : {
+        y: [0, -1.5, 0],
+        transition: { duration: 3, repeat: Infinity, ease: 'easeInOut' as const },
+      };
 
   const shimmerAnim = reduce
     ? {}
-    : { x: ['-150%', '150%'], transition: { duration: 2.2, repeat: Infinity, ease: 'linear' } };
+    : {
+        x: ['-150%', '150%'],
+        transition: { duration: 2.2, repeat: Infinity, ease: 'linear' as const },
+      };
 
   const Content = (
     <>
@@ -113,7 +119,7 @@ export default function AnimatedButton({
     <Link
       href={href ?? '#'}
       className={`${base} ${variants[variant]} ${className ?? ''}`}
-      {...(rest as ComponentProps<typeof Link>)}
+      {...(rest as Omit<ComponentProps<typeof Link>, 'href'>)}
     >
       {Content}
     </Link>

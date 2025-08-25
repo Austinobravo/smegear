@@ -11,7 +11,7 @@ import Banner from '@/components/banner';
 import { notFound } from 'next/navigation';
 
 interface PageProps {
-  params: { LessonsId: string };
+  params: Promise<{ LessonsId: string }>;
 }
 
 async function fetchLessonById(LessonsId: string) {
@@ -29,8 +29,8 @@ async function fetchLessonById(LessonsId: string) {
 }
 
 const ChapterId = async ({ params }: PageProps) => {
-  const chaptersId = (await params).LessonsId
-  const { LessonsId } = params;
+  const LessonsId = (await params).LessonsId
+  // const { LessonsId } = params;
   const lesson = await fetchLessonById(LessonsId);
   console.log("Fetched Lesson:", lesson);
   if (!lesson) return notFound();
@@ -57,7 +57,7 @@ const ChapterId = async ({ params }: PageProps) => {
       <div className='p-4'>
         <div className='flex items-center justify-between'>
           <div className='w-full'>
-            <Link href={`/admin/courses/${chaptersId}`} className='flex items-center text-sm hover:opacity-75 mb-6 transition'>
+            <Link href={`/admin/courses/${LessonsId}`} className='flex items-center text-sm hover:opacity-75 mb-6 transition'>
               <ArrowLeft className='h-4 w-4 mr-2' />
               Back to course setup
             </Link>

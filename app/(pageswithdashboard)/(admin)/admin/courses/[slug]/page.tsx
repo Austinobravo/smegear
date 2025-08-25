@@ -11,7 +11,7 @@ import AttachmentForm from "./_components/attachment-form";
 import { notFound } from "next/navigation";
 import ModulesForm from "./_components/modules-form";
 
-type PageProps = { params: { slug: string } };
+type PageProps = { params: Promise<{ slug: string }> };
 
 async function fetchAdminCourseBySlug(slug: string) {
   try {
@@ -28,7 +28,7 @@ async function fetchAdminCourseBySlug(slug: string) {
 }
 
 export default async function AdminCoursesPage({ params }: PageProps) {
-  const { slug } = params;
+  const slug  = (await params).slug;
   const course = await fetchAdminCourseBySlug(slug);
 
   console.log("Fetched course:", course);
