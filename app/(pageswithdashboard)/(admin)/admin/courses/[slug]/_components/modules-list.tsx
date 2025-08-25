@@ -9,7 +9,12 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -77,17 +82,12 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
     setModalOpen(true)
   }
 
-
-
-
-
   const onEditLesson = (lessonId: string) => {
     router.push(`/admin/courses/${category.id}/Lessons/${lessonId}`)
   }
   const onDeleteLesson = (lessonId: string) => {
     console.log('Delete lesson', lessonId)
   }
-
 
   const inlineForm = useForm<z.infer<typeof inlineChapterSchema>>({
     resolver: zodResolver(inlineChapterSchema),
@@ -108,7 +108,6 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
     selectedModuleId != null && !Number.isNaN(Number(selectedModuleId))
       ? Number(selectedModuleId)
       : undefined
-
 
   const handleCreateLesson = addForm.handleSubmit(async ({ title }) => {
     if (!addOpenFor) {
@@ -145,27 +144,27 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
     }
   })
 
-const onDeleteModule = async (moduleId: string) => {
-if (deletingId) return;
-if (!window.confirm('Delete this module? This cannot be undone.')) return;
-  try {
-    setDeletingId(moduleId);
- const user = await getSession();
-    const accessToken = (user as any)?.accessToken;
-    if (!accessToken) throw new Error('Missing access token');
- await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/modules`, {
-      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-      data: { id: moduleId },
-    });
- setModules((prev) => prev.filter((m) => m.id !== moduleId));
-    toast.success('Module deleted successfully');
-  } catch (e: any) {
-    console.error(e);
-    toast.error(e?.response?.data?.message || e?.message || 'Failed to delete module');
-  } finally {
-    setDeletingId(null);
+  const onDeleteModule = async (moduleId: string) => {
+    if (deletingId) return
+    if (!window.confirm('Delete this module? This cannot be undone.')) return
+    try {
+      setDeletingId(moduleId)
+      const user = await getSession()
+      const accessToken = (user as any)?.accessToken
+      if (!accessToken) throw new Error('Missing access token')
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/modules`, {
+        headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+        data: { id: moduleId },
+      })
+      setModules((prev) => prev.filter((m) => m.id !== moduleId))
+      toast.success('Module deleted successfully')
+    } catch (e: any) {
+      console.error(e)
+      toast.error(e?.response?.data?.message || e?.message || 'Failed to delete module')
+    } finally {
+      setDeletingId(null)
+    }
   }
-};
 
   return (
     <>
@@ -219,6 +218,8 @@ if (!window.confirm('Delete this module? This cannot be undone.')) return;
               const courseIsPublished = category.isPublished
               const courseIsFree = category.free
               const isDeletingThis = deletingId === module.id
+              const hasLessons = Array.isArray(module.lessons) && module.lessons.length > 0
+
               return (
                 <AccordionItem
                   key={module.id}
@@ -284,44 +285,47 @@ if (!window.confirm('Delete this module? This cannot be undone.')) return;
                   </div>
 
                   <AccordionContent className="pl-12 pb-4">
-                    {module.lessons.map((lesson) => (
-                      <div key={lesson.id} className="flex items-center justify-between py-1">
-                        <div className="flex items-center gap-x-2">
-                          <span className="text-sm">└─ {lesson.title}</span>
-                        </div>
-                        <div className="flex items-center gap-x-2">
-                          <button
-                            type="button"
-                            onClick={() => onEditLesson(lesson.id)}
-                            className="p-1 rounded hover:opacity-75"
-                            title="Edit lesson"
-                            aria-label="Edit lesson"
-                          >
-                            <Pencil className="w-4 h-4" aria-hidden="true" />
-                          </button>
-                          <button
-                            type="button"
-
-                            className="p-1 rounded hover:opacity-75"
-                            title="Delete lesson"
-                            aria-label="Delete lesson"
-                          >
-                            <Trash2 className="w-4 h-4 text-red-500" aria-hidden="true" />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-
-
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="mt-2 text-sky-700 hover:text-sky-900"
-                      onClick={() => setAddOpenFor(module.id)}
-                    >
-                      <Plus className="w-4 h-4 mr-1" />
-                      Add Lesson to {module.name}
-                    </Button>
+                    {hasLessons ? (
+                      <>
+                        {module.lessons.map((lesson) => (
+                          <div key={lesson.id} className="flex items-center justify-between py-1">
+                            <div className="flex items-center gap-x-2">
+                              <span className="text-sm">└─ {lesson.title}</span>
+                            </div>
+                            <div className="flex items-center gap-x-2">
+                              <button
+                                type="button"
+                                onClick={() => onEditLesson(lesson.id)}
+                                className="p-1 rounded hover:opacity-75"
+                                title="Edit lesson"
+                                aria-label="Edit lesson"
+                              >
+                                <Pencil className="w-4 h-4" aria-hidden="true" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => onDeleteLesson(lesson.id)}
+                                className="p-1 rounded hover:opacity-75"
+                                title="Delete lesson"
+                                aria-label="Delete lesson"
+                              >
+                                <Trash2 className="w-4 h-4 text-red-500" aria-hidden="true" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </>
+                    ) : (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="mt-2 text-sky-700 hover:text-sky-900"
+                        onClick={() => setAddOpenFor(module.id)}
+                      >
+                        <Plus className="w-4 h-4 mr-1" />
+                        Add Lesson to {module.name || module.ModuleTitle}
+                      </Button>
+                    )}
                   </AccordionContent>
                 </AccordionItem>
               )
@@ -329,7 +333,6 @@ if (!window.confirm('Delete this module? This cannot be undone.')) return;
           </Accordion>
         </div>
       )}
-
 
       <Dialog
         open={Boolean(addOpenFor)}

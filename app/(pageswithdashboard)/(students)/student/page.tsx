@@ -5,9 +5,9 @@ import axios from 'axios'
 import { getCurrentSession } from '@/lib/getServerSession'
 
 const fetchAllCourses = async () => {
-  try{
-      const session = await getCurrentSession();
-      const token = (session as any).accessToken
+  try {
+    const session = await getCurrentSession();
+    const token = (session as any).accessToken
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/courses`,
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -15,18 +15,19 @@ const fetchAllCourses = async () => {
     console.log("all courses", response.data)
     return response.data
 
-  }catch(error){
+  } catch (error) {
     console.error("error", error)
     return []
   }
- 
+
 }
 const page = async () => {
-  const allCourses = await fetchAllCourses()
+  const data = await fetchAllCourses()
+
   return (
     <section className=' space-y-6'>
       <CourseCards />
-      <RecommendedCourses />
+      <RecommendedCourses data={data}/>
     </section>
   )
 }

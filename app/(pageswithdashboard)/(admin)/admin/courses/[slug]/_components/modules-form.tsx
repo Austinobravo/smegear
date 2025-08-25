@@ -156,7 +156,7 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
       form.reset({ title: "" });
       setIsCreating(false);
 
-      // Re-fetch to confirm order/data with DB
+
       fetchModules();
     } catch (e: any) {
       toast.error(e?.message ?? "Something went wrong");
@@ -170,7 +170,7 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
       .slice()
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
       .map((m, idx) => ({
-        id: String(m.id ?? idx + 1), // <-- force string, not number
+        id: String(m.id ?? idx + 1), 
         ModuleTitle: m.title,
         name: m.title,
         lessons: [] as { id: string; title: string }[],

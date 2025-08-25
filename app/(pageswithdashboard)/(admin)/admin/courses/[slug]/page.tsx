@@ -7,10 +7,11 @@ import ImageForm from "./_components/image-form";
 import CategoryForm from "./_components/category-form";
 import PriceForm from "./_components/price-form";
 import AttachmentForm from "./_components/attachment-form";
-
+import { fetchAllCoursesBySession } from "@/lib/fetchAllCourses";
 import { notFound } from "next/navigation";
 import ModulesForm from "./_components/modules-form";
-
+import Banner from "@/components/banner";
+import CourseActions from "./_components/course-actions";
 type PageProps = { params: { slug: string } };
 
 async function fetchAdminCourseBySlug(slug: string) {
@@ -28,65 +29,77 @@ async function fetchAdminCourseBySlug(slug: string) {
 }
 
 export default async function AdminCoursesPage({ params }: PageProps) {
+  const data = await fetchAllCoursesBySession()
+  console.log("fetchAllCoursesBySession", data)
+
   const { slug } = params;
   const course = await fetchAdminCourseBySlug(slug);
 
-  console.log("Fetched course:", course);
+  console.log("Fetched course with id:", course);
 
   if (!course) return notFound();
 
+  const requiredFields = [course.title, course.description, course.imageUrl, course.price];
+  const totalFields = requiredFields.length;
+  const completedFields = requiredFields.filter(Boolean).length;
+  const completionText = ` (${completedFields}/${totalFields})`;
+  const isComplete=requiredFields.every(Boolean);
   return (
-    <div className="p-6">
-      {/* Show the specific course title based on its slug */}
-      <h1 className="text-2xl font-semibold">Course setup</h1>
+    <>
+      {!course.published && (<Banner variant="warning" label='This course is unpublished. It will not be visible in the course list' />)}
+      <div className="p-6">
+        {/* Show the specific course title based on its slug */}
+        <h1 className="text-2xl font-semibold">Course setup</h1>
 
-      <div className="flex items-center justify-between mt-2">
-        <div className="flex flex-col gap-y-2">
-          <span className="text-muted-foreground">Complete all fields (1/6)</span>
+        <div className="flex items-center justify-between mt-2">
+          <div className="flex flex-col gap-y-2">
+            <span className="text-muted-foreground">Complete all fields {completionText}</span>
+          </div>
+          <CourseActions disabled={!isComplete} courseId={course.id} published={course.published} />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
+          <div>
+            <div className="flex items-center gap-x-2">
+              <IconBadge icon={LayoutDashboard} />
+              <h2 className="text-xl">Customize your course</h2>
+            </div>
+
+            {/* Keep your existing prop names; change if your components expect `course` or `initialData` */}
+            <TitleForm category={course} />
+            <DescriptionForm category={course} />
+            <ImageForm courseId={course.id} initialImg={course.imageUrl} />
+            <CategoryForm />
+          </div>
+
+          <div className="space-y-6">
+            <div>
+              <div className="flex items-center gap-x-2">
+                <IconBadge icon={ListChecks} />
+                <h2 className="text-xl">Course modules</h2>
+              </div>
+              <ModulesForm category={course} />
+            </div>
+
+            <div>
+              <div className="flex items-center gap-x-2">
+                <IconBadge icon={CircleDollarSign} />
+                <h2 className="text-xl">Sell your course</h2>
+              </div>
+              <PriceForm courseId={course.id} initialPrice={course.price} />
+
+            </div>
+
+            <div>
+              <div className="flex items-center gap-x-2">
+                <IconBadge icon={File} />
+                <h2 className="text-xl">Resource & Attachments</h2>
+              </div>
+              <AttachmentForm />
+            </div>
+          </div>
         </div>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
-        <div>
-          <div className="flex items-center gap-x-2">
-            <IconBadge icon={LayoutDashboard} />
-            <h2 className="text-xl">Customize your course</h2>
-          </div>
-
-          {/* Keep your existing prop names; change if your components expect `course` or `initialData` */}
-          <TitleForm category={course} />
-          <DescriptionForm category={course} />
-          <ImageForm courseId={course.id} initialImg={course.imageUrl} />
-          <CategoryForm />
-        </div>
-
-        <div className="space-y-6">
-          <div>
-            <div className="flex items-center gap-x-2">
-              <IconBadge icon={ListChecks} />
-              <h2 className="text-xl">Course modules</h2>
-            </div>
-            <ModulesForm category={course} />
-          </div>
-
-          <div>
-            <div className="flex items-center gap-x-2">
-              <IconBadge icon={CircleDollarSign} />
-              <h2 className="text-xl">Sell your course</h2>
-            </div>
-            <PriceForm courseId={course.id} initialPrice={course.price} />
-
-          </div>
-
-          <div>
-            <div className="flex items-center gap-x-2">
-              <IconBadge icon={File} />
-              <h2 className="text-xl">Resource & Attachments</h2>
-            </div>
-            <AttachmentForm />
-          </div>
-        </div>
-      </div>
-    </div>
+    </>
   );
 }

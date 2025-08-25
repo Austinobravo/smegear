@@ -57,14 +57,14 @@ export default async function PopularCourses() {
               href={`/courses/${course.id}`}
               className="no-underline"
             >
-              <Card className="overflow-hidden shadow-lg rounded-xl bg-white  p-0 group">
+              <Card className="overflow-hidden shadow-lg rounded-xl bg-white pb-4 pt-0 hover:shadow-xl transition-shadow duration-300 group">
                 <div className="overflow-hidden">
                   <Image
                     src={course.imageUrl}
                     alt={course.title}
                     width={600}
                     height={400}
-                    className="w-full h-72 object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="w-full h-72 object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
 

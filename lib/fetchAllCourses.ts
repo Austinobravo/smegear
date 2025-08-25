@@ -1,4 +1,6 @@
 // lib/fetchAllCourses.ts
+import { getCurrentSession } from '@/lib/getServerSession'
+import axios from 'axios';
 
 
 export type Course = {
@@ -41,4 +43,24 @@ export async function fetchAllCourses(): Promise<Course[]> {
     console.error("Error fetching courses:", err);
     return [];
   }
+}
+
+
+
+export const fetchAllCoursesBySession = async () => {
+  try {
+    const session = await getCurrentSession();
+    const token = (session as any).accessToken
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/courses`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+    console.log("all courses", response.data)
+    return response.data
+
+  } catch (error) {
+    console.error("error", error)
+    return []
+  }
+
 }
