@@ -215,7 +215,7 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
                   <Grip className="h-5 w-5" />
                 </div>
 
-                <span className="flex-1 text-red-500">{module.title}</span>
+                <span className="flex-1 text-black">{module.title}</span>
 
                 <div className="flex items-center gap-x-2">
                   <Badge className={cn('bg-slate-500', category.published && 'bg-sky-700')}>
@@ -239,7 +239,7 @@ const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
                     title={isDeleting ? 'Deleting…' : 'Delete module'}
                     aria-label={isDeleting ? 'Deleting…' : 'Delete module'}
                   >
-                    {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden /> : <Trash2 className="w-4 h-4 text-black" aria-hidden />}
+                    {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden /> : <Trash2 className="w-4 h-4 text-red-500" aria-hidden />}
                   </button>
                 </div>
 

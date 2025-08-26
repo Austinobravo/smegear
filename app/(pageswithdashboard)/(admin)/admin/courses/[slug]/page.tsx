@@ -12,6 +12,7 @@ import ModulesForm from "./_components/modules-form";
 import Banner from "@/components/banner";
 import CourseActions from "./_components/course-actions";
 import { fetchAdminCourseBySlug } from "@/lib/fetchAllCourses";
+import { BackButton } from "@/components/globals/BackButton";
 type PageProps = { params: { slug: string } };
 
 
@@ -34,8 +35,9 @@ export default async function AdminCoursesPage({ params }: PageProps) {
     <>
       {!course.published && (<Banner variant="warning" label='This course is unpublished. It will not be visible in the course list' />)}
       <div className="p-6">
+        <BackButton />
         {/* Show the specific course title based on its slug */}
-        <h1 className="text-2xl font-semibold">Course setup</h1>
+        <h1 className="text-2xl font-semibold mt-4">Course setup</h1>
 
         <div className="flex items-center justify-between mt-2">
           <div className="flex flex-col gap-y-2">
