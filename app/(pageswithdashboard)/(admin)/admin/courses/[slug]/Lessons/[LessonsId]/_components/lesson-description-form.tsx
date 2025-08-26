@@ -121,7 +121,33 @@ const LessonDescriptionForm = ({ lesson }: LessonDescriptionFormProps) => {
               )}
             />
             <Button disabled={!isValid || isSubmitting} type="submit">
-              Save
+              {isSubmitting ? (
+                <span className="flex items-center justify-center min-w-[3.5rem]">
+                  <svg
+                    className="animate-spin h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                    />
+                  </svg>
+                </span>
+              ) : (
+                <span className="min-w-[3.5rem] text-center">Save</span>
+              )}
+
             </Button>
           </form>
         </Form>
