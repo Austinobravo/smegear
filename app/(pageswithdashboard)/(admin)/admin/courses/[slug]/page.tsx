@@ -7,30 +7,16 @@ import ImageForm from "./_components/image-form";
 import CategoryForm from "./_components/category-form";
 import PriceForm from "./_components/price-form";
 import AttachmentForm from "./_components/attachment-form";
-import { fetchAllCoursesBySession } from "@/lib/fetchAllCourses";
 import { notFound } from "next/navigation";
 import ModulesForm from "./_components/modules-form";
 import Banner from "@/components/banner";
 import CourseActions from "./_components/course-actions";
+import { fetchAdminCourseBySlug } from "@/lib/fetchAllCourses";
 type PageProps = { params: { slug: string } };
 
-async function fetchAdminCourseBySlug(slug: string) {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/courses/${encodeURIComponent(slug)}`,
-      { cache: "no-store" }
-    );
-    if (!res.ok) return null;
-    return res.json();
-  } catch (e) {
-    console.error("Failed to fetch course by slug:", e);
-    return null;
-  }
-}
+
 
 export default async function AdminCoursesPage({ params }: PageProps) {
-  const data = await fetchAllCoursesBySession()
-  console.log("fetchAllCoursesBySession", data)
 
   const { slug } = params;
   const course = await fetchAdminCourseBySlug(slug);
@@ -39,11 +25,11 @@ export default async function AdminCoursesPage({ params }: PageProps) {
 
   if (!course) return notFound();
 
-  const requiredFields = [course.title, course.description, course.imageUrl, course.price];
+  const requiredFields = [course.title, course.description, course.imageUrl, course.price, course.modules.length > 0];
   const totalFields = requiredFields.length;
   const completedFields = requiredFields.filter(Boolean).length;
   const completionText = ` (${completedFields}/${totalFields})`;
-  const isComplete=requiredFields.every(Boolean);
+  const isComplete = requiredFields.every(Boolean);
   return (
     <>
       {!course.published && (<Banner variant="warning" label='This course is unpublished. It will not be visible in the course list' />)}

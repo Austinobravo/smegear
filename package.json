@@ -68,6 +68,7 @@
     "sonner": "^2.0.6",
     "swagger-ui-dist": "^5.27.0",
     "swiper": "^11.2.10",
+    "swr": "^2.3.6",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.25.76"

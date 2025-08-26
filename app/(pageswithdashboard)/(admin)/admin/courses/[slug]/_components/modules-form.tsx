@@ -16,21 +16,23 @@ import ChaptersList from "./modules-list";
 
 interface ChaptersFormProps {
   category:
-    | {
-        Title: string;
-        OverView: string;
-        id: string; 
-        modules?: {
-          id: number; 
-          ModuleTitle: string;
-          name: string;
-          lessons: { id: string; title: string }[];
-        }[];
-        isPublished: boolean;
-        free: boolean;
-        price: number;
-      }
-    | undefined;
+  | {
+    title: string;
+    description: string;
+    id: string;
+    modules?: {
+      courseId: string
+      id: string;
+      title: string;
+      name: string;
+      lessons: { id: string; title: string }[];
+      order: number;
+    }[];
+    published: boolean;
+    slug: string
+    price: number;
+  }
+  | undefined;
 }
 
 type ApiModule = {
@@ -46,12 +48,12 @@ const formSchema = z.object({
 
 const mapCategoryModulesToApi = (
   courseId?: string,
-  modules?: { id: number; ModuleTitle: string }[]
+  modules?: { id: string; title: string }[]
 ): ApiModule[] => {
   if (!courseId || !modules) return [];
   return modules.map((m, idx) => ({
-    id: String(m.id ?? idx + 1), 
-    title: m.ModuleTitle,
+    id: String(m.id ?? idx + 1),
+    title: m.title,
     order: idx + 1,
     courseId,
   }));
@@ -105,7 +107,7 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
     setApiModules(mapCategoryModulesToApi(category?.id, category?.modules));
 
     fetchModules();
-  
+
   }, [category?.id]);
 
 
@@ -120,7 +122,7 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
       window.removeEventListener("focus", onFocus);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  
+
   }, [category?.id]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -149,7 +151,7 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
 
       const newModule: ApiModule = await res.json();
 
-    
+
       setApiModules((prev) => [...prev, newModule]);
 
       toast.success("Module created");
@@ -170,19 +172,19 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
       .slice()
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
       .map((m, idx) => ({
-        id: String(m.id ?? idx + 1), 
-        ModuleTitle: m.title,
+        id: String(m.id ?? idx + 1),
+        title: m.title,
         name: m.title,
         lessons: [] as { id: string; title: string }[],
       }));
-    
+
     return {
-      Title: category.Title,
+      Title: category.title,
       id: category.id,
-      OverView: category.OverView,
-      modules: mapped, 
-      isPublished: category.isPublished,
-      free: category.free,
+
+      modules: mapped,
+      isPublished: category.published,
+
     };
   }, [category, apiModules]);
 
@@ -242,12 +244,12 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
             apiModules.length === 0 && "text-slate-500 italic"
           )}
         >
-          {loading && "Loading modules..."}
-          {!loading && apiModules.length === 0 && "No chapters"}
+          {loading && "Loading Modules..."}
+          {!loading && apiModules.length === 0 && "No Modules yet."}
           {categoryForList && (
             <ChaptersList
-              key={modulesKey}               
-              category={categoryForList}      
+              key={modulesKey}
+              category={categoryForList}
             />
           )}
         </div>
@@ -255,7 +257,7 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
 
       {!isCreating && (
         <p className="text-xs text-muted-foreground mt-4">
-          Drag and drop to reorder the chapters
+          {/* Drag and drop to reorder the chapters */}
         </p>
       )}
     </div>
