@@ -62,7 +62,7 @@ const CreatePage = () => {
       // setResult(res.data);
       // console.log("Created course:", res.data);
       toast.success("Course created successfully!");
-      router.push(`/admin/courses`)
+      router.push(`/admin/courses/${res.data.id}`);
       form.reset(); // optional
 
     } catch (e: any) {

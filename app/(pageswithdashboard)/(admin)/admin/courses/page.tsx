@@ -26,13 +26,13 @@ async function fetchAllCourses() {
 }
 
 const CoursesPage = async () => {
-  const courses = await fetchAllCourses(); // ✅ fetch server-side
+  const courses = await fetchAllCourses();
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-semibold mb-6">Courses</h1>
 
-      <DataTable columns={columns} data={courses} /> {/* ✅ pass API data */}
+      <DataTable columns={columns} data={courses} /> 
     </div>
   );
 };

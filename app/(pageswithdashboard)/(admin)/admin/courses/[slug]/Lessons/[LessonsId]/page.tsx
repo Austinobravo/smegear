@@ -1,14 +1,13 @@
 import { IconBadge } from '@/components/icon-badge';
 import { ArrowLeft, Eye, LayoutDashboard, Video } from 'lucide-react';
-import Link from 'next/link';
 import React from 'react'
 import LessonTitleForm from './_components/lesson-title-form';
 import LessonDescriptionForm from './_components/lesson-description-form';
-
-import Items from '@/Data/items';
 import ChapterVideoForm from './_components/lesson-video-form';
-import Banner from '@/components/banner';
 import { notFound } from 'next/navigation';
+import { fetchAllCoursesBySession } from '@/lib/fetchAllCourses';
+import { BackButton } from '@/components/globals/BackButton';
+
 
 interface PageProps {
   params: Promise<{ LessonsId: string }>;
@@ -29,6 +28,9 @@ async function fetchLessonById(LessonsId: string) {
 }
 
 const ChapterId = async ({ params }: PageProps) => {
+  const res = await fetchAllCoursesBySession()
+  console.log("fetchAllCoursesBySession", res)
+
   const LessonsId = (await params).LessonsId
   // const { LessonsId } = params;
   const lesson = await fetchLessonById(LessonsId);
@@ -49,18 +51,12 @@ const ChapterId = async ({ params }: PageProps) => {
   const completedFields = requiredFields.filter(Boolean).length;
   const completionText = `(${completedFields}/${totalFields})`
   const isComplete = requiredFields.every(Boolean)
-
   return (
     <>
-      {/* {!category?.isPublished && (<Banner variant="warning"
-        label='This chapter is unpublished. It will not be visible in the course' />)} */}
       <div className='p-4'>
         <div className='flex items-center justify-between'>
           <div className='w-full'>
-            <Link href={`/admin/courses/${LessonsId}`} className='flex items-center text-sm hover:opacity-75 mb-6 transition'>
-              <ArrowLeft className='h-4 w-4 mr-2' />
-              Back to course setup
-            </Link>
+            <BackButton />
             <div className='flex items-center justify-between w-full'>
               <div className='flex flex-col gap-y-2'>
                 <h1 className='text-2xl font-medium'>
@@ -119,7 +115,7 @@ const ChapterId = async ({ params }: PageProps) => {
               <IconBadge icon={Video} />
               <h2 className="text-xl">Add a video</h2>
             </div>
-            <ChapterVideoForm lesson={lesson}/>
+            <ChapterVideoForm lesson={lesson} />
           </div>
         </div>
       </div>
