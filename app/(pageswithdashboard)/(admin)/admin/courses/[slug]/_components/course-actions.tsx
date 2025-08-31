@@ -15,7 +15,7 @@ import React from "react";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 interface CourseActionsProps {
   disabled: boolean;
   courseId: string;
@@ -90,13 +90,28 @@ const CourseActions = ({ disabled, courseId, published }: CourseActionsProps) =>
 
       <Dialog>
         <DialogTrigger asChild>
-          <Button aria-label="Delete a course" className="" size="sm" disabled={isLoading}>
-            <Trash className="h-4 w-4  " aria-hidden />
-          </Button>
+          <TooltipProvider delayDuration={500}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                aria-label="Delete a course"
+                className=""
+                size="sm"
+                disabled={isLoading}
+              >
+                <Trash className="h-4 w-4" aria-hidden />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Are you sure you want to delete this course?</p>
+            </TooltipContent>
+          </Tooltip>
+          </TooltipProvider>
         </DialogTrigger>
+
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Are you sure?</DialogTitle>
+            <DialogTitle>Are you sure you want to delete this course?</DialogTitle>
             <DialogDescription>This action cannot be undone.</DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -132,13 +147,11 @@ const CourseActions = ({ disabled, courseId, published }: CourseActionsProps) =>
                       d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
                     />
                   </svg>
-
                 </>
               ) : (
                 "Continue"
               )}
             </Button>
-
           </DialogFooter>
         </DialogContent>
       </Dialog>
