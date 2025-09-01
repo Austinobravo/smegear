@@ -3,11 +3,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { fetchAllCourses } from "@/lib/fetchAllCourses";
+import StudentSearchInput from "./StudentSearchInput";
+import { useUrlQueryState } from "@/hooks/useUrlQueryState";
 
 type Course = {
   id: string | number;
@@ -16,20 +16,16 @@ type Course = {
   price?: string | number | null;
 };
 
-
-
-
 const formatPrice = (price?: string | number | null) => {
   if (price === null || price === undefined || price === "") return "Free";
   if (typeof price === "number") return new Intl.NumberFormat().format(price);
   return price;
 };
 
-
 const CourseCard = React.memo(function CourseCard({ course }: { course: Course }) {
   return (
     <Link href={`/student/search/${course.id}`} className="no-underline">
-      <Card className="overflow-hidden shadow-lg rounded-xl bg-white  p-0 group">
+      <Card className="overflow-hidden shadow-lg rounded-xl bg-white p-0 group">
         <div className="overflow-hidden">
           <Image
             src={course.imageUrl}
@@ -40,22 +36,18 @@ const CourseCard = React.memo(function CourseCard({ course }: { course: Course }
           />
         </div>
         <CardContent className="px-6 space-y-4 pb-6">
-          <h3 className=" cursor-pointer text-lg font-semibold text-gray-900 line-clamp-2">
+          <h3 className="cursor-pointer text-lg font-semibold text-gray-900 line-clamp-2">
             {course.title}
           </h3>
 
           <div className="flex items-center justify-between pt-2">
-            <div className="text-base font-semibold text-primary">
-              Smegear
-            </div>
+            <div className="text-base font-semibold text-primary">Smegear</div>
             <div className="text-right">
               <p className="text-lg font-bold text-primary text-smegear-accent">
-                ₦ {course.price ?? "—"}
+                ₦ {formatPrice(course.price)}
               </p>
             </div>
           </div>
-
-
         </CardContent>
       </Card>
     </Link>
@@ -63,16 +55,10 @@ const CourseCard = React.memo(function CourseCard({ course }: { course: Course }
 });
 
 export default function PopularCourses() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const initialQ = searchParams.get("q") ?? "";
-  const [query, setQuery] = useState(initialQ);
+  const [q, setQ] = useUrlQueryState("q");
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [errored, setErrored] = useState(false);
-
 
   useEffect(() => {
     let mounted = true;
@@ -90,20 +76,7 @@ export default function PopularCourses() {
     };
   }, []);
 
-
-  useEffect(() => {
-    const current = searchParams.get("q") ?? "";
-    if (current !== query) {
-      const p = new URLSearchParams(searchParams);
-      if (query) p.set("q", query);
-      else p.delete("q");
-      router.replace(`${pathname}?${p.toString()}`, { scroll: false });
-    }
-
-  }, [query]);
-
-  const normalizedQ = query.trim().toLowerCase();
-
+  const normalizedQ = q.trim().toLowerCase();
   const filteredCourses = useMemo(() => {
     if (!normalizedQ) return courses;
     return courses.filter((c) => c.title?.toLowerCase().includes(normalizedQ));
@@ -114,25 +87,17 @@ export default function PopularCourses() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <h2 className="text-2xl text-gray-800 font-bold">Search Courses</h2>
         <div className="flex gap-2">
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by title…"
-            className="w-full sm:w-80"
-            aria-label="Search courses"
-          />
-          {query ? (
-            <Button variant="outline" onClick={() => setQuery("")}>
+          {/* Search lives in another component */}
+          {/* <StudentSearchInput />
+          {q ? (
+            <Button variant="outline" onClick={() => setQ("")}>
               Clear
             </Button>
-          ) : null}
+          ) : null} */}
         </div>
       </div>
 
-
-      {loading && (
-        <div className="text-gray-500">Loading courses…</div>
-      )}
+      {loading && <div className="text-gray-500">Loading courses…</div>}
 
       {!loading && errored && courses.length === 0 && (
         <div className="text-gray-500">
@@ -142,10 +107,9 @@ export default function PopularCourses() {
 
       {!loading && !errored && filteredCourses.length === 0 && (
         <div className="text-gray-500">
-          No results for <span className="font-semibold">“{query}”</span>.
+          No results for <span className="font-semibold">“{q}”</span>.
         </div>
       )}
-
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {filteredCourses.map((course) => (

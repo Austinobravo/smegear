@@ -32,7 +32,7 @@ const ChapterId = async ({ params }: PageProps) => {
   console.log("fetchAllCoursesBySession", res)
 
   const LessonsId = (await params).LessonsId
-  // const { LessonsId } = params;
+  // const LessonsId = params;
   const lesson = await fetchLessonById(LessonsId);
   console.log("Fetched Lesson:", lesson);
   if (!lesson) return notFound();

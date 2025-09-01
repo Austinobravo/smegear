@@ -6,7 +6,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { Input } from "./ui/input"; // assuming you're using shadcn UI
-
+import StudentSearchInput from "@/app/(pageswithdashboard)/(students)/student/search/_components/StudentSearchInput";
 const NavbarRoutes = () => {
   const pathname = usePathname();
   const router = useRouter();
@@ -33,20 +33,12 @@ const NavbarRoutes = () => {
   }, [search]);
 
   return (
-     <Suspense fallback={<div className='text-center'>loading...</div>}>
-        <div className="w-full">
+    <Suspense fallback={<div className='text-center'>loading...</div>}>
+      <div className="w-full">
         {isStudentSearch && (
           <div className="flex items-center justify-between gap-2 w-full max-w-5xl mx-auto">
-            <div className="relative w-full max-w-xl">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search courses..."
-                className="pl-9 pr-4 py-2 rounded-md border-2 border-gray-900 border-input bg-white shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-smegear-secondary"
-              />
-            </div>
-
+            {/* studentsearchinput */}
+            <StudentSearchInput />
             <div className="flex justify-end items-center gap-2 ml-auto">
               <Link href="/admin/courses">
                 <Button className="bg-smegear-secondary hover:bg-smegear-accent">
