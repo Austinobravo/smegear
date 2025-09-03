@@ -24,7 +24,7 @@ export function getApiDocs() {
           BearerAuth: {
             type: 'http',
             scheme: 'bearer',
-            bearerFormat: 'JWT', // optional, can be "Token" or omitted
+            bearerFormat: 'JWT', 
           },
         },
       },
