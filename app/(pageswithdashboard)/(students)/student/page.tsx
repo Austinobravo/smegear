@@ -1,0 +1,35 @@
+import React from 'react'
+import CourseCards from './_components/CourseCards'
+import RecommendedCourses from './_components/RecommendedCourses'
+import axios from 'axios'
+import { getCurrentSession } from '@/lib/getServerSession'
+
+const fetchAllCourses = async () => {
+  try {
+    const session = await getCurrentSession();
+    const token = (session as any)?.accessToken
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/courses`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+    console.log("all courses", response.data)
+    return response.data
+
+  } catch (error) {
+    console.error("error", error)
+    return []
+  }
+
+}
+const page = async () => {
+  const data = await fetchAllCourses()
+
+  return (
+    <section className=' space-y-6'>
+      <CourseCards />
+      <RecommendedCourses data={data}/>
+    </section>
+  )
+}
+
+export default page
