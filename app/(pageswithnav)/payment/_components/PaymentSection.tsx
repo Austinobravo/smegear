@@ -17,7 +17,7 @@ function apiBase() {
 export default function PaymentCallbackSection() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const reference = searchParams.get("reference");
+  const reference = searchParams.get("trxref");
   const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying");
   const [msg, setMsg] = useState("");
 

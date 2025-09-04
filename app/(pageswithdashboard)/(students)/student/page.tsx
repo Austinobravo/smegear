@@ -4,6 +4,15 @@ import axios from 'axios'
 import CourseCards from './_components/CourseCards'
 import RecommendedCourses from './_components/RecommendedCourses'
 import { getCurrentSession } from '@/lib/getServerSession'
+import { Lesson } from '@/lib/generated/prisma'
+
+type Module = {
+  id: string;
+  title: string;
+  order?: number;
+  courseId: string;
+  lessons: Lesson[];
+};
 
 type APICourse = {
   id: string
@@ -11,8 +20,9 @@ type APICourse = {
   title: string
   description?: string
   imageUrl?: string
-  modules?: { lessons?: any[] }[]
+  modules?: Module[]
   progress?: number
+  price?: number
 }
 
 type EnrollmentLike = {
@@ -38,6 +48,8 @@ const fetchData = async () => {
       api('/api/courses', token),
       api('/api/my-courses', token) // swagger: "courses only"
     ])
+    console.log("allcourses", allCoursesRaw)
+    console.log("my courses", myCoursesRaw)
 
     // Normalize “my courses” to an array of courses + (optional) progress
     // Supports either: [Course, ...]  OR  [{ courseId, progress, course? }, ...]

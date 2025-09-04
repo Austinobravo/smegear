@@ -20,11 +20,18 @@ import { BackButton } from "@/components/globals/BackButton";
 type Course = {
   id: string;
   slug: string;
-  title?: string | null;
-  description?: string | null;
+  title: string ;
+  description?: string;
   imageUrl?: string | null;
   price?: number | null;
-  modules: { id: string }[];
+   modules?: {
+      courseId: string
+      id: string;
+      title: string;
+      name: string;
+      lessons: { id: string; title: string }[];
+      order: number;
+    }[];
   published: boolean;
 };
 
@@ -106,10 +113,10 @@ export default function AdminCourseClient({ initialCourse }: { initialCourse: Co
             </div>
 
             {/* Pass onUpdated so each form can inform us when it changes data */}
-            <TitleForm category={course} onUpdated={onUpdated} />
-            <DescriptionForm category={course} onUpdated={onUpdated} />
-            <ImageForm courseId={course.id} initialImg={course.imageUrl} onUpdated={onUpdated} />
-            <CategoryForm onUpdated={onUpdated} />
+            <TitleForm category={course} />
+            <DescriptionForm category={course}  />
+            <ImageForm courseId={course.id} initialImg={course.imageUrl}  />
+            <CategoryForm />
           </div>
 
           <div className="space-y-6">
@@ -118,7 +125,7 @@ export default function AdminCourseClient({ initialCourse }: { initialCourse: Co
                 <IconBadge icon={ListChecks} />
                 <h2 className="text-xl">Course modules</h2>
               </div>
-              <ModulesForm category={course} onUpdated={onUpdated} />
+              <ModulesForm category={course}  />
             </div>
 
             <div>
@@ -126,7 +133,7 @@ export default function AdminCourseClient({ initialCourse }: { initialCourse: Co
                 <IconBadge icon={CircleDollarSign} />
                 <h2 className="text-xl">Sell your course</h2>
               </div>
-              <PriceForm courseId={course.id} initialPrice={course.price} onUpdated={onUpdated} />
+              <PriceForm courseId={course.id} initialPrice={course.price}  />
             </div>
 
             <div>
@@ -134,7 +141,7 @@ export default function AdminCourseClient({ initialCourse }: { initialCourse: Co
                 <IconBadge icon={File} />
                 <h2 className="text-xl">Resource & Attachments</h2>
               </div>
-              <AttachmentForm onUpdated={onUpdated} />
+              <AttachmentForm  />
             </div>
           </div>
         </div>

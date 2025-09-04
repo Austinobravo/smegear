@@ -24,9 +24,10 @@ export async function GET(req: Request) {
         },
         modules: {
           include:{
-            lessons: true
+            lessons: true,
           }
         },
+        reviews: true
         
       },
     });
