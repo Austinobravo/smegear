@@ -5,7 +5,9 @@ import { redirect, notFound } from "next/navigation";
 type LayoutProps = {
   children: React.ReactNode;
   params: Promise<{ id: number }>;
-}) => {
+}
+
+const PurchasedCoursesLayout = async ({ children, params }: LayoutProps  ) => {
   const id = (await params).id
   const category = courses.find((cat) => cat.id === id);
   if(!category) return notFound()
@@ -30,3 +32,5 @@ type LayoutProps = {
     </div>
   );
 }
+
+export default PurchasedCoursesLayout
