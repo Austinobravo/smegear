@@ -43,19 +43,19 @@ const fetchData = async () => {
     // Supports either: [Course, ...]  OR  [{ courseId, progress, course? }, ...]
     const myCourses: (APICourse & { progress?: number })[] = Array.isArray(myCoursesRaw)
       ? myCoursesRaw.map((item: any) => {
-          // 1) Already a full course
-          if (item?.id && item?.title) return item as APICourse
+        // 1) Already a full course
+        if (item?.id && item?.title) return item as APICourse
 
-          // 2) Enrollment-like
-          const e = item as EnrollmentLike
-          const course: APICourse | undefined =
-            (e.course as APICourse) ||
-            undefined
+        // 2) Enrollment-like
+        const e = item as EnrollmentLike
+        const course: APICourse | undefined =
+          (e.course as APICourse) ||
+          undefined
 
-          if (course) return { ...course, progress: e.progress }
-          // fallback when only courseId is present (will be enriched in the card mapper)
-          return { id: String(e.courseId), title: '', progress: e.progress } as APICourse
-        })
+        if (course) return { ...course, progress: e.progress }
+        // fallback when only courseId is present (will be enriched in the card mapper)
+        return { id: String(e.courseId), title: '', progress: e.progress } as APICourse
+      })
       : []
 
     const allCourses: APICourse[] = Array.isArray(allCoursesRaw) ? allCoursesRaw : []
@@ -69,7 +69,7 @@ const fetchData = async () => {
 
 const Page = async () => {
   const { allCourses, myCourses } = await fetchData()
-
+  console.log(myCourses)
   return (
     <section className="space-y-6">
       <CourseCards allCourses={allCourses} myCourses={myCourses} />
