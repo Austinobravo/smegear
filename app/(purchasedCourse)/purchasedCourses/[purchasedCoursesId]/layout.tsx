@@ -12,7 +12,7 @@ const PurchasedCoursesLayout = async ({
 }) => {
   const id = (await params).id
   const category = courses.find((cat) => cat.id === id);
-  if(!category) return notFound()
+  if (!category) return notFound()
 
   // Safely log the title (avoids crash if category is undefined)
   console.log("Course Title:", category?.title ?? "Not found");

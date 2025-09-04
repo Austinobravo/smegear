@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import ChaptersList from "./modules-list";
-
+import { useRouter } from 'next/navigation';
 interface ChaptersFormProps {
   category:
   | {
@@ -60,6 +60,7 @@ const mapCategoryModulesToApi = (
 };
 
 const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
+  const router = useRouter();
   const [isCreating, setIsCreating] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -157,7 +158,7 @@ const ChaptersForm: React.FC<ChaptersFormProps> = ({ category }) => {
       toast.success("Module created");
       form.reset({ title: "" });
       setIsCreating(false);
-
+      router.refresh();
 
       fetchModules();
     } catch (e: any) {

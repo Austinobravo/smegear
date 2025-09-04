@@ -7,13 +7,14 @@ import { ImageIcon, Pencil, PlusCircle } from "lucide-react";
 import { toast } from "sonner";
 import { CldUploadButton } from "next-cloudinary";
 import { cn } from "@/lib/utils";
-
+import { useRouter } from 'next/navigation';
 interface ImageFormProps {
   courseId: string;
   initialImg?: string | null;
 }
 
 const ImageForm: React.FC<ImageFormProps> = ({ courseId, initialImg }) => {
+  const router = useRouter();
   const normalizedInitial = useMemo(
     () => (typeof initialImg === "string" && initialImg.length > 0 ? initialImg : undefined),
     [initialImg]
@@ -57,8 +58,10 @@ const ImageForm: React.FC<ImageFormProps> = ({ courseId, initialImg }) => {
 
       toast.success("Image saved!");
       setIsEditing(false);
+
       // Optionally close the Cloudinary widget (if still open)
       widget?.close?.();
+      router.refresh();
     } catch (e: any) {
       setImageUrl(prev); // rollback on failure
       toast.error(e?.message || "Failed to save image");

@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useMemo, useState } from "react";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/format";
-
+import { useRouter } from 'next/navigation';
 interface PriceFormProps {
   courseId: string;
   initialPrice?: number | null;
@@ -24,6 +23,7 @@ const formSchema = z.object({
 });
 
 const PriceForm: React.FC<PriceFormProps> = ({ courseId, initialPrice }) => {
+    const router = useRouter();
   const normalizedInitial = useMemo(
     () => (typeof initialPrice === "number" ? initialPrice : undefined),
     [initialPrice]
@@ -51,6 +51,7 @@ const PriceForm: React.FC<PriceFormProps> = ({ courseId, initialPrice }) => {
   const { isSubmitting } = form.formState;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+  
     const prev = displayPrice;
     setDisplayPrice(values.price); // optimistic UI
 
@@ -69,6 +70,7 @@ const PriceForm: React.FC<PriceFormProps> = ({ courseId, initialPrice }) => {
 
       toast.success("Price saved!");
       setIsEditing(false);
+       router.refresh();
     } catch (e: any) {
       setDisplayPrice(prev); // rollback on error
       toast.error(e?.message || "Failed to save price");
