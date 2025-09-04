@@ -33,14 +33,14 @@ type Module = {
   lessons: Lesson[]
 }
 
-interface ChaptersListProps {
-  category?: {
-    id: string
-    title: string
-    published: boolean
-    modules: any[] // normalize below
-  }
-}
+// interface ChaptersListProps {
+//   category?: {
+//     id: string
+//     title: string
+//     published: boolean
+//     modules: any[] // normalized below
+//   }
+// }
 
 const addLessonSchema = z.object({
   title: z.string().min(1, 'Please enter a title').max(120, 'Keep it short'),
@@ -66,6 +66,7 @@ const ChaptersList: React.FC<any> = ({ category }) => {
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [addOpenFor, setAddOpenFor] = useState<string | null>(null)
+  const [loadingLessonsFor, setLoadingLessonsFor] = useState<string | null>(null) // NEW: per-module loading state
 
   const addForm = useForm<z.infer<typeof addLessonSchema>>({
     resolver: zodResolver(addLessonSchema),
@@ -100,27 +101,22 @@ const ChaptersList: React.FC<any> = ({ category }) => {
   // Lazy-load lessons if module.lessons is empty
   const fetchLessonsByModuleId = useCallback(
     async (moduleId: string) => {
+      setLoadingLessonsFor(moduleId)
       try {
         const token = await getToken()
-        // Adjust the endpoint/query if your API differs:
-        const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/lessons`,
-          {
-            params: { moduleId },
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        )
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/lessons`, {
+          params: { moduleId },
+          headers: { Authorization: `Bearer ${token}` },
+        })
         const lessons = (res?.data?.lessons ?? res?.data ?? [])
           .map((l: any) => ({ id: String(l.id), title: l.title ?? '' })) as Lesson[]
 
-        if (!Array.isArray(lessons) || lessons.length === 0) return
-
-        setModules((prev) =>
-          prev.map((m) => (m.id === moduleId ? { ...m, lessons } : m))
-        )
-      } catch (e) {
-        // Silent fail is fine for UX; un-silence if desired:
-        // console.error('Failed to fetch lessons', e)
+        // Update even if empty, so we don't keep reloading on every open
+        setModules((prev) => prev.map((m) => (m.id === moduleId ? { ...m, lessons } : m)))
+      } catch {
+        // Silent fail for UX; optionally toast here
+      } finally {
+        setLoadingLessonsFor(null)
       }
     },
     [getToken]
@@ -145,7 +141,8 @@ const ChaptersList: React.FC<any> = ({ category }) => {
       const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/lessons`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      const newLessonId = res?.data?.id ?? res?.data?.lesson?.id ?? res?.data?.data?.id
+      const newLessonId =
+        res?.data?.id ?? res?.data?.lesson?.id ?? res?.data?.data?.id
       if (!newLessonId) throw new Error('Could not determine created lesson id')
 
       toast.success('Lesson created successfully!')
@@ -169,6 +166,7 @@ const ChaptersList: React.FC<any> = ({ category }) => {
       })
       setModules((prev) => prev.filter((m) => m.id !== moduleId))
       toast.success('Module deleted successfully')
+      router.refresh();
     } catch (e: any) {
       toast.error(e?.response?.data?.message || e?.message || 'Failed to delete module')
     } finally {
@@ -185,21 +183,30 @@ const ChaptersList: React.FC<any> = ({ category }) => {
         moduleId={numericModuleId}
         initialTitle={selectedModule?.title ?? ''}
         onSave={async (values, ctx) => {
-          const idStr = ctx?.moduleId != null ? String(ctx.moduleId) : selectedModuleId ?? undefined
+          const idStr =
+            ctx?.moduleId != null
+              ? String(ctx.moduleId)
+              : selectedModuleId ?? undefined
           if (!idStr) return
-          setModules((prev) => prev.map((m) => (m.id === idStr ? { ...m, title: values.title } : m)))
+          setModules((prev) =>
+            prev.map((m) => (m.id === idStr ? { ...m, title: values.title } : m))
+          )
         }}
       />
 
-      <Accordion type="multiple" className="w-full" onValueChange={(vals) => {
-        // When any item opens, try to fetch lessons for those with empty lessons
-        // vals is an array of open values; fetch for the last toggled one
-        const last = vals[vals.length - 1]
-        if (last) handleAccordionOpen(last)
-      }}>
+      <Accordion
+        type="multiple"
+        className="w-full"
+        onValueChange={(vals) => {
+          // When any item opens, fetch lessons for those with empty lessons
+          const last = vals[vals.length - 1]
+          if (last) handleAccordionOpen(last)
+        }}
+      >
         {modules.map((module) => {
           const isDeleting = deletingId === module.id
           const hasLessons = Array.isArray(module.lessons) && module.lessons.length > 0
+          const isLoading = loadingLessonsFor === module.id
 
           return (
             <AccordionItem
@@ -207,25 +214,40 @@ const ChaptersList: React.FC<any> = ({ category }) => {
               value={`module-${module.id}`}
               className={cn(
                 'rounded-md border text-sm mb-4',
-                category.published ? 'bg-sky-100 border-sky-200 text-sky-700' : 'bg-slate-200 border-slate-200 text-slate-700'
+                category.published
+                  ? 'bg-sky-100 border-sky-200 text-sky-700'
+                  : 'bg-slate-200 border-slate-200 text-slate-700'
               )}
             >
               <div className="flex items-center gap-x-2 px-2 py-3">
-                <div className={cn('border-r px-2 pr-3 border-slate-200 rounded-l-md', category.published && 'border-r-sky-200')}>
+                <div
+                  className={cn(
+                    'border-r px-2 pr-3 border-slate-200 rounded-l-md',
+                    category.published && 'border-r-sky-200'
+                  )}
+                >
                   <Grip className="h-5 w-5" />
                 </div>
 
                 <span className="flex-1 text-black">{module.title}</span>
 
                 <div className="flex items-center gap-x-2">
-                  <Badge className={cn('bg-slate-500', category.published && 'bg-sky-700')}>
+                  <Badge
+                    className={cn(
+                      'bg-slate-500',
+                      category.published && 'bg-sky-700'
+                    )}
+                  >
                     {category.published ? 'Published' : 'Draft'}
                   </Badge>
 
                   <button
                     type="button"
                     onClick={() => onEditModule(module.id)}
-                    className={cn('p-1 rounded hover:opacity-75', isDeleting && 'pointer-events-none opacity-40')}
+                    className={cn(
+                      'p-1 rounded hover:opacity-75',
+                      isDeleting && 'pointer-events-none opacity-40'
+                    )}
                     title="Edit module"
                     aria-label="Edit module"
                   >
@@ -235,11 +257,18 @@ const ChaptersList: React.FC<any> = ({ category }) => {
                   <button
                     type="button"
                     onClick={() => onDeleteModule(module.id)}
-                    className={cn('p-1 rounded hover:opacity-75 flex items-center gap-1', isDeleting && 'pointer-events-none opacity-40')}
+                    className={cn(
+                      'p-1 rounded hover:opacity-75 flex items-center gap-1',
+                      isDeleting && 'pointer-events-none opacity-40'
+                    )}
                     title={isDeleting ? 'Deleting…' : 'Delete module'}
                     aria-label={isDeleting ? 'Deleting…' : 'Delete module'}
                   >
-                    {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden /> : <Trash2 className="w-4 h-4 text-red-500" aria-hidden />}
+                    {isDeleting ? (
+                      <Loader2 className="w-4 h-4 animate-spin" aria-hidden />
+                    ) : (
+                      <Trash2 className="w-4 h-4 text-red-500" aria-hidden />
+                    )}
                   </button>
                 </div>
 
@@ -247,25 +276,38 @@ const ChaptersList: React.FC<any> = ({ category }) => {
               </div>
 
               <AccordionContent className="pl-12 pb-4">
-                {hasLessons ? (
-                  module.lessons.map((lesson) => (
-                    <div key={lesson.id} className="flex items-center justify-between py-1">
-                      <span className="text-sm">└─ {lesson.title}</span>
-                      <div className="flex items-center gap-x-2">
-                        <button
-                          type="button"
-                          onClick={() => onEditLesson(lesson.id)}
-                          className="p-1 rounded hover:opacity-75"
-                          title="Edit lesson"
-                          aria-label="Edit lesson"
-                        >
-                          <Pencil className="w-4 h-4" aria-hidden />
-                        </button>
+                {isLoading && (
+                  <p className="text-sm text-gray-500 italic mb-2">
+                    Loading lessons...
+                  </p>
+                )}
 
+                {!isLoading && hasLessons && (
+                  <>
+                    {module.lessons.map((lesson) => (
+                      <div
+                        key={lesson.id}
+                        className="flex items-center justify-between py-1"
+                      >
+                        <span className="text-sm">└─ {lesson.title}</span>
+                        <div className="flex items-center gap-x-2">
+                          <button
+                            type="button"
+                            onClick={() => onEditLesson(lesson.id)}
+                            className="p-1 rounded hover:opacity-75"
+                            title="Edit lesson"
+                            aria-label="Edit lesson"
+                          >
+                            <Pencil className="w-4 h-4" aria-hidden />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))
-                ) : (
+                    ))}
+                  </>
+                )}
+
+                {/* Always render the "Add Lesson" button */}
+                {!isLoading && (
                   <Button
                     variant="ghost"
                     size="sm"
@@ -273,7 +315,9 @@ const ChaptersList: React.FC<any> = ({ category }) => {
                     onClick={() => setAddOpenFor(module.id)}
                   >
                     <Plus className="w-4 h-4 mr-1" />
-                    Add Lesson to {module.title}
+                    {hasLessons
+                      ? `Add another lesson to ${module.title}`
+                      : `Add Lesson to ${module.title}`}
                   </Button>
                 )}
               </AccordionContent>

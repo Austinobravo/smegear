@@ -9,7 +9,7 @@ import { Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-
+import { useRouter } from 'next/navigation';
 interface DescriptionFormProps {
   category?:
   | {
@@ -27,6 +27,7 @@ const formSchema = z.object({
 });
 
 const DescriptionForm: React.FC<DescriptionFormProps> = ({ category }) => {
+     const router = useRouter();
   // Normalize: prefer `description`, fall back to `OverView`
   const initialDescription = useMemo(
     () => category?.description ?? category?.OverView ?? "",
@@ -55,6 +56,7 @@ const DescriptionForm: React.FC<DescriptionFormProps> = ({ category }) => {
   const { isSubmitting, isValid } = form.formState;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+
     const prev = displayDescription;
     setDisplayDescription(values.description); // optimistic
 
@@ -73,6 +75,7 @@ const DescriptionForm: React.FC<DescriptionFormProps> = ({ category }) => {
 
       toast.success("Description saved!");
       setIsEditing(false);
+      router.refresh();
     } catch (e: any) {
       setDisplayDescription(prev); // rollback
       toast.error(e?.message || "Failed to save description");

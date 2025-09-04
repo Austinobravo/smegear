@@ -14,7 +14,7 @@ const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
 });
 
-export default function TitleForm({ category }: { category?: { id: string; title: string  } }) {
+export default function TitleForm({ category }: { category?: { id: string; title: string } }) {
   const [isEditing, setIsEditing] = useState(false);
   const [displayTitle, setDisplayTitle] = useState(category?.title ?? "");
 

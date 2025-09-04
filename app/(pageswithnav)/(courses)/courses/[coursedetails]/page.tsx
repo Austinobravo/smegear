@@ -2,6 +2,7 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { fetchAllCourses } from "@/lib/fetchAllCourses";
+import PaystackBuyButton from "@/app/(pageswithnav)/payment/_components/PaystackBuyButton";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -395,19 +396,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 {formatPrice(course.price)}
               </h3>
 
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="w-full py-8 font-bold bg-smegear-secondary text-white text-lg">
-                    Buy Now
-                  </Button>
-                </DialogTrigger>
-                <DialogTitle></DialogTitle>
-                <DialogContent className="sm:max-w-md ">
-                  <div className="w-full overflow-hidden p-5">
-                    <ModalLoginForm />
-                  </div>
-                </DialogContent>
-              </Dialog>
+             <PaystackBuyButton courseId={course.id} />
+
 
               {Array.isArray(course.info) && course.info.length > 0 && (
                 <div className="border-t pt-4">

@@ -1,14 +1,25 @@
+// app/payment/_components/PaymentSection.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { getSession } from "next-auth/react";
+
+function apiBase() {
+  // Prefer the current origin to keep cookies/session aligned.
+  if (typeof window !== "undefined" && window.location.origin) {
+    return window.location.origin.replace(/\/+$/, "");
+  }
+  // SSR fallback to env (works in production deploys)
+  return (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "");
+}
 
 export default function PaymentCallbackSection() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const reference = searchParams.get("reference");
+  const reference = searchParams.get("trxref");
   const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying");
-  const [msg, setMsg] = useState<string>("");
+  const [msg, setMsg] = useState("");
 
   useEffect(() => {
     const verify = async () => {
@@ -17,23 +28,50 @@ export default function PaymentCallbackSection() {
         setMsg("Missing reference");
         return;
       }
+
       try {
+        // 1) Get session/access token (like your Course create code)
+        const session = await getSession();
+        const accessToken = (session as any)?.accessToken as string | undefined;
+
+        // 2) Build same-origin base to keep cookies valid
+        const base = apiBase();
+
+        // 3) Verify
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/payments/paystack/verify`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+          },
+          credentials: "include", // send cookies if this is same-origin
           body: JSON.stringify({ reference }),
         });
-        const json = await res.json();
+
+        if (res.status === 401) {
+          // Not signed in on this origin
+          setStatus("error");
+          setMsg("You need to sign in again to complete verification.");
+          // Optional: auto-redirect to login, then back to this page
+          setTimeout(() => {
+            const returnTo = typeof window !== "undefined" ? window.location.href : "/payment/callback";
+            router.push(`/auth/login?next=${encodeURIComponent(returnTo)}`);
+          }, 1200);
+          return;
+        }
+
+        const json = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(json?.message || "Verification failed");
+
         setStatus("success");
-        setMsg("Payment verified! You are now enrolled and will be redirected now.");
-        
+        setMsg("Payment verified! You are now enrolled and will be redirected.");
         setTimeout(() => router.push("/student"), 1200);
       } catch (e: any) {
         setStatus("error");
         setMsg(e.message || "Something went wrong");
       }
     };
+
     verify();
   }, [reference, router]);
 

@@ -32,15 +32,17 @@ export type Course = {
   id: string;
   title: string;
   description?: string;
-  imageUrl: string;            // <-- from your payload
-  price: number;               // 25000 (₦25,000)
+  imageUrl?: string;            // <-- from your payload
+  price?: number;               // 25000 (₦25,000)
   slug?: string;
   published?: boolean;
   createdAt?: string;
   updatedAt?: string;
   instructor?: Instructor;
   modules?: Module[];
+  progress?: number
 };
+
 
 type Props = {
   data: Course[];              // <RecommendedCourses data={data} />

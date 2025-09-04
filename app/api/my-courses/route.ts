@@ -23,7 +23,14 @@ export async function GET(req:NextRequest) {
         where: { userId: user.id },
         include: {
           course: {
-            select: { id: true, title: true, slug: true, imageUrl: true, price: true, published: true },
+            include:{
+              modules:{
+                include:{
+                  lessons:true
+                }
+              },
+              reviews: true
+            }
           },
         },
         orderBy: { enrolledAt: "desc" },

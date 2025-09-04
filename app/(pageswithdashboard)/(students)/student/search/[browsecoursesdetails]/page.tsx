@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/accordion";
 import ModalLoginForm from "@/components/globals/ModalLoginForm";
 import { DialogTitle } from "@radix-ui/react-dialog";
+import PaystackBuyButton from "@/app/(pageswithnav)/payment/_components/PaystackBuyButton";
 
 
 
@@ -395,19 +396,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 {formatPrice(course.price)}
               </h3>
 
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="w-full py-8 font-bold bg-smegear-secondary text-white text-lg">
-                    Buy Now
-                  </Button>
-                </DialogTrigger>
-                <DialogTitle></DialogTitle>
-                <DialogContent className="sm:max-w-md ">
-                  <div className="w-full overflow-hidden p-5">
-                    <ModalLoginForm />
-                  </div>
-                </DialogContent>
-              </Dialog>
+              <PaystackBuyButton courseId={course.id} />
 
               {Array.isArray(course.info) && course.info.length > 0 && (
                 <div className="border-t pt-4">
