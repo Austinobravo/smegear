@@ -81,7 +81,7 @@ export default function PaystackBuyButton({ courseId, className }: Props) {
         disabled={loading}
         className={
           className ??
-          "w-full py-8 font-bold bg-smegear-secondary text-white text-lg"
+          "w-full py-8 font-bold bg-smegear-secondary text-white text-lg hover:bg-smegear-accent"
         }
       >
         {loading ? "Redirecting…" : "Buy Now"}

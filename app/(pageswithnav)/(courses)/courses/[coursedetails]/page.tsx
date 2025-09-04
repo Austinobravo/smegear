@@ -101,7 +101,28 @@ const instructorInfo = {
     { icon: Github, url: "#" },
   ],
 };
-
+const tabs = [
+  {
+    value: "overview",
+    label: "Overview",
+    icon: BookOpen,
+  },
+  {
+    value: "curriculum",
+    label: "Curriculum",
+    icon: LayoutList,
+  },
+  {
+    value: "instructor",
+    label: "Instructor",
+    icon: User,
+  },
+  {
+    value: "reviews",
+    label: "Reviews",
+    icon: Star,
+  },
+];
 function formatPrice(price?: string | number | null) {
   if (price === null || price === undefined || price === "") return "Free";
   const asNumber = typeof price === "string" ? Number(price) : price;
@@ -136,7 +157,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
   const modules: Module[] = Array.isArray(course.modules) ? course.modules : [];
 
   return (
-    <div className="max-w-7xl mx-auto p-2 md:p-6  md:py-20">
+    <div className="max-w-7xl mx-auto p-3 md:p-6  md:py-20">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
@@ -165,7 +186,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               </div>
             </div>
 
-            <h2 className="text-3xl font-bold mt-4">
+            <h2 className="md:text-3xl text-2xl font-bold mt-4">
               {course.title ?? "No title available"}
             </h2>
 
@@ -184,35 +205,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
           {/* Tabs */}
           <Tabs defaultValue="overview" className="mt-10">
-            <TabsList className="bg-white  justify-start pt-4">
-              <TabsTrigger
-                value="overview"
-                className="text-[17px] font-bold flex items-center md:gap-3  md:p-8 border-b-2 border-transparent data-[state=active]:border-b-smegear-secondary data-[state=active]:text-smegear-secondary bg-[#F3F6FA] data-[state=active]:bg-white text-gray-800 py-8 rounded-none transition-all border-b-gray-200"
-              >
-                <BookOpen size={24} /> Overview
-              </TabsTrigger>
-
-              <TabsTrigger
-                value="curriculum"
-                className="text-[17px] font-bold flex items-center md:gap-3  md:p-8 border-b-2 border-transparent data-[state=active]:border-b-smegear-secondary data-[state=active]:text-smegear-secondary bg-[#F3F6FA] data-[state=active]:bg-white text-gray-800 py-8 rounded-none transition-all border-b-gray-200"
-              >
-                <LayoutList size={24} /> Curriculum
-              </TabsTrigger>
-
-              <TabsTrigger
-                value="instructor"
-                className="text-[17px] font-bold flex items-center md:gap-3  md:p-8 border-b-2 border-transparent data-[state=active]:border-b-smegear-secondary data-[state=active]:text-smegear-secondary bg-[#F3F6FA] data-[state=active]:bg-white text-gray-800 py-8 rounded-none transition-all border-b-gray-200"
-              >
-                <User size={24} /> Instructor
-              </TabsTrigger>
-
-              <TabsTrigger
-                value="reviews"
-                className="text-[17px] font-bold flex items-center md:gap-3  md:p-8 border-b-2 border-transparent data-[state=active]:border-b-smegear-secondary data-[state=active]:text-smegear-secondary bg-[#F3F6FA] data-[state=active]:bg-white text-gray-800 py-8 rounded-none transition-all border-b-gray-200"
-              >
-                <Star size={24} /> Reviews
-              </TabsTrigger>
-            </TabsList>
+            <TabsList className="bg-white justify-start pt-4"> <TabsTrigger value="overview" className="text-[17px] font-bold flex items-center md:gap-3 md:p-8 border-b-2 border-transparent data-[state=active]:border-b-smegear-secondary data-[state=active]:text-smegear-secondary bg-[#F3F6FA] data-[state=active]:bg-white text-gray-800 py-8 rounded-none transition-all border-b-gray-200" > <BookOpen size={24} /> Overview </TabsTrigger> <TabsTrigger value="curriculum" className="text-[17px] font-bold flex items-center md:gap-3 md:p-8 border-b-2 border-transparent data-[state=active]:border-b-smegear-secondary data-[state=active]:text-smegear-secondary bg-[#F3F6FA] data-[state=active]:bg-white text-gray-800 py-8 rounded-none transition-all border-b-gray-200" > <LayoutList size={24} /> Curriculum </TabsTrigger> <TabsTrigger value="instructor" className="text-[17px] font-bold flex items-center md:gap-3 md:p-8 border-b-2 border-transparent data-[state=active]:border-b-smegear-secondary data-[state=active]:text-smegear-secondary bg-[#F3F6FA] data-[state=active]:bg-white text-gray-800 py-8 rounded-none transition-all border-b-gray-200" > <User size={24} /> Instructor </TabsTrigger> <TabsTrigger value="reviews" className="text-[17px] font-bold flex items-center md:gap-3 md:p-8 border-b-2 border-transparent data-[state=active]:border-b-smegear-secondary data-[state=active]:text-smegear-secondary bg-[#F3F6FA] data-[state=active]:bg-white text-gray-800 py-8 rounded-none transition-all border-b-gray-200" > <Star size={24} /> Reviews </TabsTrigger> </TabsList>
 
             {/* Overview */}
             <TabsContent value="overview" className="mt-8 space-y-6">
@@ -383,14 +376,14 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
         {/* Right Column */}
         <div className="space-y-6">
-          <Card className="p-4">
-            <CardContent className="flex flex-col gap-4">
+          <Card className="p-2 rounded-lg">
+            <CardContent className="flex flex-col gap-4 p-0">
               <Image
                 src={course.imageUrl}
                 alt={course.title}
                 width={400}
                 height={300}
-                className="rounded-none"
+                className="rounded-lg"
               />
               <h3 className="text-3xl font-extrabold text-gray-800">
                 {formatPrice(course.price)}

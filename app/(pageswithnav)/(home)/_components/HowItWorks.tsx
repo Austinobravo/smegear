@@ -27,7 +27,7 @@ export default function HowItWorks() {
 
   return (
     <section className="py-16 px-6 text-center bg-[#FEFFFE]">
-      <div className="text-smegear-accent font-semibold text-sm tracking-wide flex justify-center items-center gap-2 mb-2">
+      <div className="text-smegear-secondary text-[18px] font-semibold  tracking-wide flex justify-center items-center gap-2 mb-2">
         <GraduationCap className="w-5 h-5" />
         <span>LEARN WITH EASE</span>
       </div>
@@ -39,7 +39,7 @@ export default function HowItWorks() {
         {steps.map((step, i) => (
           <div key={i} className="flex-1 max-w-sm mx-auto relative">
           
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-smegear-accent w-12 h-12 rounded-full flex items-center justify-center shadow-lg z-10">
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-smegear-secondary w-12 h-12 rounded-full flex items-center justify-center shadow-lg z-10">
               {step.icon}
             </div>
 
