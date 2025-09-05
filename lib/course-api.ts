@@ -53,14 +53,16 @@ const api = async (path: string, token?: string) =>
 const asArray = (x: any) => Array.isArray(x) ? x : (Array.isArray(x?.data) ? x.data : []);
 
 export async function fetchCourses() {
-  const token = (await getCurrentSession() as any)?.accessToken;
+    const session = await getCurrentSession() as any;
+  const token = session?.accessToken;
+  const userId = session?.user?.id; 
   const [allRaw, mineRaw] = await Promise.all([
     api("/api/courses", token),
     api("/api/my-courses", token)
   ]);
   const all = asArray(allRaw);
   const mine = asArray(mineRaw);
-  return { token, all, mine };
+  return { token, all, mine,userId };
 }
 
 const normDuration = (d?: string | number | null) =>
