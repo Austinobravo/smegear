@@ -1,53 +1,26 @@
-import PurchasedCourseNavbar from "./_components/PurchasedCourseNavbar";
-import LessonSidebar, { Module } from "./_components/LessonSidebar";
 import { redirect, notFound } from "next/navigation";
+import PurchasedCourseNavbar from "./_components/PurchasedCourseNavbar";
+import LessonSidebar from "./_components/LessonSidebar";
+import { fetchCourses, findCourse, mapCourse, userOwnsCourse } from "@/lib/course-api";
 
 type LayoutProps = {
   children: React.ReactNode;
   params: { purchasedCoursesId: string };
 };
 
-// ---- Replace with your real auth/purchase logic ----
-async function getViewer() {
-  return { id: "user_123" };
-}
-async function hasPurchasedCourse(userId: string, courseId: string) {
-  return true;
-}
-
-// ---- Replace with your real DB call ----
-async function getCourse(courseId: string): Promise<{ id: string; title: string; modules: Module[] } | null> {
-  return {
-    id: courseId,
-    title: "Comprehensive Guide to NAFDAC and SON Registration in Nigeria",
-    modules: [
-      {
-        id: "m1",
-        title: "Module 1: Introduction to NAFDAC and SON",
-        order: 1,
-        lessons: [
-          { id: "l1", title: "1.1 What is NAFDAC?", duration: "10:00" },
-          { id: "l2", title: "1.2 What is SON?", duration: "07:12" },
-        ],
-      },
-    ],
-  };
-}
-
 export default async function PurchasedCoursesLayout({ children, params }: LayoutProps) {
-  const viewer = await getViewer();
-  if (!viewer) redirect("/login");
+  const { all, mine } = await fetchCourses();
+  const raw = findCourse(all, params.purchasedCoursesId);
+  if (!raw) notFound();
 
-  const purchased = await hasPurchasedCourse(viewer.id, params.purchasedCoursesId);
-  if (!purchased) redirect(`/courses/${params.purchasedCoursesId}`);
+  const owns = userOwnsCourse(mine, raw.id);
+  if (!owns) redirect(`/courses/${raw.slug ?? raw.id}`);
 
-  const course = await getCourse(params.purchasedCoursesId);
-  if (!course) notFound();
-
-  const orderedModules = course.modules.slice().sort((a, b) => a.order - b.order);
+  const course = mapCourse(raw);
+  const orderedModules = course.modules;
 
   return (
-    <div className="h-screen grid grid-cols-[300px_1fr] max-lg:grid-cols-1 bg-white">
+  <div className="min-h-screen grid grid-cols-[300px_1fr] max-lg:grid-cols-1 bg-white">
       {/* Top navbar */}
       <div className="fixed top-0 inset-x-0 z-50 h-[64px]">
         <PurchasedCourseNavbar courseTitle={course.title} modules={orderedModules} />

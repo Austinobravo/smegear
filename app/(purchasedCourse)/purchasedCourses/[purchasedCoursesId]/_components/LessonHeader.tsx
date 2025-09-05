@@ -7,7 +7,7 @@ type LessonHeaderProps = {
   nextHref?: string;
 };
 
-export function LessonHeader({ title, duration, prevHref, nextHref }: LessonHeaderProps) {
+export default function LessonHeader({ title, duration, prevHref, nextHref }: LessonHeaderProps) {
   return (
     <div className="flex items-center justify-between mt-3 mb-2">
       <div>
@@ -37,4 +37,3 @@ export function LessonHeader({ title, duration, prevHref, nextHref }: LessonHead
     </div>
   );
 }
-export default LessonHeader;

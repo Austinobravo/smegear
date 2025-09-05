@@ -1,6 +1,6 @@
 export type Resource = { name: string; url: string };
 
-export function ResourceList({ resources }: { resources: Resource[] }) {
+export default function ResourceList({ resources }: { resources: Resource[] }) {
   if (!resources?.length) return null;
   return (
     <div className="mt-4">
@@ -22,4 +22,3 @@ export function ResourceList({ resources }: { resources: Resource[] }) {
     </div>
   );
 }
-export default ResourceList;

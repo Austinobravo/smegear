@@ -1,16 +1,17 @@
 "use client";
-
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import LessonSidebar, { Module } from "./LessonSidebar";
 import { ReactNode } from "react";
 
-type Props = {
+export default function PurchasedCourseMobileSidebar({
+  trigger,
+  modules,
+  courseTitle
+}: {
   trigger: ReactNode;
   modules: Module[];
   courseTitle: string;
-};
-
-const PurchasedCourseMobileSidebar = ({ trigger, modules, courseTitle }: Props) => {
+}) {
   return (
     <Sheet>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
@@ -19,6 +20,4 @@ const PurchasedCourseMobileSidebar = ({ trigger, modules, courseTitle }: Props) 
       </SheetContent>
     </Sheet>
   );
-};
-
-export default PurchasedCourseMobileSidebar;
+}

@@ -38,7 +38,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
            include:{
              lessons: true
            }
-       }
+       },
+       reviews: true
         },
     });
 

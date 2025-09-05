@@ -18,7 +18,7 @@ interface ChaptersFormProps {
   category:
   | {
     title: string;
-    description: string;
+    description?: string;
     id: string;
     modules?: {
       courseId: string
@@ -30,7 +30,7 @@ interface ChaptersFormProps {
     }[];
     published: boolean;
     slug: string
-    price: number;
+    price?: number | null;
   }
   | undefined;
 }

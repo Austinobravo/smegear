@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle, PlayCircle } from "lucide-react";
+import { CheckCircle, PlayCircle, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 
@@ -13,25 +13,41 @@ type Props = {
 };
 
 export default function LessonSidebar({ courseTitle, modules }: Props) {
-  const isCompleted = false
-  const Icon = isCompleted ? CheckCircle : PlayCircle
+  const isCompleted = false;
+  const Icon = isCompleted ? CheckCircle : PlayCircle;
   const pathname = usePathname();
   const sp = useSearchParams();
+
   const activeLessonId = sp.get("lessonId") || undefined;
+  const activeModuleId = sp.get("moduleId") || undefined;
+  const showOverview = !activeLessonId && !activeModuleId; // ✅ active by default
 
   return (
     <div className="h-dvh flex flex-col">
-      {/* <div className="px-4 py-3 border-b">
-        <h2 className="font-semibold truncate">{courseTitle}</h2>
-      </div> */}
-
       <nav className="flex-1 overflow-y-auto p-2 space-y-5">
+        {/* ---- Course Overview Tab ---- */}
+        <div>
+          <Link
+            href={pathname} // base path without query shows overview
+            className={`flex items-center gap-2 px-3 py-4 rounded-md text-sm font-semibold ${showOverview
+                ? "text-sky-700 bg-sky-200/20 hover:bg-sky-200/20 hover:text-sky-700"
+                : "hover:bg-gray-100"
+              }`}
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>Course Overview</span>
+          </Link>
+        </div>
+
+        {/* ---- Modules & Lessons ---- */}
         {modules
           .slice()
           .sort((a, b) => a.order - b.order)
           .map((m) => (
             <div key={m.id}>
-              <p className="px-2 text-xs uppercase tracking-wide text-gray-500">{m.title}</p>
+              <p className="px-2 text-xs uppercase tracking-wide text-gray-500 mt-4">
+                {m.title}
+              </p>
               <ul className="mt-2">
                 {m.lessons.map((lesson) => {
                   const href = `${pathname}?lessonId=${lesson.id}`;
@@ -40,14 +56,18 @@ export default function LessonSidebar({ courseTitle, modules }: Props) {
                     <li key={lesson.id}>
                       <Link
                         href={href}
-                        className={`flex items-center justify-between px-3 py-2 rounded-md text-sm ${isActive ? "bg-smegear-secondary text-white" : "hover:bg-gray-100"
+                        className={`flex items-center justify-between px-3 py-2 rounded-md text-sm ${isActive
+                            ? "text-sky-700 bg-sky-200/20 hover:bg-sky-200/20 hover:text-sky-700"
+                            : "hover:bg-gray-100"
                           }`}
                       >
-                        <span><Icon /></span>
+                        <span>
+                          <Icon />
+                        </span>
                         <span className="truncate">{lesson.title}</span>
                         {lesson.duration ? (
                           <span
-                            className={`ml-3 shrink-0 text-xs ${isActive ? "text-gray-200" : "text-gray-500"
+                            className={`ml-3 shrink-0 text-xs ${isActive ? "text-sky-700 bg-sky-200/20 hover:bg-sky-200/20 hover:text-sky-700" : "text-gray-500"
                               }`}
                           >
                             {lesson.duration}

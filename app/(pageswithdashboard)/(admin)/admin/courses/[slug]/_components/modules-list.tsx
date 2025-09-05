@@ -33,20 +33,20 @@ type Module = {
   lessons: Lesson[]
 }
 
-interface ChaptersListProps {
-  category?: {
-    id: string
-    title: string
-    published: boolean
-    modules: any[] // normalized below
-  }
-}
+// interface ChaptersListProps {
+//   category?: {
+//     id: string
+//     title: string
+//     published: boolean
+//     modules: any[] // normalized below
+//   }
+// }
 
 const addLessonSchema = z.object({
   title: z.string().min(1, 'Please enter a title').max(120, 'Keep it short'),
 })
 
-const ChaptersList: React.FC<ChaptersListProps> = ({ category }) => {
+const ChaptersList: React.FC<any> = ({ category }) => {
   const router = useRouter()
   if (!category) return null
 

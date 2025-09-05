@@ -4,7 +4,7 @@ import { getCurrentUser } from "@/lib/getServerSession";
 
 /**
  * @swagger
- * /api/enrollments/me:
+ * /api/my-courses:
  *   get:
  *     summary: Get the current user's enrollments (courses only)
  *     tags: [Enrollments]
@@ -23,13 +23,20 @@ export async function GET(req:NextRequest) {
         where: { userId: user.id },
         include: {
           course: {
-            select: { id: true, title: true, slug: true, imageUrl: true, price: true, published: true },
+            include:{
+              modules:{
+                include:{
+                  lessons:true
+                }
+              },
+              reviews: true
+            }
           },
         },
         orderBy: { enrolledAt: "desc" },
       });
     
-      // Return only the course objects to keep the payload clean
+
       const courses = enrollments.map((e) => e.course);
       return NextResponse.json({ data: courses });
       

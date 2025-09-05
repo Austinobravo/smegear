@@ -1,5 +1,3 @@
-// page.tsx
-import React from 'react'
 import axios from 'axios'
 import CourseCards from './_components/CourseCards'
 import RecommendedCourses from './_components/RecommendedCourses'
@@ -15,61 +13,40 @@ type APICourse = {
   progress?: number
 }
 
-type EnrollmentLike = {
-  courseId?: string
-  progress?: number
-  course?: APICourse
-}
-
-const api = async (path: string, token?: string) => {
-  const url = `${process.env.NEXT_PUBLIC_API_URL}${path}`
-  const res = await axios.get(url, {
+const api = async (path: string, token?: string) =>
+  (await axios.get(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {
     headers: token ? { Authorization: `Bearer ${token}` } : undefined
-  })
-  return res.data
-}
+  })).data
+
+const asArray = (x: any) => Array.isArray(x) ? x : (Array.isArray(x?.data) ? x.data : [])
 
 const fetchData = async () => {
   try {
-    const session = await getCurrentSession()
-    const token = (session as any)?.accessToken
-
-    const [allCoursesRaw, myCoursesRaw] = await Promise.all([
+    const token = (await getCurrentSession() as any)?.accessToken
+    const [allRaw, mineRaw] = await Promise.all([
       api('/api/courses', token),
-      api('/api/my-courses', token) // swagger: "courses only"
+      api('/api/my-courses', token)
     ])
 
-    // Normalize “my courses” to an array of courses + (optional) progress
-    // Supports either: [Course, ...]  OR  [{ courseId, progress, course? }, ...]
-    const myCourses: (APICourse & { progress?: number })[] = Array.isArray(myCoursesRaw)
-      ? myCoursesRaw.map((item: any) => {
-        // 1) Already a full course
-        if (item?.id && item?.title) return item as APICourse
+    const allCourses: APICourse[] = asArray(allRaw)
+    const myInput = asArray(mineRaw)
 
-        // 2) Enrollment-like
-        const e = item as EnrollmentLike
-        const course: APICourse | undefined =
-          (e.course as APICourse) ||
-          undefined
-
-        if (course) return { ...course, progress: e.progress }
-        // fallback when only courseId is present (will be enriched in the card mapper)
-        return { id: String(e.courseId), title: '', progress: e.progress } as APICourse
-      })
-      : []
-
-    const allCourses: APICourse[] = Array.isArray(allCoursesRaw) ? allCoursesRaw : []
+    // normalize: accept either full courses or enrollment-like { course, progress } or { courseId, progress }
+    const myCourses: APICourse[] = myInput.map((it: any) => {
+      if (it?.id && it?.title) return it
+      if (it?.course) return { ...it.course, progress: it.progress }
+      return { id: String(it?.courseId ?? ''), title: '', progress: it?.progress }
+    })
 
     return { allCourses, myCourses }
-  } catch (err) {
-    console.error('fetch error', err)
+  } catch {
     return { allCourses: [], myCourses: [] }
   }
 }
 
 const Page = async () => {
   const { allCourses, myCourses } = await fetchData()
-  console.log(myCourses)
+  console.log("allCourses", allCourses, "myCourses", myCourses)
   return (
     <section className="space-y-6">
       <CourseCards allCourses={allCourses} myCourses={myCourses} />

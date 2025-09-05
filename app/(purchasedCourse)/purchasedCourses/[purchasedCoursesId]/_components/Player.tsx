@@ -1,12 +1,8 @@
 "use client";
+
 import { useEffect, useRef } from "react";
 
-type PlayerProps = {
-  src: string;
-  title: string;
-};
-
-export function Player({ src, title }: PlayerProps) {
+export default function Player({ src, title }: { src: string; title: string }) {
   const ref = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
@@ -23,19 +19,19 @@ export function Player({ src, title }: PlayerProps) {
   }, [src]);
 
   return (
-   <div className="aspect-[70%] md:aspect-[1/2] w-full rounded-lg overflow-hidden bg-black">
-  <video
-    ref={ref}
-    key={src}
-    className="h-full w-full"
-    controls
-    playsInline
-    preload="metadata"
-    src={src}
-    aria-label={title}
-  />
-</div>
-
+    <div className="w-full flex justify-center">
+      <div className="w-full max-w-3xl aspect-video rounded-lg overflow-hidden bg-black">
+        <video
+          ref={ref}
+          key={src}
+          className="h-full w-full"
+          controls
+          playsInline
+          preload="metadata"
+          src={src}
+          aria-label={title}
+        />
+      </div>
+    </div>
   );
 }
-export default Player;
