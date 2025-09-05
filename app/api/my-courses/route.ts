@@ -26,7 +26,11 @@ export async function GET(req:NextRequest) {
             include:{
               modules:{
                 include:{
-                  lessons:true
+                  lessons:{
+                    include:{
+                      progress: true
+                    }
+                  }
                 }
               },
               reviews: true
