@@ -10,9 +10,10 @@ export type Module = { id: string; title: string; order: number; lessons: Lesson
 type Props = {
   courseTitle: string;
   modules: Module[];
+  onNavigate?: () => void; // ✅ new prop
 };
 
-export default function LessonSidebar({ courseTitle, modules }: Props) {
+export default function LessonSidebar({ courseTitle, modules, onNavigate }: Props) {
   const isCompleted = false;
   const Icon = isCompleted ? CheckCircle : PlayCircle;
   const pathname = usePathname();
@@ -20,7 +21,7 @@ export default function LessonSidebar({ courseTitle, modules }: Props) {
 
   const activeLessonId = sp.get("lessonId") || undefined;
   const activeModuleId = sp.get("moduleId") || undefined;
-  const showOverview = !activeLessonId && !activeModuleId; // ✅ active by default
+  const showOverview = !activeLessonId && !activeModuleId;
 
   return (
     <div className="h-dvh flex flex-col">
@@ -28,13 +29,15 @@ export default function LessonSidebar({ courseTitle, modules }: Props) {
         {/* ---- Course Overview Tab ---- */}
         <div>
           <Link
-            href={pathname} // base path without query shows overview
-            className={`flex items-center gap-2 px-3 py-4 rounded-md text-sm font-semibold ${showOverview
+            href={pathname}
+            onClick={onNavigate} // ✅ closes sheet
+            className={`flex items-center gap-2 px-3 py-4 rounded-md text-sm font-semibold ${
+              showOverview
                 ? "text-sky-700 bg-sky-200/20 hover:bg-sky-200/20 hover:text-sky-700"
                 : "hover:bg-gray-100"
-              }`}
+            }`}
           >
-            <BookOpen className="w-4 h-4" />
+            <BookOpen />
             <span>Course Overview</span>
           </Link>
         </div>
@@ -45,7 +48,7 @@ export default function LessonSidebar({ courseTitle, modules }: Props) {
           .sort((a, b) => a.order - b.order)
           .map((m) => (
             <div key={m.id}>
-              <p className="px-2 text-xs uppercase tracking-wide text-gray-500 mt-4">
+              <p className="px-2 text-sm uppercase tracking-wide text-gray-500 mt-4">
                 {m.title}
               </p>
               <ul className="mt-2">
@@ -56,23 +59,17 @@ export default function LessonSidebar({ courseTitle, modules }: Props) {
                     <li key={lesson.id}>
                       <Link
                         href={href}
-                        className={`flex items-center justify-between px-3 py-2 rounded-md text-sm ${isActive
+                        onClick={onNavigate} // ✅ closes sheet
+                        className={`flex items-center gap-2 px-3 py-4 rounded-md text-sm font-semibold ${
+                          isActive
                             ? "text-sky-700 bg-sky-200/20 hover:bg-sky-200/20 hover:text-sky-700"
                             : "hover:bg-gray-100"
-                          }`}
+                        }`}
                       >
                         <span>
                           <Icon />
                         </span>
                         <span className="truncate">{lesson.title}</span>
-                        {lesson.duration ? (
-                          <span
-                            className={`ml-3 shrink-0 text-xs ${isActive ? "text-sky-700 bg-sky-200/20 hover:bg-sky-200/20 hover:text-sky-700" : "text-gray-500"
-                              }`}
-                          >
-                            {lesson.duration}
-                          </span>
-                        ) : null}
                       </Link>
                     </li>
                   );

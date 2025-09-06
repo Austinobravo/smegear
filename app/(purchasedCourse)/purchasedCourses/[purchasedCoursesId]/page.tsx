@@ -9,6 +9,7 @@ import Player from "./_components/Player";
 import LessonHeader from "./_components/LessonHeader";
 import ResourceList from "./_components/ResourceList";
 import VisibilityRefresh from "./_components/VisibilityRefresh"; // ⬅️ wrapper
+import ScrollToTop from "./_components/ScrollToTop";
 
 type PageProps = {
   params: { purchasedCoursesId: string };
@@ -36,6 +37,7 @@ export default async function PurchasedCoursesPage({
   if (!searchParams.lessonId && !searchParams.moduleId) {
     return (
       <VisibilityRefresh>
+          <ScrollToTop />
         <div className="p-8 text-center">
           <h1 className="text-2xl font-bold mb-4">{course.title}</h1>
           {course.description ? (
